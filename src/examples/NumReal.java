@@ -44,6 +44,26 @@ public class NumReal {
 			case 7:
 				estado = estado7();
 				break;
+			case 10: //tk abreconch
+			break;
+			case 11: //tk fechaconch
+			break;
+			case 12: //tk abrechaves
+			break;
+			case 13: // tk fechachave		
+//			break
+//			case '>': new_estado =  15;
+//			break;
+//			case '<': new_estado =  16;
+//			break;
+//			case '/': new_estado =  31;
+//			break;
+//			case '+': new_estado =  19;
+//			break;
+//			case '-': new_estado =  20;
+//			break;
+//			case '!': new_estado =  22;
+//			break;
 			
 			}
 			if(estado==-1){
@@ -68,10 +88,34 @@ public class NumReal {
 			return 0;
 		}else if(Character.isDigit(atual)){
 			new_estado =  6;
-		}else if(atual=='.'){
-			new_estado =  1;
-		}else 
-			throw new Exception("caracter inesperado no estado nao final 0.");
+		}else{
+			switch(atual){
+			case '.': new_estado =  1;
+			break;
+			case '/': new_estado =  31;
+			break;
+			case '+': new_estado =  19;
+			break;
+			case '-': new_estado =  20;
+			break;
+			case '!': new_estado =  22;
+			break;
+			case '>': new_estado =  15;
+			break;
+			case '<': new_estado =  16;
+			break;
+			case '[': new_estado =  10;
+			break;
+			case ']': new_estado =  11;
+			break;
+			case '{': new_estado =  12;
+			break;
+			case '}': new_estado =  13;
+			break;
+				default:
+					throw new Exception("caracter inesperado no estado nao final 0.");
+			}
+		}
 		token.concatValue((char) atual);
 		return new_estado;
 	}
