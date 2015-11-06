@@ -1,7 +1,24 @@
 package examples;
 
 public class Token {
-	public static enum TypeToken{NUM_REAL, NONE};
+	public Token(){
+	}
+	public Token(String value, TypeToken type){
+		this.value = value;
+		this.type = type;
+	}
+
+	public Token(String value, TypeToken type, int stado, int linha, int posIn , int posFim ){
+		this.value = value;
+		this.estado = stado;
+		this.linha = linha;
+		this.posFin	 = posFim;
+		this.posIni	 = posIn;
+	}
+	public static enum TypeToken{NUM_REAL, NONE,TK_ABRECONCH, TK_FECHCONCH, 
+		TK_ABRECHAVE, TK_FECHACHAVE, TK_MAIOR, TK_MENOR, TK_DIV, TK_PLUS, 
+		TK_SUB, TK_NEG};
+	
 	int linha;
 	String value="";
 	int estado; 

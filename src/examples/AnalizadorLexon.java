@@ -1,21 +1,26 @@
 package examples;
 
 import java.io.PushbackInputStream;
+import java.util.ArrayList;
 
 import examples.Token.TypeToken;
 
-public class NumReal {
+public class AnalizadorLexon {
 
 	Token token;
 	int atual;
+	final int RECONHECEU_SEM_TRANSICAO =-1;
+	final int RECONHECEU_COM_TRANSICAO =-2;
+	
+	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition) throws Exception {
+		ArrayList<Token> tks = new ArrayList<>();
 
-	public Token lexan(PushbackInputStream strean, int currentPosition) throws Exception {
 		token = new Token();
 		token.setLinha(1);
 		atual =0;
 		int   estado= 0;
 		int ultimo_estado=-1;
-		while(atual!=-1){
+		do{
 			ultimo_estado = estado;
 			 atual = strean.read();
 			switch(estado){
@@ -45,43 +50,70 @@ public class NumReal {
 				estado = estado7();
 				break;
 			case 10: //tk abreconch
+				token.type = TypeToken.TK_ABRECONCH;
+				estado =0;
 			break;
 			case 11: //tk fechaconch
+				token.type = TypeToken.TK_FECHCONCH;
+				estado =0;
 			break;
 			case 12: //tk abrechaves
+				token.type = TypeToken.TK_ABRECHAVE;
+				estado =RECONHECEU_SEM_TRANSICAO;
 			break;
-			case 13: // tk fechachave		
-//			break
-//			case '>': new_estado =  15;
-//			break;
-//			case '<': new_estado =  16;
-//			break;
-//			case '/': new_estado =  31;
-//			break;
-//			case '+': new_estado =  19;
-//			break;
-//			case '-': new_estado =  20;
-//			break;
-//			case '!': new_estado =  22;
-//			break;
+			case 13: // tk fechachave	
+				token.type = TypeToken.TK_FECHACHAVE;
+				estado =RECONHECEU_SEM_TRANSICAO;	
+			break;
+			case 15: //tk maior;
+				token.type = TypeToken.TK_MAIOR;
+				estado =RECONHECEU_SEM_TRANSICAO;
+			break;
+			case 16: //tk menor
+				token.type = TypeToken.TK_MENOR;
+				estado =RECONHECEU_SEM_TRANSICAO;
+			break;
+			case 31: //tk div
+				token.type = TypeToken.TK_DIV;
+				estado =RECONHECEU_SEM_TRANSICAO;
+			break;
+			case 19: // tk plus 
+				token.type = TypeToken.TK_PLUS;
+				estado =RECONHECEU_SEM_TRANSICAO;
+			break;
+			case 20: // tk sub
+				token.type = TypeToken.TK_SUB;
+				estado =RECONHECEU_SEM_TRANSICAO;
+			break;
+			case 22: //tk neg
+				token.type = TypeToken.TK_NEG;
+				estado =RECONHECEU_SEM_TRANSICAO;
+			break;
 			
 			}
-			if(estado==-1){
-				strean.unread(atual);
+			if(estado==RECONHECEU_SEM_TRANSICAO || estado == RECONHECEU_COM_TRANSICAO){
+				if(estado == RECONHECEU_COM_TRANSICAO){
+					strean.unread(atual);
+					currentPosition--;
+				}
+				
+				estado =0;
 				token.setEstado(ultimo_estado);
 				token.setPosFin(currentPosition);
-				return token;
+				int l = token.getLinha();
+				tks.add(token);
+				token = new Token();	
+				token.setLinha(l);
 			}
 			currentPosition++;
-		}
-		token.setEstado(ultimo_estado);
-		token.setPosFin(currentPosition);
-		return token; 
+		}while(atual!=-1);
+		
+		return tks; 
 	}
 
 	private int estado0() throws Exception{
 		token.setType(TypeToken.NONE);
-		if( atual== '\0')return -1;
+		if( atual== '\0')return RECONHECEU_SEM_TRANSICAO;
 		int new_estado;
 		if(atual=='\t' || atual==' ' || atual=='\n'){
 			if(atual=='\n')	token.incrementLinha();
@@ -111,8 +143,10 @@ public class NumReal {
 			case '{': new_estado =  12;
 			break;
 			case '}': new_estado =  13;
+			case -1: new_estado =  0;
 			break;
 				default:
+					System.out.println(atual);
 					throw new Exception("caracter inesperado no estado nao final 0.");
 			}
 		}
@@ -129,7 +163,7 @@ public class NumReal {
 			new_estado= 7;
 		}else if(atual=='E'){
 			new_estado= 3;
-		}else return -1;
+		}else return RECONHECEU_COM_TRANSICAO;
 
 		token.concatValue((char) atual);
 		return new_estado;
@@ -151,7 +185,7 @@ public class NumReal {
 			new_estado=  2;
 		}else if(atual=='E'){
 			new_estado= 3;
-		}else return -1;
+		}else return RECONHECEU_COM_TRANSICAO;
 
 		token.concatValue((char) atual);
 		return new_estado;
@@ -164,7 +198,7 @@ public class NumReal {
 			new_estado= 5;
 		}else if(atual=='-' || atual=='+'){
 			new_estado= 4;
-		}else return -1;
+		}else return RECONHECEU_COM_TRANSICAO;
 		
 		token.concatValue((char) atual);
 		return new_estado;
@@ -185,7 +219,7 @@ public class NumReal {
 			token.concatValue((char) atual);
 			return 5;
 		}
-		return -1;
+		return RECONHECEU_COM_TRANSICAO;
 	}	
 	
 	private int estado7() {
@@ -194,7 +228,7 @@ public class NumReal {
 			token.concatValue((char) atual);
 			return 2;
 		}
-		return -1;
+		return RECONHECEU_COM_TRANSICAO;
 	}
 
 
