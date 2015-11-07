@@ -14,8 +14,9 @@ public class Token {
 		this.linha = linha;
 		this.posFin	 = posFim;
 		this.posIni	 = posIn;
+		this.type	 = type;
 	}
-	public static enum TypeToken{NUM_REAL, NONE,TK_ABRECONCH, TK_FECHCONCH, 
+	public static enum TypeToken{CONST_NUM, NONE,TK_ABRECONCH, TK_FECHCONCH, 
 		TK_ABRECHAVE, TK_FECHACHAVE, TK_MAIOR, TK_MENOR, TK_DIV, TK_PLUS, 
 		TK_SUB, TK_NEG};
 	

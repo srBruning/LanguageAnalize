@@ -155,7 +155,7 @@ public class AnalizadorLexon {
 	}
 
 	private int estado6(){
-		token.setType(TypeToken.NUM_REAL);
+		token.setType(TypeToken.CONST_NUM);
 		int new_estado;
 		if(Character.isDigit(atual)){
 			new_estado= 6;
@@ -179,7 +179,7 @@ public class AnalizadorLexon {
 	}
 	
 	private int estado2() {
-		token.setType(TypeToken.NUM_REAL);
+		token.setType(TypeToken.CONST_NUM);
 		int new_estado;
 		if(Character.isDigit(atual)){
 			new_estado=  2;
@@ -192,7 +192,7 @@ public class AnalizadorLexon {
 	}	
 	
 	private int estado3() {
-		token.setType(TypeToken.NUM_REAL);
+		token.setType(TypeToken.CONST_NUM);
 		int new_estado;
 		if(Character.isDigit(atual)){
 			new_estado= 5;
@@ -214,7 +214,7 @@ public class AnalizadorLexon {
 	}
 	
 	private int estado5() {
-		token.setType(TypeToken.NUM_REAL);
+		token.setType(TypeToken.CONST_NUM);
 		if(Character.isDigit(atual)){
 			token.concatValue((char) atual);
 			return 5;
@@ -223,7 +223,7 @@ public class AnalizadorLexon {
 	}	
 	
 	private int estado7() {
-		token.setType(TypeToken.NUM_REAL);
+		token.setType(TypeToken.CONST_NUM);
 		if(Character.isDigit(atual)){
 			token.concatValue((char) atual);
 			return 2;
