@@ -18,7 +18,7 @@ public class Token {
 	}
 	public static enum TypeToken{CONST_NUM, NONE,TK_ABRECONCH, TK_FECHCONCH, 
 		TK_ABRECHAVE, TK_FECHACHAVE, TK_MAIOR, TK_MENOR, TK_DIV, TK_PLUS, 
-		TK_SUB, TK_NEG};
+		TK_SUB, TK_NEG, TK_ADD};
 	
 	int linha;
 	String value="";
