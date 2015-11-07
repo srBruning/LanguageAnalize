@@ -38,6 +38,12 @@ public class NumRealTest {
 //		lexanReconheceNumReal(" \t\n \n 123 \t\n",  new String[]{"123"}, 6, 13, 3);
 		
 	}
+//	@Test
+//	public void lexanTest2() throws Exception {
+//		PushbackInputStream pbInput = newStrean("\n\t {100/2+53} ");
+//		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
+//		assertEquals(tks.size()	, 11);
+//	}
 
 	private void lexanReconheceNumReal(String input, Token[] reconhecidos) throws Exception {
 		PushbackInputStream pbInput = newStrean(input);
