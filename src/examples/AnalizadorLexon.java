@@ -8,7 +8,7 @@ import examples.Token.TypeToken;
 public class AnalizadorLexon {
 
 	Token token;
-	int atual;
+	int atual, anterior;
 	final int RECONHECEU_SEM_TRANSICAO =-1;
 	final int RECONHECEU_COM_TRANSICAO =-2;
 	
@@ -45,58 +45,52 @@ public class AnalizadorLexon {
 			case 6:
 				estado = estado6();
 				break;
-
 			case 7:
-				estado = estado7();
+				estado = estado7();		
 				break;
-			case 10: //tk abreconch
-				token.type = TypeToken.TK_ABRECONCH;
-				estado =0;
-			break;
-			case 11: //tk fechaconch
-				token.type = TypeToken.TK_FECHCONCH;
-				estado =0;
-			break;
-			case 12: //tk abrechaves
-				token.type = TypeToken.TK_ABRECHAVE;
-				estado =RECONHECEU_SEM_TRANSICAO;
-			break;
-			case 13: // tk fechachave	
-				token.type = TypeToken.TK_FECHACHAVE;
-				estado =RECONHECEU_SEM_TRANSICAO;	
-			break;
-			case 15: //tk maior;
-				token.type = TypeToken.TK_MAIOR;
-				estado =RECONHECEU_SEM_TRANSICAO;
-			break;
-			case 16: //tk menor
-				token.type = TypeToken.TK_MENOR;
-				estado =RECONHECEU_SEM_TRANSICAO;
-			break;
-			case 31: //tk div
-				token.type = TypeToken.TK_DIV;
-				estado =RECONHECEU_SEM_TRANSICAO;
-			break;
-			case 19: // tk plus 
-				token.type = TypeToken.TK_PLUS;
-				estado =RECONHECEU_SEM_TRANSICAO;
-			break;
-			case 20: // tk sub
-				token.type = TypeToken.TK_SUB;
-				estado =RECONHECEU_SEM_TRANSICAO;
-			break;
-			case 22: //tk neg
-				token.type = TypeToken.TK_NEG;
-				estado =RECONHECEU_SEM_TRANSICAO;
-			break;
-			
+			case 22:
+				if(atual== '=')	{
+					TypeToken t = TypeToken.NONE;
+					if(anterior=='!') t = TypeToken.TK_DIFF;
+					if(anterior=='>') t = TypeToken.TK_MAIORIGUAL;
+					if(anterior=='<') t = TypeToken.TK_MENORIGUAL;
+					if(anterior=='=') t = TypeToken.TK_EQUALS;
+					token.setType(t);
+					estado =  RECONHECEU_SEM_TRANSICAO;
+				}else estado =  RECONHECEU_COM_TRANSICAO;
+				break;
+			case 31:
+				if(atual=='/'){
+					token.setValue("");
+					token.setType(TypeToken.NONE);
+					estado=35;
+				} else if(atual=='*'){
+					token.setValue("");
+					token.setType(TypeToken.NONE);
+					estado=33;
+				}
+				else{
+					estado = RECONHECEU_COM_TRANSICAO;
+				}
+				break;
+			case 33:
+				if(atual=='*')	estado=34;
+				else estado = 33;
+				break;	
+			case 34:
+				if(atual=='/')	estado=0;
+				else estado = 33;
+				break;	
+			case 35:
+				if(atual=='\n')	estado=0;
+				else estado = 35;
+				break;				
 			}
 			if(estado==RECONHECEU_SEM_TRANSICAO || estado == RECONHECEU_COM_TRANSICAO){
-				if(estado == RECONHECEU_COM_TRANSICAO){
+				if(estado== RECONHECEU_COM_TRANSICAO){
 					strean.unread(atual);
 					currentPosition--;
-				}
-				
+				}				
 				estado =0;
 				token.setEstado(ultimo_estado);
 				token.setPosFin(currentPosition);
@@ -106,6 +100,7 @@ public class AnalizadorLexon {
 				token.setLinha(l);
 			}
 			currentPosition++;
+			anterior = atual;
 		}while(atual!=-1);
 		
 		return tks; 
@@ -115,44 +110,36 @@ public class AnalizadorLexon {
 		token.setType(TypeToken.NONE);
 		if( atual== '\0')return RECONHECEU_SEM_TRANSICAO;
 		int new_estado;
-		if(atual=='\t' || atual==' ' || atual=='\n'){
-			if(atual=='\n')	token.incrementLinha();
+		if(atual=='\n')	token.incrementLinha();
+		if(atual<14 || atual==' ' || atual=='\n'){
 			return 0;
 		}else if(Character.isDigit(atual)){
 			new_estado =  6;
+		}else if(atual =='.'){
+			new_estado=1;
+		}else if(atual ==-1){
+			new_estado=0;
 		}else{
+			TypeToken t;
+			new_estado =RECONHECEU_SEM_TRANSICAO;
 			switch(atual){
-			case '.': new_estado =  1;
-			break;
-			case '/': new_estado =  31;
-			break;
-			case '+': new_estado =  19;
-			break;
-			case '-': new_estado =  20;
-			break;
-			case '!': new_estado =  22;
-			break;
-			case '>': new_estado =  15;
-			break;
-			case '<': new_estado =  16;
-			break;
-			case '[': new_estado =  10;
-			break;
-			case ']': new_estado =  11;
-			break;
-			case '{': new_estado =  12;
-			break;
-			case '}': new_estado =  13;
-			case -1: new_estado =  0;
-			break;
-				default:
-					System.out.println(atual);
-					throw new Exception("caracter inesperado no estado nao final 0.");
+				case '/': t = TypeToken.TK_DIV; new_estado= 31; break;
+				case '+': t= TypeToken.TK_PLUS;break;
+				case '-': t=  TypeToken.TK_SUB;break;
+				case '!': t=  TypeToken.TK_NEG; new_estado= 22; break;
+				case '>':t=  TypeToken.TK_MAIOR; new_estado=22; break;
+				case '<': t=  TypeToken.TK_MENOR; new_estado=22; break;
+				case '{': t=  TypeToken.TK_ABRECHAVE;break;
+				case '}': t=  TypeToken.TK_FECHACHAVE;break;
+				case '=': t=  TypeToken.TK_ATTRIB; new_estado=22;break;
+				default: throw new Exception("caracter inesperado no estado nao final 0.");
 			}
+			token.setType(t);
 		}
 		token.concatValue((char) atual);
 		return new_estado;
 	}
+	
 
 	private int estado6(){
 		token.setType(TypeToken.CONST_NUM);

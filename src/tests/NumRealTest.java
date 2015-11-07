@@ -38,12 +38,27 @@ public class NumRealTest {
 //		lexanReconheceNumReal(" \t\n \n 123 \t\n",  new String[]{"123"}, 6, 13, 3);
 		
 	}
-//	@Test
-//	public void lexanTest2() throws Exception {
-//		PushbackInputStream pbInput = newStrean("\n\t {100/2+53} ");
-//		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
-//		assertEquals(tks.size()	, 11);
-//	}
+
+	@Test
+	public void lexanTest2() throws Exception {
+		PushbackInputStream pbInput = newStrean("//comentario = ! - + 122 fimcomentario\n\t !{100/2+53}!= /*comentario 123 */< > >= <= = ==");
+		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
+		assertEquals(tks.get(0).getType(), TypeToken.TK_NEG);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_ABRECHAVE);
+		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
+		assertEquals(tks.get(3).getType(), TypeToken.TK_DIV);
+		assertEquals(tks.get(4).getType(), TypeToken.CONST_NUM);
+		assertEquals(tks.get(5).getType(), TypeToken.TK_PLUS);
+		assertEquals(tks.get(6).getType(), TypeToken.CONST_NUM);
+		assertEquals(tks.get(7).getType(), TypeToken.TK_FECHACHAVE);
+		assertEquals(tks.get(8).getType(), TypeToken.TK_DIFF);
+		assertEquals(tks.get(9).getType(), TypeToken.TK_MENOR);
+		assertEquals(tks.get(10).getType(), TypeToken.TK_MAIOR);
+		assertEquals(tks.get(11).getType(), TypeToken.TK_MAIORIGUAL);
+		assertEquals(tks.get(12).getType(), TypeToken.TK_MENORIGUAL);
+		assertEquals(tks.get(13).getType(), TypeToken.TK_ATTRIB);
+		assertEquals(tks.get(14).getType(), TypeToken.TK_EQUALS);
+	}
 
 	private void lexanReconheceNumReal(String input, Token[] reconhecidos) throws Exception {
 		PushbackInputStream pbInput = newStrean(input);
