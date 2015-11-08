@@ -63,11 +63,57 @@ public class NumRealTest {
 	@Test
 	public void lexanTest3() throws Exception {
 		PushbackInputStream pbInput = newStrean(
-			"true && false");
+			"my_var = true && false || oi\nmai_var2+=6");
 		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
 		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
-		assertEquals(tks.get(1).getType(), TypeToken.TK_AND);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_ATTRIB);
+		assertEquals(tks.get(2).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(3).getType(), TypeToken.TK_AND);
+		assertEquals(tks.get(4).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(5).getType(), TypeToken.TK_OR);
+		assertEquals(tks.get(6).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(7).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(8).getType(), TypeToken.TK_PLUSIGUAL);
+		assertEquals(tks.get(9).getType(), TypeToken.CONST_NUM);
+	}
+
+	@Test
+	public void pusAtribTest() throws Exception {
+		PushbackInputStream pbInput = newStrean(
+			"my_var+=1");
+		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
 		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_PLUSIGUAL);
+		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
+	}
+
+	@Test
+	public void subAtribTest() throws Exception {
+		PushbackInputStream pbInput = newStrean(
+			"my_var-=1");
+		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
+		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_SUBIGUAL);
+		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
+	}
+
+	@Test
+	public void multAtribTest() throws Exception {
+		PushbackInputStream pbInput = newStrean(
+			"my_var*=1");
+		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
+		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_MULTPIGUAL);
+		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
+	}
+	@Test
+	public void divAtribTest() throws Exception {
+		PushbackInputStream pbInput = newStrean(
+			"my_var/=1");
+		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
+		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_DIVIGUAL);
+		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
 	}
 
 	private void lexanReconheceNumReal(String input, Token[] reconhecidos) throws Exception {
