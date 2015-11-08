@@ -1,5 +1,6 @@
 package examples;
 
+import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 
@@ -12,8 +13,9 @@ public class AnalizadorLexon {
 	int atual, anterior, col;
 	final int RECONHECEU_SEM_TRANSICAO =-1;
 	final int RECONHECEU_COM_TRANSICAO =-2;
-	
-	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition) throws Exception {
+		
+	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition) 
+			throws IOException, InvalidCharacterExcption {
 		ArrayList<Token> tks = new ArrayList<>();
 
 		token = new Token();
@@ -180,7 +182,7 @@ public class AnalizadorLexon {
 		}
 	}
 
-	private int estado0() throws Exception{
+	private int estado0() throws InvalidCharacterExcption {
 		token.setType(TypeToken.NONE);
 		if( atual== '\0')return RECONHECEU_SEM_TRANSICAO;
 		int new_estado;
@@ -223,7 +225,7 @@ public class AnalizadorLexon {
 				case ';': t=  TypeToken.TK_PONTOVIRG;break;
 				case '%': t=  TypeToken.TK_MOD;break;
 				case ',': t=  TypeToken.TK_VIRG;break;
-				default: throw new Exception("caracter inesperado no estado nao final 0.");
+				default: throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
 			}
 			token.setType(t);
 		}
@@ -247,13 +249,13 @@ public class AnalizadorLexon {
 		return new_estado;
 	}
 	
-	private int estado1() throws Exception{
+	private int estado1() throws InvalidCharacterExcption {
 		token.setType(TypeToken.NONE);
 		if(Character.isDigit(atual)){
 			token.concatValue((char) atual);
 			return 2;
 		}
-		throw new Exception("caracter inesperado no estado nao final 1.");
+		throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
 	}
 	
 	private int estado2() {
@@ -282,13 +284,13 @@ public class AnalizadorLexon {
 		return new_estado;
 	}
 
-	private int estado4() throws Exception{
+	private int estado4() throws InvalidCharacterExcption {
 		token.setType(TypeToken.NONE);
 		if(Character.isDigit(atual)){
 			token.concatValue((char) atual);
 			return 5;
 		}
-		throw new Exception("caracter inesperado no estado nao final 4.");
+		throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
 	}
 	
 	private int estado5() {
