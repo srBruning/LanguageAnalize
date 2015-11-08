@@ -55,9 +55,26 @@ public class AnalizadorLexon {
 					if(anterior=='>') t = TypeToken.TK_MAIORIGUAL;
 					if(anterior=='<') t = TypeToken.TK_MENORIGUAL;
 					if(anterior=='=') t = TypeToken.TK_EQUALS;
+					if(anterior=='+') t = TypeToken.TK_PLUSIGUAL;
+					if(anterior=='-') t = TypeToken.TK_SUBIGUAL;
+					if(anterior=='*') t = TypeToken.TK_MULTPIGUAL;
 					token.setType(t);
 					estado =  RECONHECEU_SEM_TRANSICAO;
 				}else estado =  RECONHECEU_COM_TRANSICAO;
+				break;
+			case 24: 
+				if(atual== '|') {
+					token.setType(TypeToken.TK_OR);
+					estado=RECONHECEU_SEM_TRANSICAO;					
+				}else throw new Exception("caracter inesperado no estado 24 esperava '|'");
+
+				break;				
+			case 26: 
+				if(atual== '&') {
+					token.setType(TypeToken.TK_AND);
+					estado=RECONHECEU_SEM_TRANSICAO;					
+				}else throw new Exception("caracter inesperado no estado 26 esperava '&'");
+
 				break;
 			case 31:
 				if(atual=='/'){
@@ -68,11 +85,18 @@ public class AnalizadorLexon {
 					token.setValue("");
 					token.setType(TypeToken.NONE);
 					estado=33;
+				} else if(atual=='='){
+					token.setType(TypeToken.TK_DIVIGUAL);
+					estado=RECONHECEU_SEM_TRANSICAO;
 				}
 				else{
 					estado = RECONHECEU_COM_TRANSICAO;
 				}
 				break;
+			case 32:
+				if(atual =='_' || Character.isLetterOrDigit(atual))	estado=32;
+				else estado = RECONHECEU_COM_TRANSICAO;
+				break;				
 			case 33:
 				if(atual=='*')	estado=34;
 				else estado = 33;
@@ -119,19 +143,31 @@ public class AnalizadorLexon {
 			new_estado=1;
 		}else if(atual ==-1){
 			new_estado=0;
+		}else if(atual =='&'){
+			new_estado=26;
+		}else if(atual =='|'){
+			new_estado=24;
+		}else if(atual =='_' || Character.isLetter(atual)){
+			new_estado=32;
 		}else{
 			TypeToken t;
 			new_estado =RECONHECEU_SEM_TRANSICAO;
 			switch(atual){
-				case '/': t = TypeToken.TK_DIV; new_estado= 31; break;
-				case '+': t= TypeToken.TK_PLUS;break;
-				case '-': t=  TypeToken.TK_SUB;break;
+				case '/': t=  TypeToken.TK_DIV; new_estado= 31; break;
+				case '+': t=  TypeToken.TK_PLUS; new_estado= 22; break;
+				case '-': t=  TypeToken.TK_SUB; new_estado= 22; break;
 				case '!': t=  TypeToken.TK_NEG; new_estado= 22; break;
-				case '>':t=  TypeToken.TK_MAIOR; new_estado=22; break;
+				case '>': t=  TypeToken.TK_MAIOR; new_estado=22; break;
+				case '*': t=  TypeToken.TK_MULTP; new_estado=22; break;
 				case '<': t=  TypeToken.TK_MENOR; new_estado=22; break;
 				case '{': t=  TypeToken.TK_ABRECHAVE;break;
 				case '}': t=  TypeToken.TK_FECHACHAVE;break;
 				case '=': t=  TypeToken.TK_ATTRIB; new_estado=22;break;
+				case '(': t=  TypeToken.TK_ABREPAR;break;
+				case ')': t=  TypeToken.TK_FECHAPAR;break;
+				case ';': t=  TypeToken.TK_PONTOVIRG;break;
+				case '%': t=  TypeToken.TK_MOD;break;
+				case ',': t=  TypeToken.TK_VIRG;break;
 				default: throw new Exception("caracter inesperado no estado nao final 0.");
 			}
 			token.setType(t);
@@ -148,7 +184,7 @@ public class AnalizadorLexon {
 			new_estado= 6;
 		}else if(atual=='.'){
 			new_estado= 7;
-		}else if(atual=='E'){
+		}else if(atual=='E' || atual=='e'){
 			new_estado= 3;
 		}else return RECONHECEU_COM_TRANSICAO;
 
@@ -170,7 +206,7 @@ public class AnalizadorLexon {
 		int new_estado;
 		if(Character.isDigit(atual)){
 			new_estado=  2;
-		}else if(atual=='E'){
+		}else if(atual=='E' || atual=='e'){
 			new_estado= 3;
 		}else return RECONHECEU_COM_TRANSICAO;
 
