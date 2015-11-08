@@ -141,9 +141,10 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 		JButton btnSaveFile = new JButton("Save File");
 		btnSaveFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				  BufferedOutputStream out;
-                      out = new BufferedOutputStream(new FileOutputStream(Teste.this.file.getName()));
-                      Teste.this.editorPane.write(out, Teste.this.editorPane.getDocument(), Teste.this.editorPane.getDocument().getStartPosition().getOffset(), doc.getLength());
+//				  BufferedOutputStream out;
+//				  Document doc = Teste.this.editorPane.getDocument();
+//                      out = new BufferedOutputStream(new FileOutputStream(Teste.this.file.getName()));
+//                      Teste.this.editorPane.write(out);
 
 			}
 		});
