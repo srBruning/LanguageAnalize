@@ -3,7 +3,6 @@ package examples;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 
-import examples.Token.IDReservado;
 import examples.Token.TypeToken;
 import exceptions.InvalidCharacterExcption;
 
@@ -96,11 +95,12 @@ public class AnalizadorLexon {
 				}
 				break;
 			case 32:
-				token.setType(TypeToken.TK_ID);
-				if(atual =='_' || Character.isLetterOrDigit(atual))	estado=32;
-				else {
-					estado = RECONHECEU_COM_TRANSICAO;
+				if(atual =='_' || Character.isLetterOrDigit(atual)){
+					estado=32;
+					token.concatValue((char) atual);
+				}else {
 					this.idreservado();
+					estado = RECONHECEU_COM_TRANSICAO;
 				}
 				break;				
 			case 33:
@@ -146,37 +146,37 @@ public class AnalizadorLexon {
 	private void idreservado(){		
 		
 		switch(token.value.toLowerCase()){
-			case "break": token.setId(IDReservado.BREAK); break;
-			case "case": token.setId(IDReservado.CASE); break;
-			case "char": token.setId(IDReservado.CHAR); break;
-			case "const": token.setId(IDReservado.CONST); break;
-			case "continue": token.setId(IDReservado.CONTINUE); break;
-			case "default": token.setId(IDReservado.DEFAULT); break;
-			case "do": token.setId(IDReservado.DO); break;
-			case "int": token.setId(IDReservado.INT); break;
-			case "long": token.setId(IDReservado.LONG); break;
-			case "return": token.setId(IDReservado.RETURN); break;
-			case "short": token.setId(IDReservado.SHORT); break;
-			case "signed": token.setId(IDReservado.SIGNED); break;
-			case "sizeof": token.setId(IDReservado.SIZEOF); break;
-			case "static": token.setId(IDReservado.STATIC); break;
-			case "struct": token.setId(IDReservado.STRUCT); break;
-			case "switch": token.setId(IDReservado.SWITCH); break;
-			case "typedef": token.setId(IDReservado.TYPEDEF); break;
-			case "unsigned": token.setId(IDReservado.UNSIGNED); break;
-			case "void": token.setId(IDReservado.VOID); break;
-			case "volatile": token.setId(IDReservado.VOLATILE); break;
-			case "while": token.setId(IDReservado.WHILE); break;
-			case "double": token.setId(IDReservado.DOUBLE); break;
-			case "else": token.setId(IDReservado.ELSE); break;
-			case "enum": token.setId(IDReservado.ENUM); break;
-			case "extern": token.setId(IDReservado.EXTERN); break;
-			case "float": token.setId(IDReservado.FLOAT); break;
-			case "for": token.setId(IDReservado.FOR); break;
-			case "goto": token.setId(IDReservado.GOTO); break;
-			case "if": token.setId(IDReservado.IF); break;	
-			default: token.setId(IDReservado.VAR);
-			
+			case "break": token.setType(TypeToken.BREAK); break;
+			case "case": token.setType(TypeToken.CASE); break;
+			case "char": 
+				token.setType(TypeToken.CHAR); break;
+			case "const": token.setType(TypeToken.CONST); break;
+			case "continue": token.setType(TypeToken.CONTINUE); break;
+			case "default": token.setType(TypeToken.DEFAULT); break;
+			case "do": token.setType(TypeToken.DO); break;
+			case "int": token.setType(TypeToken.INT); break;
+			case "long": token.setType(TypeToken.LONG); break;
+			case "return": token.setType(TypeToken.RETURN); break;
+			case "short": token.setType(TypeToken.SHORT); break;
+			case "signed": token.setType(TypeToken.SIGNED); break;
+			case "sizeof": token.setType(TypeToken.SIZEOF); break;
+			case "static": token.setType(TypeToken.STATIC); break;
+			case "struct": token.setType(TypeToken.STRUCT); break;
+			case "switch": token.setType(TypeToken.SWITCH); break;
+			case "typedef": token.setType(TypeToken.TYPEDEF); break;
+			case "unsigned": token.setType(TypeToken.UNSIGNED); break;
+			case "void": token.setType(TypeToken.VOID); break;
+			case "volatile": token.setType(TypeToken.VOLATILE); break;
+			case "while": token.setType(TypeToken.WHILE); break;
+			case "double": token.setType(TypeToken.DOUBLE); break;
+			case "else": token.setType(TypeToken.ELSE); break;
+			case "enum": token.setType(TypeToken.ENUM); break;
+			case "extern": token.setType(TypeToken.EXTERN); break;
+			case "float": token.setType(TypeToken.FLOAT); break;
+			case "for": token.setType(TypeToken.FOR); break;
+			case "goto": token.setType(TypeToken.GOTO); break;
+			case "if": token.setType(TypeToken.IF); break;	
+			default: token.setType(TypeToken.TK_ID);			
 		}
 	}
 

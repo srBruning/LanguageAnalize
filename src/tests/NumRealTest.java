@@ -116,6 +116,15 @@ public class NumRealTest {
 		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
 	}
 
+	@Test
+	public void palavresReservadasTest() throws Exception {
+		PushbackInputStream pbInput = newStrean(
+			"int char");
+		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
+		assertEquals(tks.get(0).getType(), TypeToken.INT);
+		assertEquals(tks.get(1).getType(), TypeToken.CHAR);
+	}
+
 	private void lexanReconheceNumReal(String input, Token[] reconhecidos) throws Exception {
 		PushbackInputStream pbInput = newStrean(input);
 		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
