@@ -5,7 +5,7 @@ import java.io.PushbackInputStream;
 import java.util.ArrayList;
 
 import examples.Token.TypeToken;
-import exceptions.InvalidCharacterExcption;
+import excptions.InvalidCharacterExcption;
 
 public class AnalizadorLexon {
 
@@ -147,7 +147,7 @@ public class AnalizadorLexon {
 	
 	private void idreservado(){		
 		
-		switch(token.value.toLowerCase()){
+		switch(token.value){
 			case "break": token.setType(TypeToken.BREAK); break;
 			case "case": token.setType(TypeToken.CASE); break;
 			case "char": 
