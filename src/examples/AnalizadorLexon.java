@@ -3,8 +3,9 @@ package examples;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 
+import examples.Token.IDReservado;
 import examples.Token.TypeToken;
-import excptions.InvalidCharacterExcption;
+import exceptions.InvalidCharacterExcption;
 
 public class AnalizadorLexon {
 
@@ -97,7 +98,10 @@ public class AnalizadorLexon {
 			case 32:
 				token.setType(TypeToken.TK_ID);
 				if(atual =='_' || Character.isLetterOrDigit(atual))	estado=32;
-				else estado = RECONHECEU_COM_TRANSICAO;
+				else {
+					estado = RECONHECEU_COM_TRANSICAO;
+					this.idreservado();
+				}
 				break;				
 			case 33:
 				if(atual=='*')	estado=34;
@@ -137,6 +141,43 @@ public class AnalizadorLexon {
 		}while(atual!=-1);
 		
 		return tks; 
+	}
+	
+	private void idreservado(){		
+		
+		switch(token.value.toLowerCase()){
+			case "break": token.setId(IDReservado.BREAK); break;
+			case "case": token.setId(IDReservado.CASE); break;
+			case "char": token.setId(IDReservado.CHAR); break;
+			case "const": token.setId(IDReservado.CONST); break;
+			case "continue": token.setId(IDReservado.CONTINUE); break;
+			case "default": token.setId(IDReservado.DEFAULT); break;
+			case "do": token.setId(IDReservado.DO); break;
+			case "int": token.setId(IDReservado.INT); break;
+			case "long": token.setId(IDReservado.LONG); break;
+			case "return": token.setId(IDReservado.RETURN); break;
+			case "short": token.setId(IDReservado.SHORT); break;
+			case "signed": token.setId(IDReservado.SIGNED); break;
+			case "sizeof": token.setId(IDReservado.SIZEOF); break;
+			case "static": token.setId(IDReservado.STATIC); break;
+			case "struct": token.setId(IDReservado.STRUCT); break;
+			case "switch": token.setId(IDReservado.SWITCH); break;
+			case "typedef": token.setId(IDReservado.TYPEDEF); break;
+			case "unsigned": token.setId(IDReservado.UNSIGNED); break;
+			case "void": token.setId(IDReservado.VOID); break;
+			case "volatile": token.setId(IDReservado.VOLATILE); break;
+			case "while": token.setId(IDReservado.WHILE); break;
+			case "double": token.setId(IDReservado.DOUBLE); break;
+			case "else": token.setId(IDReservado.ELSE); break;
+			case "enum": token.setId(IDReservado.ENUM); break;
+			case "extern": token.setId(IDReservado.EXTERN); break;
+			case "float": token.setId(IDReservado.FLOAT); break;
+			case "for": token.setId(IDReservado.FOR); break;
+			case "goto": token.setId(IDReservado.GOTO); break;
+			case "if": token.setId(IDReservado.IF); break;	
+			default: token.setId(IDReservado.VAR);
+			
+		}
 	}
 
 	private int estado0() throws Exception{
