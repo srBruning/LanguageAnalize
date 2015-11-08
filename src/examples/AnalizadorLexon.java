@@ -4,11 +4,12 @@ import java.io.PushbackInputStream;
 import java.util.ArrayList;
 
 import examples.Token.TypeToken;
+import excptions.InvalidCharacterExcption;
 
 public class AnalizadorLexon {
 
 	Token token;
-	int atual, anterior;
+	int atual, anterior, col;
 	final int RECONHECEU_SEM_TRANSICAO =-1;
 	final int RECONHECEU_COM_TRANSICAO =-2;
 	
@@ -66,14 +67,14 @@ public class AnalizadorLexon {
 				if(atual== '|') {
 					token.setType(TypeToken.TK_OR);
 					estado=RECONHECEU_SEM_TRANSICAO;					
-				}else throw new Exception("caracter inesperado no estado 24 esperava '|'");
+				}else throw new InvalidCharacterExcption(token.linha, col, '|');
 
 				break;				
 			case 26: 
 				if(atual== '&') {
 					token.setType(TypeToken.TK_AND);
 					estado=RECONHECEU_SEM_TRANSICAO;					
-				}else throw new Exception("caracter inesperado no estado 26 esperava '&'");
+				}else throw new InvalidCharacterExcption(token.linha, col, '&');
 
 				break;
 			case 31:
@@ -94,6 +95,7 @@ public class AnalizadorLexon {
 				}
 				break;
 			case 32:
+				token.setType(TypeToken.TK_ID);
 				if(atual =='_' || Character.isLetterOrDigit(atual))	estado=32;
 				else estado = RECONHECEU_COM_TRANSICAO;
 				break;				
@@ -108,7 +110,13 @@ public class AnalizadorLexon {
 			case 35:
 				if(atual=='\n')	estado=0;
 				else estado = 35;
-				break;				
+				break;	
+			case 36:
+				if(atual =='_' ){
+					token.setType(TypeToken.NONE);
+					estado=36;
+				}else if( Character.isLetterOrDigit(atual))	estado=32;
+				else throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
 			}
 			if(estado==RECONHECEU_SEM_TRANSICAO || estado == RECONHECEU_COM_TRANSICAO){
 				if(estado== RECONHECEU_COM_TRANSICAO){
@@ -124,6 +132,7 @@ public class AnalizadorLexon {
 				token.setLinha(l);
 			}
 			currentPosition++;
+			col++;
 			anterior = atual;
 		}while(atual!=-1);
 		
@@ -134,7 +143,10 @@ public class AnalizadorLexon {
 		token.setType(TypeToken.NONE);
 		if( atual== '\0')return RECONHECEU_SEM_TRANSICAO;
 		int new_estado;
-		if(atual=='\n')	token.incrementLinha();
+		if(atual=='\n'){
+			col=0;
+			token.incrementLinha();
+		}
 		if(atual<14 || atual==' ' || atual=='\n'){
 			return 0;
 		}else if(Character.isDigit(atual)){
@@ -147,7 +159,9 @@ public class AnalizadorLexon {
 			new_estado=26;
 		}else if(atual =='|'){
 			new_estado=24;
-		}else if(atual =='_' || Character.isLetter(atual)){
+		}else if(atual =='_'){
+			new_estado=36;
+		}else if(Character.isLetter(atual)){
 			new_estado=32;
 		}else{
 			TypeToken t;

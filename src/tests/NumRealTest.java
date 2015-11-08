@@ -60,6 +60,16 @@ public class NumRealTest {
 		assertEquals(tks.get(14).getType(), TypeToken.TK_EQUALS);
 	}
 
+	@Test
+	public void lexanTest3() throws Exception {
+		PushbackInputStream pbInput = newStrean(
+			"true && false");
+		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
+		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_AND);
+		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
+	}
+
 	private void lexanReconheceNumReal(String input, Token[] reconhecidos) throws Exception {
 		PushbackInputStream pbInput = newStrean(input);
 		ArrayList<Token> tks = numReal.lexan(pbInput, 0);
