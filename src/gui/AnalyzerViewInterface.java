@@ -8,7 +8,7 @@ import examples.Token;
 public interface AnalyzerViewInterface  {
 	public void setController(AnalyzerControllerInterface controller);
 
-	public void onAnalyzeError(String message, int linha, int coluna, String expected);
+	public void onAnalyzeError(ArrayList<Token> lexemas, String message, int linha, int coluna, String expected);
 
 	public void onResult(ArrayList<Token> saida);
 }

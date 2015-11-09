@@ -13,10 +13,10 @@ public class AnalizadorLexon {
 	int atual, anterior, col;
 	final int RECONHECEU_SEM_TRANSICAO =-1;
 	final int RECONHECEU_COM_TRANSICAO =-2;
-		
+	private ArrayList<Token> tks;
 	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition) 
 			throws IOException, InvalidCharacterExcption {
-		ArrayList<Token> tks = new ArrayList<>();
+		tks = new ArrayList<>();
 
 		token = new Token();
 		token.setLinha(1);
@@ -69,14 +69,14 @@ public class AnalizadorLexon {
 				if(atual== '|') {
 					token.setType(TypeToken.TK_OR);
 					estado=RECONHECEU_SEM_TRANSICAO;					
-				}else throw new InvalidCharacterExcption(token.linha, col, '|');
+				}else throw new InvalidCharacterExcption(tks, token.linha, col, '|');
 
 				break;				
 			case 26: 
 				if(atual== '&') {
 					token.setType(TypeToken.TK_AND);
 					estado=RECONHECEU_SEM_TRANSICAO;					
-				}else throw new InvalidCharacterExcption(token.linha, col, '&');
+				}else throw new InvalidCharacterExcption(tks, token.linha, col, '&');
 
 				break;
 			case 31:
@@ -122,7 +122,7 @@ public class AnalizadorLexon {
 					token.setType(TypeToken.NONE);
 					estado=36;
 				}else if( Character.isLetterOrDigit(atual))	estado=32;
-				else throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
+				else throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
 			}
 			if(estado==RECONHECEU_SEM_TRANSICAO || estado == RECONHECEU_COM_TRANSICAO){
 				if(estado== RECONHECEU_COM_TRANSICAO){
@@ -225,7 +225,7 @@ public class AnalizadorLexon {
 				case ';': t=  TypeToken.TK_PONTOVIRG;break;
 				case '%': t=  TypeToken.TK_MOD;break;
 				case ',': t=  TypeToken.TK_VIRG;break;
-				default: throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
+				default: throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
 			}
 			token.setType(t);
 		}
@@ -234,7 +234,7 @@ public class AnalizadorLexon {
 	}
 	
 
-	private int estado6(){
+	private int estado6() throws InvalidCharacterExcption{
 		token.setType(TypeToken.CONST_NUM);
 		int new_estado;
 		if(Character.isDigit(atual)){
@@ -243,7 +243,11 @@ public class AnalizadorLexon {
 			new_estado= 7;
 		}else if(atual=='E' || atual=='e'){
 			new_estado= 3;
-		}else return RECONHECEU_COM_TRANSICAO;
+		}else{
+			if(Character.isLetter(atual) || atual=='_')
+				throw new InvalidCharacterExcption(tks, token.linha, col, "token end");
+			return RECONHECEU_COM_TRANSICAO;
+		}
 
 		token.concatValue((char) atual);
 		return new_estado;
@@ -255,7 +259,7 @@ public class AnalizadorLexon {
 			token.concatValue((char) atual);
 			return 2;
 		}
-		throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
+		throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
 	}
 	
 	private int estado2() {
@@ -290,7 +294,7 @@ public class AnalizadorLexon {
 			token.concatValue((char) atual);
 			return 5;
 		}
-		throw new InvalidCharacterExcption(token.linha, col, "letter or digit.");
+		throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
 	}
 	
 	private int estado5() {

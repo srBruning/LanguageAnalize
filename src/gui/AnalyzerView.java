@@ -2,24 +2,15 @@ package gui;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.PushbackInputStream;
+import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
-
-import controller.AnalyzerControllerInterface;
-import examples.Token;
-import junit.framework.Test;
-
 import javax.swing.JButton;
 import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
@@ -27,14 +18,16 @@ import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-import javax.swing.JTable;
 
-public class Teste extends JFrame implements AnalyzerViewInterface {
+import controller.AnalyzerControllerInterface;
+import examples.Token;
+
+public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	private JTextField txtFileName;
 
 	JTextPane console;
@@ -55,8 +48,8 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 	/**
 	 * Create the frame.
 	 */
-	public Teste() {
-		setBounds(100, 100, 732, 623);
+	public AnalyzerView() {
+		setBounds(100, 100, 795, 623);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		
 		panel = new JPanel();
@@ -64,11 +57,11 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 		JPanel panel_1 = new JPanel();
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
-			groupLayout.createParallelGroup(Alignment.TRAILING)
-				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 641, Short.MAX_VALUE)
-				.addGroup(Alignment.LEADING, groupLayout.createSequentialGroup()
+			groupLayout.createParallelGroup(Alignment.LEADING)
+				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
+				.addGroup(groupLayout.createSequentialGroup()
 					.addGap(12)
-					.addComponent(panel_1, GroupLayout.PREFERRED_SIZE, 697, GroupLayout.PREFERRED_SIZE)
+					.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
 					.addContainerGap())
 		);
 		groupLayout.setVerticalGroup(
@@ -81,12 +74,12 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 		panel_1.setLayout(null);
 		
 		JPanel panel_2 = new JPanel();
-		panel_2.setBounds(12, 12, 324, 384);
+		panel_2.setBounds(12, 12, 346, 384);
 		panel_1.add(panel_2);
 		panel_2.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 5, 314, 380);
+		scrollPane.setBounds(10, 5, 336, 380);
 		panel_2.add(scrollPane);
 		
 		editorPane = new JEditorPane();
@@ -105,12 +98,12 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 		scrollPane_1.setViewportView(console);
 		
 		JPanel panel_4 = new JPanel();
-		panel_4.setBounds(348, 12, 324, 384);
+		panel_4.setBounds(383, 12, 376, 384);
 		panel_1.add(panel_4);
 		panel_4.setLayout(null);
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(10, 5, 300, 367);
+		scrollPane_2.setBounds(0, 5, 364, 367);
 		panel_4.add(scrollPane_2);
 		this.myTableModel = new MyTableModel(new ArrayList<Token>());
 		table = new JTable(myTableModel);
@@ -129,7 +122,7 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 		btnAnalizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
-					Teste.this.setController.analizeFile(entrada);
+					AnalyzerView.this.setController.analizeFile(entrada);
 				} catch (FileNotFoundException e1) {
 					e1.printStackTrace();
 					 JOptionPane.showMessageDialog(null, e.toString(), "Error",
@@ -141,10 +134,18 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 		JButton btnSaveFile = new JButton("Save File");
 		btnSaveFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-//				  BufferedOutputStream out;
-//				  Document doc = Teste.this.editorPane.getDocument();
-//                      out = new BufferedOutputStream(new FileOutputStream(Teste.this.file.getName()));
-//                      Teste.this.editorPane.write(out);
+				
+				try {
+					PrintWriter out = new PrintWriter(AnalyzerView.this.file);
+					String text = AnalyzerView.this.editorPane.getText();
+					System.out.println(text);
+					out.println(text);
+					out.close();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, e.toString(), "Error",
+                            JOptionPane.ERROR_MESSAGE);
+				}
 
 			}
 		});
@@ -157,8 +158,7 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 	private void setFileIputStrean(File file){
 		try {
 			this.entrada= file;
-			editorPane.setPage(file.toURI().toURL());
-			
+			editorPane.setPage(file.toURI().toURL());			
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -176,11 +176,11 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 		public void actionPerformed(ActionEvent e) {
 	      JFileChooser c = new JFileChooser();
 	      // Demonstrate "Open" dialog:
-	      int rVal = c.showOpenDialog(Teste.this);
+	      int rVal = c.showOpenDialog(AnalyzerView.this);
 	      if (rVal == JFileChooser.APPROVE_OPTION) {
-	    	  Teste.this.file = c.getSelectedFile();
-	    	  txtFileName.setText(Teste.this.file.getName());
-	    	  setFileIputStrean(Teste.this.file);
+	    	  AnalyzerView.this.file = c.getSelectedFile();
+	    	  txtFileName.setText(AnalyzerView.this.file.getName());
+	    	  setFileIputStrean(AnalyzerView.this.file);
 	      }
 	      if (rVal == JFileChooser.CANCEL_OPTION) {
 	    	  txtFileName.setText("You pressed cancel");
@@ -193,13 +193,14 @@ public class Teste extends JFrame implements AnalyzerViewInterface {
 	}
 
 	@Override
-	public void onAnalyzeError(String message, int linha, int coluna, String expected) {
+	public void onAnalyzeError(ArrayList<Token> lexemas, String message, int linha, int coluna, String expected) {
 	   try {
 		       Document doc = console.getDocument();
 		      doc.insertString(doc.getLength(), message, null);
 		   } catch(BadLocationException exc) {
 		      exc.printStackTrace();
 		   }
+	   this.onResult(lexemas);
 	}
 
 	@Override

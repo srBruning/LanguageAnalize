@@ -1,17 +1,23 @@
 package excptions;
 
+import java.util.ArrayList;
+
+import examples.Token;
+
 public class InvalidCharacterExcption extends Exception {
 	private int linha;
 	private int coluna;
 	private String expected;
-	public InvalidCharacterExcption(int linha, int coluna, char expected){
-		super("Unexpected character in line "+linha+" column "+coluna+",  expected "+expected);
+	private ArrayList<Token> lexemas;
+	public InvalidCharacterExcption(ArrayList<Token> tks, int linha, int coluna, char expected){
+		this( tks,  linha,  coluna,  new String(new char[]{expected}));
 	}
-	public InvalidCharacterExcption(int linha, int coluna, String expected){
+	public InvalidCharacterExcption(ArrayList<Token> tks, int linha, int coluna, String expected){
 		super("Unexpected character in line "+linha+" column "+coluna+",  expected "+expected);
 		this.linha = linha;
 		this.coluna = coluna;
 		this.expected = expected;
+		this.lexemas = tks;
 	}
 	public String simpleMessage(){
 		return "Caracter inesperado, esperava: "+this.expected;
@@ -33,6 +39,12 @@ public class InvalidCharacterExcption extends Exception {
 	}
 	public void setExpected(String expected) {
 		this.expected = expected;
+	}
+	public ArrayList<Token> getLexemas() {
+		return lexemas;
+	}
+	public void setLexemas(ArrayList<Token> lexemas) {
+		this.lexemas = lexemas;
 	}
 	
 	
