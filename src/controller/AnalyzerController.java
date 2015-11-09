@@ -8,24 +8,27 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-import examples.AnalizadorLexon;
+import examples.LexiconAnalyzer;
 import examples.Token;
+import examples.Token.TypeToken;
 import excptions.InvalidCharacterExcption;
 import gui.AnalyzerViewInterface;
 import gui.AnalyzerView;
 
 public class AnalyzerController implements AnalyzerControllerInterface {
-	AnalizadorLexon numReal = new AnalizadorLexon();
+	LexiconAnalyzer numReal = new LexiconAnalyzer();
 	private AnalyzerViewInterface view;
-	AnalizadorLexon analizador;
+	LexiconAnalyzer analizador;
 	private PushbackInputStream entrada;
 	private ArrayList<Token> saida;
+	private HashMap<TypeToken, ArrayList<Token>> tableids;
 	
 	public AnalyzerController(AnalyzerViewInterface frame) {
 		this.view = frame;
 		view.setController(this);
-		this.analizador = new AnalizadorLexon();
+		this.analizador = new LexiconAnalyzer();
 	}
 
 	public static void main(String[] args) {
@@ -55,8 +58,9 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 		InputStream stream = new FileInputStream(file);
 		this.entrada = new PushbackInputStream(stream);
 		try {
-			this.saida = this.analizador.lexan(this.entrada, 0);
-			this.view.onResult(saida);
+			this.tableids =  new HashMap<TypeToken, ArrayList<Token>>();
+			this.saida = this.analizador.lexan(this.entrada, 0, this.tableids);
+			this.view.onResult(this.saida, this.tableids );
 			System.out.println(saida.size());
 		} catch (IOException   e) {
 			e.printStackTrace();

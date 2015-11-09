@@ -3,18 +3,19 @@ package examples;
 import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import examples.Token.TypeToken;
 import excptions.InvalidCharacterExcption;
 
-public class AnalizadorLexon {
+public class LexiconAnalyzer {
 
 	Token token;
 	int atual, anterior, col;
 	final int RECONHECEU_SEM_TRANSICAO =-1;
 	final int RECONHECEU_COM_TRANSICAO =-2;
 	private ArrayList<Token> tks;
-	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition) 
+	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition, HashMap<TypeToken, ArrayList<Token>> tableIds) 
 			throws IOException, InvalidCharacterExcption {
 		tks = new ArrayList<>();
 
@@ -56,12 +57,12 @@ public class AnalizadorLexon {
 				if(atual== '=')	{
 					TypeToken t = TypeToken.NONE;
 					if(anterior=='!') t = TypeToken.TK_DIFF;
-					if(anterior=='>') t = TypeToken.TK_MAIORIGUAL;
-					if(anterior=='<') t = TypeToken.TK_MENORIGUAL;
+					if(anterior=='>') t = TypeToken.TK_BIGGEREQUAL;
+					if(anterior=='<') t = TypeToken.TK_LESSEQUAL;
 					if(anterior=='=') t = TypeToken.TK_EQUALS;
-					if(anterior=='+') t = TypeToken.TK_PLUSIGUAL;
-					if(anterior=='-') t = TypeToken.TK_SUBIGUAL;
-					if(anterior=='*') t = TypeToken.TK_MULTPIGUAL;
+					if(anterior=='+') t = TypeToken.TK_ADDASSIGNMENT;
+					if(anterior=='-') t = TypeToken.TK_SUBASSIGNMENT;
+					if(anterior=='*') t = TypeToken.TK_MULTPASSIGNMENT;
 					token.setType(t);
 					estado =  RECONHECEU_SEM_TRANSICAO;
 				}else estado =  RECONHECEU_COM_TRANSICAO;
@@ -90,7 +91,7 @@ public class AnalizadorLexon {
 					token.setType(TypeToken.NONE);
 					estado=33;
 				} else if(atual=='='){
-					token.setType(TypeToken.TK_DIVIGUAL);
+					token.setType(TypeToken.TK_DIVASSIGNMENT);
 					estado=RECONHECEU_SEM_TRANSICAO;
 				}
 				else{
@@ -104,6 +105,10 @@ public class AnalizadorLexon {
 				}else {
 					this.idreservado();
 					estado = RECONHECEU_COM_TRANSICAO;
+					ArrayList<Token> ids = tableIds.get(token.getType());
+					if(ids ==null)ids = new ArrayList<Token>();
+					ids.add(token);
+					tableIds.put(token.getType(), ids);
 				}
 				break;				
 			case 33:
@@ -115,7 +120,7 @@ public class AnalizadorLexon {
 				else estado = 33;
 				break;	
 			case 35:
-				if(atual=='\n')	estado=0;
+				if(atual=='\n'){col=0;	estado=0;}
 				else estado = 35;
 				break;	
 			case 36:
@@ -134,6 +139,7 @@ public class AnalizadorLexon {
 				estado =0;
 				token.setEstado(ultimo_estado);
 				token.setPosFin(col);
+				token.setPosIni(col - (token.getValue().length()-1) );
 				int l = token.getLinha();
 				tks.add(token);
 				token = new Token();	
@@ -191,7 +197,7 @@ public class AnalizadorLexon {
 		if( atual== '\0')return RECONHECEU_SEM_TRANSICAO;
 		int new_estado;
 		if(atual=='\n'){
-			col=0;
+			col=-1;
 			token.incrementLinha();
 		}
 		if(atual<14 || atual==' ' || atual=='\n'){
@@ -218,15 +224,15 @@ public class AnalizadorLexon {
 				case '+': t=  TypeToken.TK_PLUS; new_estado= 22; break;
 				case '-': t=  TypeToken.TK_SUB; new_estado= 22; break;
 				case '!': t=  TypeToken.TK_NEG; new_estado= 22; break;
-				case '>': t=  TypeToken.TK_MAIOR; new_estado=22; break;
+				case '>': t=  TypeToken.TK_BIGGER; new_estado=22; break;
 				case '*': t=  TypeToken.TK_MULTP; new_estado=22; break;
-				case '<': t=  TypeToken.TK_MENOR; new_estado=22; break;
-				case '{': t=  TypeToken.TK_ABRECHAVE;break;
-				case '}': t=  TypeToken.TK_FECHACHAVE;break;
-				case '=': t=  TypeToken.TK_ATTRIB; new_estado=22;break;
-				case '(': t=  TypeToken.TK_ABREPAR;break;
-				case ')': t=  TypeToken.TK_FECHAPAR;break;
-				case ';': t=  TypeToken.TK_PONTOVIRG;break;
+				case '<': t=  TypeToken.TK_LESS; new_estado=22; break;
+				case '{': t=  TypeToken.TK_OPEN_KEY;break;
+				case '}': t=  TypeToken.TK_CLOSE_KEY;break;
+				case '=': t=  TypeToken.TK_ASSINGMENT; new_estado=22;break;
+				case '(': t=  TypeToken.TK_OPENBRACKETS;break;
+				case ')': t=  TypeToken.TK_CLOSEBRACKETS;break;
+				case ';': t=  TypeToken.TK_SEMICOLON;break;
 				case '%': t=  TypeToken.TK_MOD;break;
 				case ',': t=  TypeToken.TK_VIRG;break;
 				default: throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");

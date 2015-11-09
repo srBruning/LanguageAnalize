@@ -9,6 +9,7 @@ import java.io.PrintWriter;
 import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
@@ -27,6 +28,7 @@ import javax.swing.text.Document;
 
 import controller.AnalyzerControllerInterface;
 import examples.Token;
+import examples.Token.TypeToken;
 
 public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	private JTextField txtFileName;
@@ -221,15 +223,16 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 		   } catch(BadLocationException exc) {
 		      exc.printStackTrace();
 		   }
-	   this.onResult(lexemas);
+	   this.onResult(lexemas, null);
 	}
 
 	@Override
-	public void onResult(ArrayList<Token> saida) {
+	public void onResult(ArrayList<Token> saida, HashMap<TypeToken, ArrayList<Token>> tableids) {
 		System.out.println("on result");
 		this.myTableModel.setTokens(saida);
 		this.table.setModel(this.myTableModel);
 		this.myTableModel.fireTableDataChanged();
 		
 	}
+
 }

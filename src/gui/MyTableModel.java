@@ -27,7 +27,7 @@ public class MyTableModel extends AbstractTableModel {
 	}
 	@Override
 	public int getColumnCount() {
-		return 4;
+		return 5;
 	}
 
 	@Override
@@ -37,10 +37,12 @@ public class MyTableModel extends AbstractTableModel {
 		case 0:
 			return Integer.toString(tk.getLinha());
 		case 1:
-			return Integer.toString(tk.getPosFin());
+			return Integer.toString(tk.getPosIni());
 		case 2:
-			return tk.getType().toString();
+			return Integer.toString(tk.getPosFin());
 		case 3:
+			return tk.getType().toString();
+		case 4:
 			return tk.getValue();
 		default:
 			break;
