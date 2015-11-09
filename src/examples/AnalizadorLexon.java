@@ -23,6 +23,7 @@ public class AnalizadorLexon {
 		atual =0;
 		int   estado= 0;
 		int ultimo_estado=-1;
+		col=0;
 		do{
 			ultimo_estado = estado;
 			 atual = strean.read();
@@ -128,6 +129,7 @@ public class AnalizadorLexon {
 				if(estado== RECONHECEU_COM_TRANSICAO){
 					strean.unread(atual);
 					currentPosition--;
+					col--;
 				}				
 				estado =0;
 				token.setEstado(ultimo_estado);

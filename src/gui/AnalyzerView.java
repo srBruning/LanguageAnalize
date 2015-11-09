@@ -6,6 +6,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 
@@ -43,7 +44,7 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 
 	private MyTableModel myTableModel;
 
-	public File file;
+//	public File file;
 
 	/**
 	 * Create the frame.
@@ -79,11 +80,46 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 		panel_2.setLayout(null);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 5, 336, 380);
+		scrollPane.setBounds(10, 49, 336, 336);
 		panel_2.add(scrollPane);
 		
 		editorPane = new JEditorPane();
 		scrollPane.setViewportView(editorPane);
+		
+		JButton btnSaveFile = new JButton("Salvar");
+		btnSaveFile.setBounds(256, 12, 78, 25);
+		panel_2.add(btnSaveFile);
+		
+		txtFileName = new JTextField();
+		txtFileName.setEnabled(false);
+		txtFileName.setEditable(false);
+		txtFileName.setBounds(138, 15, 106, 19);
+		panel_2.add(txtFileName);
+		txtFileName.setText("File name");
+		txtFileName.setColumns(10);
+		
+		JButton btnInputfile = new JButton("Abrir");
+		btnInputfile.setBounds(28, 12, 83, 25);
+		panel_2.add(btnInputfile);
+		btnInputfile.addActionListener(new OpenL());
+		btnSaveFile.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				
+				try {
+					File f = AnalyzerView.this.currentFile();
+					if(f==null)return ;
+					PrintWriter out = new PrintWriter(f);
+					String text = AnalyzerView.this.editorPane.getText();
+					out.println(text);
+					out.close();
+				} catch (FileNotFoundException e1) {
+					e1.printStackTrace();
+					JOptionPane.showMessageDialog(null, e.toString(), "Error",
+                            JOptionPane.ERROR_MESSAGE);
+				}
+
+			}
+		});
 		
 		JPanel panel_3 = new JPanel();
 		panel_3.setBounds(12, 420, 555, 93);
@@ -109,15 +145,6 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 		table = new JTable(myTableModel);
 		scrollPane_2.setViewportView(table);
 		
-		JButton btnInputfile = new JButton("InputFile");
-		btnInputfile.addActionListener(new OpenL());
-		panel.add(btnInputfile);
-		
-		txtFileName = new JTextField();
-		txtFileName.setText("File name");
-		panel.add(txtFileName);
-		txtFileName.setColumns(10);
-		
 		JButton btnAnalizar = new JButton("Analizar");
 		btnAnalizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -131,30 +158,24 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 				}
 			}
 		});
-		
-		JButton btnSaveFile = new JButton("Save File");
-		btnSaveFile.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				
-				try {
-					PrintWriter out = new PrintWriter(AnalyzerView.this.file);
-					String text = AnalyzerView.this.editorPane.getText();
-					out.println(text);
-					out.close();
-				} catch (FileNotFoundException e1) {
-					e1.printStackTrace();
-					JOptionPane.showMessageDialog(null, e.toString(), "Error",
-                            JOptionPane.ERROR_MESSAGE);
-				}
-
-			}
-		});
-		panel.add(btnSaveFile);
 		panel.add(btnAnalizar);
 		getContentPane().setLayout(groupLayout);
 
 	}
 	
+	protected File currentFile() {
+		if(this.entrada == null|| !this.entrada.isFile()){
+		    JFileChooser c = new JFileChooser();
+			int returnVal = c.showOpenDialog(AnalyzerView.this);
+			if (returnVal == JFileChooser.APPROVE_OPTION) {
+			
+				this.entrada =   c.getSelectedFile();
+			
+			}
+		}
+		return this.entrada;
+	}
+
 	private void setFileIputStrean(File file){
 		try {
 			this.entrada= file;
@@ -178,9 +199,9 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	      // Demonstrate "Open" dialog:
 	      int rVal = c.showOpenDialog(AnalyzerView.this);
 	      if (rVal == JFileChooser.APPROVE_OPTION) {
-	    	  AnalyzerView.this.file = c.getSelectedFile();
-	    	  txtFileName.setText(AnalyzerView.this.file.getName());
-	    	  setFileIputStrean(AnalyzerView.this.file);
+	    	  AnalyzerView.this.entrada = c.getSelectedFile();
+	    	  txtFileName.setText(AnalyzerView.this.entrada.getName());
+	    	  setFileIputStrean(AnalyzerView.this.entrada);
 	      }
 	      if (rVal == JFileChooser.CANCEL_OPTION) {
 	    	  txtFileName.setText("You pressed cancel");
