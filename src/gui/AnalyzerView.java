@@ -122,8 +122,9 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 		btnAnalizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
+					console.setText("");
 					AnalyzerView.this.setController.analizeFile(entrada);
-				} catch (FileNotFoundException e1) {
+				} catch (FileNotFoundException   e1) {
 					e1.printStackTrace();
 					 JOptionPane.showMessageDialog(null, e.toString(), "Error",
                              JOptionPane.ERROR_MESSAGE);
@@ -138,7 +139,6 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 				try {
 					PrintWriter out = new PrintWriter(AnalyzerView.this.file);
 					String text = AnalyzerView.this.editorPane.getText();
-					System.out.println(text);
 					out.println(text);
 					out.close();
 				} catch (FileNotFoundException e1) {
@@ -196,7 +196,7 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	public void onAnalyzeError(ArrayList<Token> lexemas, String message, int linha, int coluna, String expected) {
 	   try {
 		       Document doc = console.getDocument();
-		      doc.insertString(doc.getLength(), message, null);
+		      doc.insertString(doc.getLength(), message+"\n", null);
 		   } catch(BadLocationException exc) {
 		      exc.printStackTrace();
 		   }

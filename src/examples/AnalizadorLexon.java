@@ -131,7 +131,7 @@ public class AnalizadorLexon {
 				}				
 				estado =0;
 				token.setEstado(ultimo_estado);
-				token.setPosFin(currentPosition);
+				token.setPosFin(col);
 				int l = token.getLinha();
 				tks.add(token);
 				token = new Token();	
@@ -178,6 +178,8 @@ public class AnalizadorLexon {
 			case "for": token.setType(TypeToken.FOR); break;
 			case "goto": token.setType(TypeToken.GOTO); break;
 			case "if": token.setType(TypeToken.IF); break;	
+			case "true": token.setType(TypeToken.TRUE); break;
+			case "false": token.setType(TypeToken.FALSE); break;	
 			default: token.setType(TypeToken.TK_ID);			
 		}
 	}
