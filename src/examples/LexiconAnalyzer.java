@@ -186,8 +186,6 @@ public class LexiconAnalyzer {
 			case "for": token.setType(TypeToken.FOR); break;
 			case "goto": token.setType(TypeToken.GOTO); break;
 			case "if": token.setType(TypeToken.IF); break;	
-			case "true": token.setType(TypeToken.TRUE); break;
-			case "false": token.setType(TypeToken.FALSE); break;	
 			default: token.setType(TypeToken.TK_ID);			
 		}
 	}
@@ -254,8 +252,6 @@ public class LexiconAnalyzer {
 		}else if(atual=='E' || atual=='e'){
 			new_estado= 3;
 		}else{
-			if(Character.isLetter(atual) || atual=='_')
-				throw new InvalidCharacterExcption(tks, token.linha, col, "token end");
 			return RECONHECEU_COM_TRANSICAO;
 		}
 
