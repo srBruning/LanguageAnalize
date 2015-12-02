@@ -12,5 +12,5 @@ public interface AnalyzerViewInterface  {
 
 	public void onAnalyzeError(ArrayList<Token> lexemas, String message, int linha, int coluna, String expected);
 
-	public void onResult(ArrayList<Token> saida, HashMap<TypeToken, ArrayList<Token>> tableids);
+	public void onResult(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids);
 }

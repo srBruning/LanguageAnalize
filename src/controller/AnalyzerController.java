@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import examples.LexiconAnalyzer;
+import examples.SyntaticAnalyzer;
 import examples.Token;
 import examples.Token.TypeToken;
 import excptions.InvalidCharacterExcption;
@@ -20,15 +21,15 @@ import gui.AnalyzerView;
 public class AnalyzerController implements AnalyzerControllerInterface {
 	LexiconAnalyzer numReal = new LexiconAnalyzer();
 	private AnalyzerViewInterface view;
-	LexiconAnalyzer analizador;
+	LexiconAnalyzer mLexiconAnalyzer;
 	private PushbackInputStream entrada;
 	private ArrayList<Token> saida;
-	private HashMap<TypeToken, ArrayList<Token>> tableids;
+	private HashMap<String, ArrayList<Token>> tableids;
 	
 	public AnalyzerController(AnalyzerViewInterface frame) {
 		this.view = frame;
 		view.setController(this);
-		this.analizador = new LexiconAnalyzer();
+		this.mLexiconAnalyzer = new LexiconAnalyzer();
 	}
 
 	public static void main(String[] args) {
@@ -54,13 +55,14 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	}
 
 	@Override
-	public void analizeFile(File file) throws FileNotFoundException {
+	public void lexicalAnalyzerFile(File file) throws FileNotFoundException {
 		InputStream stream = new FileInputStream(file);
 		this.entrada = new PushbackInputStream(stream);
 		try {
-			this.tableids =  new HashMap<TypeToken, ArrayList<Token>>();
-			this.saida = this.analizador.lexan(this.entrada, 0, this.tableids);
+			this.tableids =  new HashMap<String, ArrayList<Token>>();
+			this.saida = this.mLexiconAnalyzer.lexan(this.entrada, 0, this.tableids);
 			this.view.onResult(this.saida, this.tableids );
+			this.syntacticAnalyzer(this.saida, this.tableids );
 			System.out.println(saida.size());
 		} catch (IOException   e) {
 			e.printStackTrace();
@@ -68,5 +70,11 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 			this.view.onAnalyzeError(e.getLexemas(), e.getMessage(), e.getLinha(), e.getColuna(), e.getExpected());
 		}
 		
+	}
+
+	@Override
+	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
+			SyntaticAnalyzer sa = new SyntaticAnalyzer();
+			System.out.println("SyntaticAnalyzer: "+sa.analyzer(entrada, tableids2)  );
 	}
 }

@@ -15,7 +15,7 @@ public class LexiconAnalyzer {
 	final int RECONHECEU_SEM_TRANSICAO =-1;
 	final int RECONHECEU_COM_TRANSICAO =-2;
 	private ArrayList<Token> tks;
-	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition, HashMap<TypeToken, ArrayList<Token>> tableIds) 
+	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition, HashMap<String, ArrayList<Token>> tableIds) 
 			throws IOException, InvalidCharacterExcption {
 		tks = new ArrayList<>();
 
@@ -105,10 +105,10 @@ public class LexiconAnalyzer {
 				}else {
 					this.idreservado();
 					estado = RECONHECEU_COM_TRANSICAO;
-					ArrayList<Token> ids = tableIds.get(token.getType());
+					ArrayList<Token> ids = tableIds.get(token.getValue());
 					if(ids ==null)ids = new ArrayList<Token>();
 					ids.add(token);
-					tableIds.put(token.getType(), ids);
+					tableIds.put(token.getValue(), ids);
 				}
 				break;				
 			case 33:
@@ -225,11 +225,11 @@ public class LexiconAnalyzer {
 				case '>': t=  TypeToken.TK_BIGGER; new_estado=22; break;
 				case '*': t=  TypeToken.TK_MULTP; new_estado=22; break;
 				case '<': t=  TypeToken.TK_LESS; new_estado=22; break;
-				case '{': t=  TypeToken.TK_OPEN_KEY;break;
-				case '}': t=  TypeToken.TK_CLOSE_KEY;break;
+				case '{': t=  TypeToken.TK_OPEN_BRAKET;break;
+				case '}': t=  TypeToken.TK_CLOSE_BRAKET;break;
 				case '=': t=  TypeToken.TK_ASSINGMENT; new_estado=22;break;
-				case '(': t=  TypeToken.TK_OPENBRACKETS;break;
-				case ')': t=  TypeToken.TK_CLOSEBRACKETS;break;
+				case '(': t=  TypeToken.TK_OPENPARENTHESIS;break;
+				case ')': t=  TypeToken.TK_CLOSEPARENTHESIS;break;
 				case ';': t=  TypeToken.TK_SEMICOLON;break;
 				case '%': t=  TypeToken.TK_MOD;break;
 				case ',': t=  TypeToken.TK_VIRG;break;

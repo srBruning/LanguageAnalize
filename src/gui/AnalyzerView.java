@@ -38,7 +38,7 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	JEditorPane editorPane;
 
 
-	private AnalyzerControllerInterface setController;
+	private AnalyzerControllerInterface controller;
 
 
 	private File entrada;
@@ -152,7 +152,7 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 			public void actionPerformed(ActionEvent e) {
 				try {
 					console.setText("");
-					AnalyzerView.this.setController.analizeFile(entrada);
+					AnalyzerView.this.controller.lexicalAnalyzerFile(entrada);
 				} catch (FileNotFoundException   e1) {
 					e1.printStackTrace();
 					 JOptionPane.showMessageDialog(null, e.toString(), "Error",
@@ -212,7 +212,7 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	  }
 	@Override
 	public void setController(AnalyzerControllerInterface controller) {
-		this.setController= controller;
+		this.controller= controller;
 	}
 
 	@Override
@@ -227,7 +227,7 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	}
 
 	@Override
-	public void onResult(ArrayList<Token> saida, HashMap<TypeToken, ArrayList<Token>> tableids) {
+	public void onResult(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids) {
 		System.out.println("on result");
 		this.myTableModel.setTokens(saida);
 		this.table.setModel(this.myTableModel);

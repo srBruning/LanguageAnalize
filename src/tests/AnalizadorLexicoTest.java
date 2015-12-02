@@ -45,13 +45,13 @@ public class AnalizadorLexicoTest {
 		PushbackInputStream pbInput = newStrean("//comentario = ! - + 122 fimcomentario\n\t !{100/2+53}!= /*comentario 123 */< > >= <= = ==");
 		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.TK_NEG);
-		assertEquals(tks.get(1).getType(), TypeToken.TK_OPEN_KEY);
+		assertEquals(tks.get(1).getType(), TypeToken.TK_OPEN_BRAKET);
 		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
 		assertEquals(tks.get(3).getType(), TypeToken.TK_DIV);
 		assertEquals(tks.get(4).getType(), TypeToken.CONST_NUM);
 		assertEquals(tks.get(5).getType(), TypeToken.TK_PLUS);
 		assertEquals(tks.get(6).getType(), TypeToken.CONST_NUM);
-		assertEquals(tks.get(7).getType(), TypeToken.TK_CLOSE_KEY);
+		assertEquals(tks.get(7).getType(), TypeToken.TK_CLOSE_BRAKET);
 		assertEquals(tks.get(8).getType(), TypeToken.TK_DIFF);
 		assertEquals(tks.get(9).getType(), TypeToken.TK_LESS);
 		assertEquals(tks.get(10).getType(), TypeToken.TK_BIGGER);
