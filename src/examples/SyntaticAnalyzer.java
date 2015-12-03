@@ -30,9 +30,14 @@ public class SyntaticAnalyzer {
 	private void pushPosition(){
 		this.stakPosition.push(currentPosition);		
 	}
-	
+
 	private void popPosition(){
 		currentPosition = this.stakPosition.pop();		
+		currentToken = entrada.get(currentPosition);
+	}
+
+	private void peekPosition(){
+		currentPosition = this.stakPosition.peek();		
 		currentToken = entrada.get(currentPosition);
 	}
 
@@ -43,7 +48,7 @@ public class SyntaticAnalyzer {
 		stakPosition= new Stack<>();
 		currentPosition= -1;
 		if(!nextToken()) return false;
-		if(!expressao() || hasToken()){
+		if(!listaComandos() || hasToken()){
 			return false;
 		}
 		return true;
@@ -201,74 +206,77 @@ public class SyntaticAnalyzer {
 	} 
 
 
-	//    private boolean cmdIf(){
-	//        if (currentToken.getType() == TypeToken.IF){
-	//            if (currentToken.getType() == TypeToken.TK_OPENPARENTHESIS)
-	//            {
-	//	        	if(!nextToken()) return false;
-	//	            if (expressao()){
-	//	                if (currentToken.getType() == TypeToken.TK_CLOSEPARENTHESIS){
-	//	                	nextToken();
-	//	                    return cmdIfB();
-	//	                }
-	//	            }else previuToken();
-	//            }
-	//	   }    
-	//        return false;
-	//    }
+	private boolean cmdIf(){
+		if(!hasToken()) return false;
+		pushPosition();
+		if ( currentToken.getType() == TypeToken.IF)
+			if (nextToken() && currentToken.getType() == TypeToken.TK_OPENPARENTHESIS)
+				if(nextToken() && expressao() && currentToken.getType() == TypeToken.TK_CLOSEPARENTHESIS){
+					nextToken();
+					if(cmdIfB()) return true;
+				}
+		popPosition();
+		return false;
+	}
 
-	//    private boolean cmdIfB()
-	//    {
-	//        if (comando())
-	//        {
-	//            return cmdElse();
-	//        }else
-	//        {
-	//            if (currentToken.getType() == TypeToken.PONTOVIRGULA)
-	//            {
-	//                nextToken();
-	//                return cmdElse();
-	//            }        
-	//        }else
-	//        {  
-	//            if (currentToken.getType() == TK_OPENCHAVES)
-	//            {
-	//            	if(!nextToken()) return false;
-	//	            if (listaComandos()){
-	//	                if (currentToken.getType() == TypeToken.TK_CLOSECHAVES){
-	//	                	nextToken();
-	//	                    return cmdElse();
-	//	                }
-	//	            }else previuToken();
-	//            }  
-	//    }    
+	private boolean cmdIfB(){
+		pushPosition();
+		if (comando() && cmdElse()) return true;
+		peekPosition();
+		if (currentToken.getType() == TypeToken.TK_SEMICOLON){
+			nextToken();
+			if(cmdElse() )return true;
+		}
+		peekPosition();
+		if (currentToken.getType() == TypeToken.TK_OPEN_BRAKET && nextToken() && listaComandos() && currentToken.getType() == TypeToken.TK_CLOSE_BRAKET){
+			nextToken();
+			if ( cmdElse() ) return true;
+		}  
+		popPosition();
+		return true;
+	}
 
-	//    private boolean cmdElse()
-	//    {
-	//        if (currentToken.getType() == TypeToken.ELSE){
-	//            return corpoElse();
-	//        }
-	//        return true;
-	//    }
-	//    private boolean corpoElse(){
-	//        if (comando()){
-	//            return true;
-	//        }else{
-	//            if (currentToken.getType() == TypeToken.PONTOVIRGULA){
-	//                return true;
-	//            }        
-	//        }else{  
-	//            if (currentToken.getType() == TK_OPENCHAVES){
-	//                if(!nextToken()) return false;
-	//	            if (listaComandos()){
-	//	                if (currentToken.getType() == TypeToken.TK_CLOSECHAVES){
-	//	                	nextToken();
-	//	                    return true;
-	//	                }
-	//	            }else previuToken();
-	//            }  
-	//        }
-	//        return false;
-	//    }
+	private boolean listaComandos() {
+		pushPosition();
+		if(!hasToken()) return true;
+		if( comando() && listaComandos() ) return true;
+
+		popPosition();
+		return true;
+	}
+
+	private boolean comando() {
+		// TODO Auto-generated method stub
+		if(!hasToken() ) return false;
+		pushPosition();
+
+		if( cmdIf() ) return true;
+
+		popPosition();
+		return false;
+	}
+
+	private boolean cmdElse(){
+		if(!hasToken()) return true;// empyt
+		pushPosition();
+		if ( currentToken.getType() == TypeToken.ELSE && corpoElse()) return true;
+		popPosition();
+		return true;
+	}
+	private boolean corpoElse(){
+		pushPosition();
+		if (comando())return true;
+		peekPosition();
+		if (currentToken.getType() == TypeToken.TK_SEMICOLON){
+			nextToken();
+			return true;
+		}        
+		if (currentToken.getType() == TypeToken.TK_OPEN_BRAKET && nextToken()&& listaComandos() && currentToken.getType() == TypeToken.TK_CLOSE_BRAKET){
+			nextToken();
+			return true;
+		}  
+		popPosition();
+		return false;
+	}
 
 }
