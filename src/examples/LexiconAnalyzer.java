@@ -169,22 +169,13 @@ public class LexiconAnalyzer {
 			case "return": token.setType(TypeToken.RETURN); break;
 			case "short": token.setType(TypeToken.SHORT); break;
 			case "signed": token.setType(TypeToken.SIGNED); break;
-			case "sizeof": token.setType(TypeToken.SIZEOF); break;
-			case "static": token.setType(TypeToken.STATIC); break;
-			case "struct": token.setType(TypeToken.STRUCT); break;
 			case "switch": token.setType(TypeToken.SWITCH); break;
-			case "typedef": token.setType(TypeToken.TYPEDEF); break;
-			case "unsigned": token.setType(TypeToken.UNSIGNED); break;
 			case "void": token.setType(TypeToken.VOID); break;
-			case "volatile": token.setType(TypeToken.VOLATILE); break;
 			case "while": token.setType(TypeToken.WHILE); break;
 			case "double": token.setType(TypeToken.DOUBLE); break;
 			case "else": token.setType(TypeToken.ELSE); break;
-			case "enum": token.setType(TypeToken.ENUM); break;
-			case "extern": token.setType(TypeToken.EXTERN); break;
 			case "float": token.setType(TypeToken.FLOAT); break;
 			case "for": token.setType(TypeToken.FOR); break;
-			case "goto": token.setType(TypeToken.GOTO); break;
 			case "if": token.setType(TypeToken.IF); break;	
 			default: token.setType(TypeToken.TK_ID);			
 		}
