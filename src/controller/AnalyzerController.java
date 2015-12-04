@@ -25,7 +25,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	private PushbackInputStream entrada;
 	private ArrayList<Token> saida;
 	private HashMap<String, ArrayList<Token>> tableids;
-	
+
 	public AnalyzerController(AnalyzerViewInterface frame) {
 		this.view = frame;
 		view.setController(this);
@@ -38,7 +38,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 		AnalyzerController analyzerController = new AnalyzerController(frame);
 		launchView(frame);
 	}
-	
+
 	/**
 	 * Launch the application.
 	 */
@@ -61,20 +61,20 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 		try {
 			this.tableids =  new HashMap<String, ArrayList<Token>>();
 			this.saida = this.mLexiconAnalyzer.lexan(this.entrada, 0, this.tableids);
-			this.view.onResult(this.saida, this.tableids );
-			this.syntacticAnalyzer(this.saida, this.tableids );
+			this.view.onResultLexicon(this.saida, this.tableids );
 			System.out.println(saida.size());
 		} catch (IOException   e) {
 			e.printStackTrace();
 		} catch (InvalidCharacterExcption e) {
 			this.view.onAnalyzeError(e.getLexemas(), e.getMessage(), e.getLinha(), e.getColuna(), e.getExpected());
 		}
-		
+
 	}
 
 	@Override
 	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
-			SyntaticAnalyzer sa = new SyntaticAnalyzer();
-			System.out.println("SyntaticAnalyzer: "+sa.analyzer(entrada, tableids2)  );
+		SyntaticAnalyzer sa = new SyntaticAnalyzer();
+		this.view.onResultSyntatic(sa.analyzer(entrada, tableids2), -1, -1);
 	}
+
 }

@@ -13,7 +13,7 @@ public class SyntaticAnalyzer {
 	Stack<Integer> stakPosition= new Stack<>();
 	Token currentToken;
 
-	private boolean hasToken(){
+	private boolean hasNextToken(){
 		return currentPosition <= entrada.size()-1;
 	}
 
@@ -32,7 +32,11 @@ public class SyntaticAnalyzer {
 	}
 
 	private void popPosition(){
-		currentPosition = this.stakPosition.pop();		
+		this.stakPosition.pop();		
+	}
+
+	private void popPositionToToken(){
+		currentPosition = this.stakPosition.pop();	
 		currentToken = entrada.get(currentPosition);
 	}
 
@@ -48,7 +52,7 @@ public class SyntaticAnalyzer {
 		stakPosition= new Stack<>();
 		currentPosition= -1;
 		if(!nextToken()) return false;
-		if(!listaComandos() || hasToken()){
+		if(!listaComandos() || hasNextToken()){
 			return false;
 		}
 		return true;
@@ -56,66 +60,78 @@ public class SyntaticAnalyzer {
 
 	private boolean expressao()	{
 		pushPosition();
-		if (expressao2() && expressao_b())
+		if (expressao2() && expressao_b()){
+			popPosition();
 			return true;
-		popPosition();
+		}
+		popPositionToToken();
 		return false;
 	}
 
 	private boolean expressao_b(){
-		if(!hasToken())return true;//dedrivou vazil
+		if(currentToken==null)return true;//dedrivou vazil
 		switch (currentToken.getType()) {
 		case TK_AND:
 		case TK_OR:
 			pushPosition();
-			if ( nextToken() && expressao2() &&  expressao_b())
+			if ( nextToken() && expressao2() &&  expressao_b()){
+				popPosition();
 				return true;
-			popPosition();
+			}
+			popPositionToToken();
 		}
 		return true;//dedrivou vazil
 	}
 
 	private boolean expressao2()	{
 		pushPosition();
-		if (expressao3() && expressao2_b())
+		if (expressao3() && expressao2_b()){
+			popPosition();
 			return true;
-		popPosition();
+		}
+		popPositionToToken();
 		return false;
 	}
 
 	private boolean expressao2_b(){
-		if(!hasToken())return true;
+		if(currentToken == null)return true;
 		switch (currentToken.getType()) {
 		case TK_EQUALS:
 		case TK_DIFF:
 			pushPosition();
-			if (nextToken() && expressao3() &&  expressao2_b())
+			if (nextToken() && expressao3() &&  expressao2_b()){
+				popPosition();
 				return true;				
-			popPosition();
+			}
+			popPositionToToken();
 		}
 		return true;
 	} 
 
 	private boolean expressao3(){
 		pushPosition();
-		if (expressao4() && expressao3_b())
+		if (expressao4() && expressao3_b()){
+			popPosition();
 			return true;
+		}
 
-		popPosition();
+		popPositionToToken();
 		return false;
 	}
 
 	private boolean expressao3_b(){
-		if(!hasToken())return true;
+		if(currentToken==null)return true;
 		switch (currentToken.getType()){
 		case TK_BIGGEREQUAL:
 		case TK_LESSEQUAL:
 		case TK_LESS:
 		case TK_BIGGER:
 			pushPosition();
-			if(nextToken() && expressao4() && expressao3_b())
+			if(nextToken() && expressao4() && expressao3_b()){
+				popPosition();
 				return true;
-			popPosition();
+			}
+			popPositionToToken();
 		}
 		return true;
 	}   
@@ -123,44 +139,51 @@ public class SyntaticAnalyzer {
 	private boolean expressao4(){
 		pushPosition();
 		if (expressao5() && expressao4_b()){
+			popPosition();
 			return true;			
 		}
-		popPosition();
+		popPositionToToken();
 		return false;
 	}
 
 	private boolean expressao4_b(){
-		if(!hasToken())return true;
+		if(currentToken==null)return true;
 		pushPosition();
 		switch (currentToken.getType()) {
 		case TK_PLUS: 
 		case TK_SUB: 
-			if(nextToken() && expressao5() && expressao4_b())
+			if(nextToken() && expressao5() && expressao4_b()){
+				popPosition();
 				return true;			
+			}
 		}
-		popPosition();
+		popPositionToToken();
 		return true;
 	}   
 
 	private boolean expressao5(){
 		pushPosition();
-		if (expressao6() && expressao5_b())return true;
-		popPosition();
+		if (expressao6() && expressao5_b()){
+			popPosition();
+			return true;
+		}
+		popPositionToToken();
 		return false;
 	}
 
 	@SuppressWarnings("incomplete-switch")
 	private boolean expressao5_b(){
-		if(!hasToken())return true;
+		if(currentToken==null)return true;
 		switch (currentToken.getType()){
 		case TK_MULTP:
 		case TK_DIV:
 		case TK_MOD:
 			pushPosition();
 			if (nextToken() && expressao6() && expressao5_b() ){
+				popPosition();
 				return true;
 			}
-			popPosition();
+			popPositionToToken();
 			return false;
 		}
 		return true;
@@ -172,11 +195,12 @@ public class SyntaticAnalyzer {
 		case TK_PLUS: 
 		case TK_SUB: 
 		case TK_NEG: 
-			int m_token = currentPosition;
+			pushPosition();
 			if( nextToken() && expressao6()){
+				popPosition();
 				return true;
 			}
-			currentPosition = m_token;
+			popPositionToToken();
 			return false;
 		}
 		return baseExpressao();
@@ -191,14 +215,15 @@ public class SyntaticAnalyzer {
 			nextToken();
 			return true;
 		case TK_OPENPARENTHESIS:
-			int m_token = currentPosition;
+			pushPosition();
 			if (nextToken() && expressao()){
-				if (hasToken() && currentToken.getType() == TypeToken.TK_CLOSEPARENTHESIS){
+				if (currentToken!=null && currentToken.getType() == TypeToken.TK_CLOSEPARENTHESIS){
 					nextToken();
+					popPosition();
 					return true;
 				}
 			}
-			currentPosition = m_token;
+			popPositionToToken();
 
 		}
 
@@ -207,60 +232,86 @@ public class SyntaticAnalyzer {
 
 
 	private boolean cmdIf(){
-		if(!hasToken()) return false;
+		if(currentToken== null) return false;
 		pushPosition();
 		if ( currentToken.getType() == TypeToken.IF)
-			if (nextToken() && currentToken.getType() == TypeToken.TK_OPENPARENTHESIS)
-				if(nextToken() && expressao() && currentToken.getType() == TypeToken.TK_CLOSEPARENTHESIS){
+			if (nextToken() && 
+					currentToken.getType() == TypeToken.TK_OPENPARENTHESIS)
+				if(nextToken() && expressao() && currentToken!=null && currentToken.getType() == TypeToken.TK_CLOSEPARENTHESIS){
 					nextToken();
-					if(cmdIfB()) return true;
+					if(cmdIfB()){
+						popPosition();
+						return true;
+					}
 				}
-		popPosition();
+		popPositionToToken();
 		return false;
 	}
 
 	private boolean cmdIfB(){
+		if(currentToken==null)return false;
 		pushPosition();
-		if (comando() && cmdElse()) return true;
+		if (comando() && cmdElse()){
+			popPosition();
+			return true;
+		}
 		peekPosition();
 		if (currentToken.getType() == TypeToken.TK_SEMICOLON){
 			nextToken();
-			if(cmdElse() )return true;
+			if(cmdElse() ){
+				popPosition();
+				return true;
+			}
 		}
 		peekPosition();
 		if (currentToken.getType() == TypeToken.TK_OPEN_BRAKET && nextToken() && listaComandos() && currentToken.getType() == TypeToken.TK_CLOSE_BRAKET){
 			nextToken();
-			if ( cmdElse() ) return true;
+			if ( cmdElse() ){
+				popPosition();
+				return true;
+			}
 		}  
-		popPosition();
-		return true;
+		popPositionToToken();
+		return false;
 	}
 
 	private boolean listaComandos() {
 		pushPosition();
-		if(!hasToken()) return true;
-		if( comando() && listaComandos() ) return true;
+		if(currentToken==null ||
+				( comando()
+						&& listaComandos() ) ){
+			popPosition();
+			return true;
+		}
 
-		popPosition();
+		popPositionToToken();
 		return true;
 	}
 
 	private boolean comando() {
 		// TODO Auto-generated method stub
-		if(!hasToken() ) return false;
+		if(currentToken==null ) return false;
+		if(currentToken.type==TypeToken.TK_SEMICOLON ){
+			nextToken();
+			return true;
+		}
 		pushPosition();
 
-		if( cmdIf() ) return true;
 
-		popPosition();
+		if( cmdIf()  ){
+			popPosition();
+			return true;
+		}
+
+		popPositionToToken();
 		return false;
 	}
 
 	private boolean cmdElse(){
-		if(!hasToken()) return true;// empyt
+		if(currentToken==null) return true;// empyt
 		pushPosition();
-		if ( currentToken.getType() == TypeToken.ELSE && corpoElse()) return true;
-		popPosition();
+		if ( currentToken.getType() == TypeToken.ELSE && nextToken() && corpoElse()) return true;
+		popPositionToToken();
 		return true;
 	}
 	private boolean corpoElse(){
@@ -269,13 +320,15 @@ public class SyntaticAnalyzer {
 		peekPosition();
 		if (currentToken.getType() == TypeToken.TK_SEMICOLON){
 			nextToken();
+			popPosition();
 			return true;
 		}        
 		if (currentToken.getType() == TypeToken.TK_OPEN_BRAKET && nextToken()&& listaComandos() && currentToken.getType() == TypeToken.TK_CLOSE_BRAKET){
 			nextToken();
+			popPosition();
 			return true;
 		}  
-		popPosition();
+		popPositionToToken();
 		return false;
 	}
 

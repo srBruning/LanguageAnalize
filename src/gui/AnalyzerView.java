@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,9 +30,13 @@ import javax.swing.text.Document;
 
 import controller.AnalyzerControllerInterface;
 import examples.Token;
-import examples.Token.TypeToken;
 
 public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1140839383844786628L;
+
 	private JTextField txtFileName;
 
 	JTextPane console;
@@ -208,13 +211,10 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 			this.entrada= file;
 			editorPane.setPage(file.toURI().toURL());			
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -242,22 +242,32 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 
 	@Override
 	public void onAnalyzeError(ArrayList<Token> lexemas, String message, int linha, int coluna, String expected) {
+		writh_out(message);
+		this.onResultLexicon(lexemas, null);
+	}
+
+	private void writh_out(String message)	{
 		try {
 			Document doc = console.getDocument();
 			doc.insertString(doc.getLength(), message+"\n", null);
 		} catch(BadLocationException exc) {
 			exc.printStackTrace();
-		}
-		this.onResult(lexemas, null);
+		}	
 	}
-
 	@Override
-	public void onResult(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids) {
+	public void onResultLexicon(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids) {
 		System.out.println("on result");
 		this.myTableModel.setTokens(saida);
 		this.table.setModel(this.myTableModel);
 		this.myTableModel.fireTableDataChanged();
+		this.controller.syntacticAnalyzer(saida, tableids);
+	}
 
+	@Override
+	public void onResultSyntatic(boolean valide, int line, int col) {
+		System.out.println("___________"+valide);
+		writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido"));
+				
 	}
 
 }
