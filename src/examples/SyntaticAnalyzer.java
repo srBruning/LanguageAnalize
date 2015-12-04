@@ -6,17 +6,18 @@ import java.util.HashMap;
 import examples.Token.TypeToken;
 
 public class SyntaticAnalyzer {
-	
+
 	private HashMap<String, ArrayList<Token>> tableids;
 	private SyntaticStrean sntStrean;
 	private AnalizadorExpressao expressao;
-		
+
 	public boolean analyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids) {
 		this.tableids = tableids;
 		this.sntStrean = new SyntaticStrean(entrada);
 		this.expressao = new AnalizadorExpressao(sntStrean);
 		if(!sntStrean.nextToken()) return false;
-		if(!listaComandos() || sntStrean.hasNextToken()){
+		if(!listaComandos() || 
+				sntStrean.hasNextToken()){
 			return false;
 		}
 		return true;
@@ -80,16 +81,14 @@ public class SyntaticAnalyzer {
 	}
 
 	private boolean comando() {
-		// TODO Auto-generated method stub
 		if(sntStrean.getCurrentToken()==null ) return false;
 		if(sntStrean.getCurrentToken().type==TypeToken.TK_SEMICOLON ){
 			sntStrean.nextToken();
 			return true;
 		}
 		sntStrean.pushPosition();
-
-
-		if( cmdIf()  ){
+		if( cmdIf() || 
+				cmdAssignmet()  ){
 			sntStrean.popPosition();
 			return true;
 		}
@@ -99,7 +98,7 @@ public class SyntaticAnalyzer {
 	}
 
 	private boolean cmdElse(){
-		
+
 		if(sntStrean.getCurrentToken()==null) return true;// empyt
 		sntStrean.pushPosition();
 		if ( sntStrean.getCurrentToken().getType() == TypeToken.ELSE && sntStrean.nextToken() && corpoElse()) return true;
@@ -123,7 +122,7 @@ public class SyntaticAnalyzer {
 		sntStrean.popPositionToToken();
 		return false;
 	}
-	
+
 	private boolean tipo(){
 		switch (sntStrean.getCurrentToken().getType()) {
 		case  INT:
@@ -135,5 +134,77 @@ public class SyntaticAnalyzer {
 
 		return false;
 	}
+	//OPERADOR_ATRIB
+	//	TK_ASSINGMENT | TK_ADDASSIGNMENT | TK_SUBASSIGNMENT | TK_DIVASSIGNMENT | TK_MULTPASSIGNMENT | TK_MODASSIGNMENT
+	private boolean assignmentOperator(){
+		if(sntStrean.getCurrentToken()==null)return false;
+		switch (sntStrean.getCurrentToken().getType()) {
+		case  TK_ASSINGMENT:
+		case TK_ADDASSIGNMENT:
+		case TK_SUBASSIGNMENT:
+		case TK_DIVASSIGNMENT:
+		case TK_MULTPASSIGNMENT:
+			//case TK_MODASSIGNMENT:
+			this.sntStrean.nextToken();
+			return true;
+		}		
+		return false;
+	}
+	//CMD_ATRIBUICAO ->
+	//    TK_ID = CMD_ATRIBUICAO_b
+	private boolean cmdAssignmet(){
+		sntStrean.pushPosition();
+		if(sntStrean.getCurrentToken()==null || sntStrean.getCurrentToken().getType()!=TypeToken.TK_ID)return false;
+		sntStrean.nextToken();
+		if(! assignmentOperator()){
+			sntStrean.popPosition();
+			return false;
+		}
+		if(!cmdAssignmetAux()){
+			sntStrean.popPositionToToken();
+			return false;
+		}
+		sntStrean.popPosition();
+		return true;
+
+	}
+	//CMD_ATRIBUICAO_b ->
+	//    EXPRESSAO CMD_ATRIBUICAO_c
+	//    CMD_ATRIBUICAO
+	private boolean cmdAssignmetAux() {
+		if(sntStrean.getCurrentToken()==null)return false;
+		sntStrean.pushPosition();
+		if(this.expressao.isExpressao() && cmdAssignmetAux2()){
+			sntStrean.popPosition();
+			return true;
+		}
+		if(cmdAssignmet()){
+			sntStrean.popPosition();
+			return true;
+		}
+		sntStrean.popPositionToToken();
+		return false;
+	}
+	//CMD_ATRIBUICAO_c
+	//    , CMD_ATRIBUICAO
+	//    ø
+	private boolean cmdAssignmetAux2() {
+		Token cToken = sntStrean.getCurrentToken();
+		if(cToken==null )return false;
+		
+		if( cToken.getType()== TypeToken.TK_COMMA){
+			sntStrean.pushPosition();
+			if(sntStrean.nextToken() &&  cmdAssignmet()){
+				sntStrean.popPosition();
+				return true;
+			}
+		}
+		if( cToken.getType()== TypeToken.TK_SEMICOLON){
+			sntStrean.nextToken();
+			return true;
+		}
+		return false;
+	}
+
 
 }

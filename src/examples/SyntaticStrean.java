@@ -51,6 +51,9 @@ public class SyntaticStrean {
 		this.stakPosition.pop();		
 	}
 
+	public void setCurrentToken(Token currentToken) {
+		this.currentToken = currentToken;
+	}
 	public void popPositionToToken(){
 		currentPosition = this.stakPosition.pop();	
 		currentToken = entrada.get(currentPosition);

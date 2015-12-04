@@ -223,7 +223,7 @@ public class LexiconAnalyzer {
 				case ')': t=  TypeToken.TK_CLOSEPARENTHESIS;break;
 				case ';': t=  TypeToken.TK_SEMICOLON;break;
 				case '%': t=  TypeToken.TK_MOD;break;
-				case ',': t=  TypeToken.TK_VIRG;break;
+				case ',': t=  TypeToken.TK_COMMA;break;
 				default: throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
 			}
 			token.setType(t);
