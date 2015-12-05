@@ -2,7 +2,7 @@ package excptions;
 
 import java.util.ArrayList;
 
-import examples.Token;
+import module.Token;
 
 public class InvalidCharacterExcption extends Exception {
 	private int linha;

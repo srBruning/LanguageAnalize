@@ -1,7 +1,9 @@
-package examples;
+package module.syntactic;
 
 import java.util.ArrayList;
 import java.util.Stack;
+
+import module.Token;
 
 public class SyntaticStrean {
 	private ArrayList<Token> entrada;

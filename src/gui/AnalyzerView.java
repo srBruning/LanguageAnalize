@@ -29,7 +29,7 @@ import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
 import controller.AnalyzerControllerInterface;
-import examples.Token;
+import module.Token;
 
 public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	/**

@@ -5,7 +5,7 @@ import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import examples.Token;
+import module.Token;
 
 public interface AnalyzerControllerInterface {
 	public void lexicalAnalyzerFile(File file) throws FileNotFoundException ;

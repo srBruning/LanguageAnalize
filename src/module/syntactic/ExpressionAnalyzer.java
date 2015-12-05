@@ -1,24 +1,23 @@
-package examples;
+package module.syntactic;
 
-import examples.Token.TypeToken;
+import module.Token.TypeToken;
 
-public class AnalizadorExpressao {
+public class ExpressionAnalyzer {
 	private SyntaticStrean sntStrean;
-
-	public SyntaticStrean getStrean() {
-		return sntStrean;
-	}
-
-	public void setStrean(SyntaticStrean strean) {
+//
+//	public void setStrean(SyntaticStrean strean) {
+//		this.sntStrean = strean;
+//	}
+//
+	private ExpressionAnalyzer(SyntaticStrean strean){
 		this.sntStrean = strean;
 	}
 
-	public AnalizadorExpressao(SyntaticStrean strean){
-		this.sntStrean = strean;
+	public static boolean isExpressao(SyntaticStrean strean){
+		return new ExpressionAnalyzer(strean).expressao();
 	}
 
-
-	public boolean isExpressao()	{
+	public boolean expressao()	{
 		sntStrean.pushPosition();
 		if (expressao2() && expressao_b()){
 			sntStrean.popPosition();
@@ -177,7 +176,7 @@ public class AnalizadorExpressao {
 			return true;
 		case TK_OPENPARENTHESIS:
 			sntStrean.pushPosition();
-			if (sntStrean.nextToken() && isExpressao()){
+			if (sntStrean.nextToken() && expressao()){
 				if (sntStrean.getCurrentToken()!=null && sntStrean.getCurrentToken().getType() == TypeToken.TK_CLOSEPARENTHESIS){
 					sntStrean.nextToken();
 					sntStrean.popPosition();

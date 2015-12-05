@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import controller.AnalyzerControllerInterface;
-import examples.Token;
-import examples.Token.TypeToken;
+import module.Token;
+import module.Token.TypeToken;
 
 public interface AnalyzerViewInterface  {
 	public void setController(AnalyzerControllerInterface controller);

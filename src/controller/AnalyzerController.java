@@ -10,12 +10,12 @@ import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import examples.LexiconAnalyzer;
-import examples.SyntaticAnalyzer;
-import examples.Token;
-import examples.Token.TypeToken;
 import excptions.InvalidCharacterExcption;
 import gui.AnalyzerViewInterface;
+import module.Token;
+import module.Token.TypeToken;
+import module.lexical.LexiconAnalyzer;
+import module.syntactic.SyntacticAnalyzer;
 import gui.AnalyzerView;
 
 public class AnalyzerController implements AnalyzerControllerInterface {
@@ -73,7 +73,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 
 	@Override
 	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
-		SyntaticAnalyzer sa = new SyntaticAnalyzer();
+		SyntacticAnalyzer sa = new SyntacticAnalyzer();
 		this.view.onResultSyntatic(sa.analyzer(entrada, tableids2), -1, -1);
 	}
 

@@ -12,9 +12,9 @@ import java.util.HashMap;
 import org.junit.Before;
 import org.junit.Test;
 
-import examples.LexiconAnalyzer;
-import examples.Token;
-import examples.Token.TypeToken;
+import module.Token;
+import module.Token.TypeToken;
+import module.lexical.LexiconAnalyzer;
 
 public class AnalizadorLexicoTest {
 	LexiconAnalyzer numReal;

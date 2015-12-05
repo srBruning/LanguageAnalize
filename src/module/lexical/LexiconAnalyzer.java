@@ -1,12 +1,13 @@
-package examples;
+package module.lexical;
 
 import java.io.IOException;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import examples.Token.TypeToken;
 import excptions.InvalidCharacterExcption;
+import module.Token;
+import module.Token.TypeToken;
 
 public class LexiconAnalyzer {
 
@@ -71,14 +72,14 @@ public class LexiconAnalyzer {
 				if(atual== '|') {
 					token.setType(TypeToken.TK_OR);
 					estado=RECONHECEU_SEM_TRANSICAO;					
-				}else throw new InvalidCharacterExcption(tks, token.linha, col, '|');
+				}else throw new InvalidCharacterExcption(tks, token.getLinha(), col, '|');
 
 				break;				
 			case 26: 
 				if(atual== '&') {
 					token.setType(TypeToken.TK_AND);
 					estado=RECONHECEU_SEM_TRANSICAO;					
-				}else throw new InvalidCharacterExcption(tks, token.linha, col, '&');
+				}else throw new InvalidCharacterExcption(tks, token.getLinha(), col, '&');
 
 				break;
 			case 31:
@@ -128,7 +129,7 @@ public class LexiconAnalyzer {
 					token.setType(TypeToken.NONE);
 					estado=36;
 				}else if( Character.isLetterOrDigit(atual))	estado=32;
-				else throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
+				else throw new InvalidCharacterExcption(tks, token.getLinha(), col, "letter or digit.");
 			}
 			if(estado==RECONHECEU_SEM_TRANSICAO || estado == RECONHECEU_COM_TRANSICAO){
 				if(estado== RECONHECEU_COM_TRANSICAO){
@@ -155,7 +156,7 @@ public class LexiconAnalyzer {
 	
 	private void idreservado(){		
 		
-		switch(token.value){
+		switch(token.getValue()){
 			case "break": token.setType(TypeToken.BREAK); break;
 			case "case": token.setType(TypeToken.CASE); break;
 			case "char": 
@@ -222,9 +223,10 @@ public class LexiconAnalyzer {
 				case '(': t=  TypeToken.TK_OPENPARENTHESIS;break;
 				case ')': t=  TypeToken.TK_CLOSEPARENTHESIS;break;
 				case ';': t=  TypeToken.TK_SEMICOLON;break;
+				case ':': t=  TypeToken.TK_COLON;break;
 				case '%': t=  TypeToken.TK_MOD;break;
 				case ',': t=  TypeToken.TK_COMMA;break;
-				default: throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
+				default: throw new InvalidCharacterExcption(tks, token.getLinha(), col, "letter or digit.");
 			}
 			token.setType(t);
 		}
@@ -256,7 +258,7 @@ public class LexiconAnalyzer {
 			token.concatValue((char) atual);
 			return 2;
 		}
-		throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
+		throw new InvalidCharacterExcption(tks, token.getLinha(), col, "letter or digit.");
 	}
 	
 	private int estado2() {
@@ -291,7 +293,7 @@ public class LexiconAnalyzer {
 			token.concatValue((char) atual);
 			return 5;
 		}
-		throw new InvalidCharacterExcption(tks, token.linha, col, "letter or digit.");
+		throw new InvalidCharacterExcption(tks, token.getLinha(), col, "letter or digit.");
 	}
 	
 	private int estado5() {

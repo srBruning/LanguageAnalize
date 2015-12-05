@@ -5,7 +5,7 @@ import java.util.ArrayList;
 
 import javax.swing.table.AbstractTableModel;
 
-import examples.Token;
+import module.Token;
 
 public class MyTableModel extends AbstractTableModel {
 
