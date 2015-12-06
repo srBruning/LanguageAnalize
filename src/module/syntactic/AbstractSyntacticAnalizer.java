@@ -6,7 +6,16 @@ import module.Token.TypeToken;
 public abstract class AbstractSyntacticAnalizer {
 
 	protected SyntaticStrean sntStrean;
-	
+
+	protected void pushError(String item){
+		if(currentToken()!=null)
+			item = item+", linha:"+currentToken().getLinha()+", coluna: "+currentToken().getPosIni();
+		sntStrean.getErrors().push(item);
+	}
+
+	protected void popError(){
+		sntStrean.getErrors().pop();
+	}
 	protected Token currentToken(){
 		return sntStrean.getCurrentToken();
 	}
@@ -21,7 +30,7 @@ public abstract class AbstractSyntacticAnalizer {
 		}
 		return false;
 	}
-	
+
 	protected boolean type(){
 		switch (currentToken().getType()) {
 		case  INT:
@@ -33,5 +42,5 @@ public abstract class AbstractSyntacticAnalizer {
 
 		return false;
 	}
-	
+
 }

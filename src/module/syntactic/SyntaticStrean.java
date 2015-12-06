@@ -9,14 +9,23 @@ public class SyntaticStrean {
 	private ArrayList<Token> entrada;
 	private int currentPosition;
 	Stack<Integer> stakPosition= new Stack<>();
+	Stack<String> errors= new Stack<>();
 	Token currentToken;
 	private String erro;
+
 
 	public String getErro() {
 		return erro;
 	}
 	public void setErro(String erro) {
 		this.erro = erro;
+
+	public Stack<String> getErrors() {
+		return errors;
+	}
+	public void setErrors(Stack<String> errors) {
+		this.errors = errors;
+
 	}
 	public ArrayList<Token> getEntrada() {
 		return entrada;
