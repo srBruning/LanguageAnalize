@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Stack;
 
 import excptions.InvalidCharacterExcption;
 import gui.AnalyzerViewInterface;
@@ -74,7 +76,12 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	@Override
 	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
-		this.view.onResultSyntatic(sa.analyzer(entrada, tableids2), -1, -1,sa.getErro());
+		Stack<String> result = sa.analyzer(entrada, tableids2);
+		this.view.onResultSyntatic(result.size()==0, -1, -1,sa.getErro());
+		Iterator<String> it = result.iterator();
+		while(it.hasNext()){
+			this.view.onResultSyntatic(result.size()==0, -1, -1,it.next());			
+		}
 	}
 
 }

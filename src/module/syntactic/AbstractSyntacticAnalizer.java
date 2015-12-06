@@ -38,6 +38,7 @@ public abstract class AbstractSyntacticAnalizer {
 			sntStrean.nextToken();
 			return true;
 		}
+		pushError("esperava  "+type);
 		return false;
 	}
 
