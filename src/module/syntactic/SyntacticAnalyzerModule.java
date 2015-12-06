@@ -14,17 +14,24 @@ public class SyntacticAnalyzerModule extends AbstractSyntacticAnalizer{
 		this.sntStrean = new SyntaticStrean(entrada);
 		//		this.expressao = new ExpressionAnalyzer(sntStrean);
 		if(!sntStrean.nextToken()) return false;
-		if(!start() || sntStrean.hasNextToken()){
-			return false;
-		}
-		return true;
+	
+		return  start()   ;
 	}
 
 private boolean start(){
-	if(currentToken()==null)return true;
-	if(FunctionAnalyzer.isFunction(sntStrean) || CommandAnalyzer.isVariablesDeclarationscommand(sntStrean)){
-		return start();
+	if(currentToken()==null)return false;
+	if( FunctionAnalyzer.isFunction(sntStrean) && start2()){
+		return true;
 	}
+	if( CommandAnalyzer.isVariablesDeclarationscommand(sntStrean) && start()){
+		return true;
+	}
+	return false;
+}
+
+private boolean start2() {
+	if(currentToken()==null)return true;
+	if(start()){return true;}
 	return true;
 }
 
