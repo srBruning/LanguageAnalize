@@ -17,11 +17,11 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean listFunction(){
 		if(currentToken()==null)return true;
-		int p = getPositionErrors();
+		
 		sntStrean.pushPosition();
 		if(isFunction() && listFunction()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -30,13 +30,13 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean isFunction(){
 		sntStrean.pushPosition();
-		int p = getPositionErrors();
+		
 		if(typeFunction()&& equalsAndHasNext(TypeToken.TK_ID) && 
 				equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS) &&
 				declarationParamsFunction() && equalsAndHasNext(TypeToken.TK_CLOSEPARENTHESIS) &&
 				headerFunction()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -46,23 +46,22 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 	private boolean declarationParamsFunction() {
 		sntStrean.pushPosition();
 
-		int p = getPositionErrors();
+		
 		if(type() && equalsAndHasNext(TypeToken.TK_ID) && listDeclarationParamsFunction()){
 			sntStrean.popPosition();
 		}else sntStrean.popPositionToToken();
 
-		setPositionErrors(p);
+		
 		return true;
 	}
 
 	private boolean listDeclarationParamsFunction() {
 		sntStrean.pushPosition();
-		int p= getPositionErrors();
 		if(equalsAndHasNext(TypeToken.TK_COMMA) && declarationParamsFunction() && listDeclarationParamsFunction()){
 			sntStrean.popPosition();
 			
 		}else sntStrean.popPositionToToken();
-		setPositionErrors(p);
+		
 		return true;
 	}
 
@@ -80,9 +79,9 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 		return false;
 	}
 	private boolean typeFunction(){
-		int p = getPositionErrors();
+		
 		if(equalsAndHasNext(TypeToken.VOID)) return true;
-		setPositionErrors(p);
+		
 		return type();
 	}
 

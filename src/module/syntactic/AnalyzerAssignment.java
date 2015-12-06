@@ -31,7 +31,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 			this.sntStrean.nextToken();
 			return true;
 		}		
-		pushError("experava um tokem tipo");
+		setError("experava um tokem tipo");
 		return false;
 	}
 
@@ -41,7 +41,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 	private boolean cmdAssignmet(){
 		sntStrean.pushPosition();
 		if(!equalsAndHasNext(TypeToken.TK_ID)){
-			pushError("eperava um identificador");
+			setError("eperava um identificador");
 			sntStrean.popPosition();
 			return false;
 		}
@@ -82,22 +82,22 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 	//    ø
 	private boolean cmdAssignmetAux2() {
 		Token cToken = currentToken();
-		int pr = getPositionErrors();
+		
 		if(cToken!=null ){
 			sntStrean.pushPosition();
 			if( equalsAndHasNext(TypeToken.TK_COMMA) &&  cmdAssignmet()){
 				sntStrean.popPosition();
-				setPositionErrors(pr);
+				
 				return true;
 			}
 			if( equalsAndHasNext(TypeToken.TK_SEMICOLON)){
 				sntStrean.popPosition();
-				setPositionErrors(pr);
+				
 				return true;
 			}
 			sntStrean.popPositionToToken();
 		}
-		pushError("esperava uma virgula ou um ponto e virgula");
+		setError("esperava uma virgula ou um ponto e virgula");
 		return false;
 	}
 
