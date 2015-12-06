@@ -26,7 +26,11 @@ public abstract class AbstractSyntacticAnalizer {
 		return sntStrean.getCurrentToken();
 	}
 	protected boolean equalsAndHasNext(TypeToken type){
-		return (currentToken()!= null  && currentToken().getType() == type  && sntStrean.nextToken() );
+		if(currentToken()!= null  && currentToken().getType() == type  && sntStrean.nextToken()  ){
+			return true;
+		};
+		pushError("esperava  "+type);
+		return false;
 	}
 
 	protected boolean toNextIfEquals(TypeToken type){
