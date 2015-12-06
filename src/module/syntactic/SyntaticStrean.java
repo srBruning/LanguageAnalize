@@ -10,7 +10,14 @@ public class SyntaticStrean {
 	private int currentPosition;
 	Stack<Integer> stakPosition= new Stack<>();
 	Token currentToken;
+	private String erro;
 
+	public String getErro() {
+		return erro;
+	}
+	public void setErro(String erro) {
+		this.erro = erro;
+	}
 	public ArrayList<Token> getEntrada() {
 		return entrada;
 	}
