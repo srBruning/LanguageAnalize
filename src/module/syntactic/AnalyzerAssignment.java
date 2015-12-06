@@ -3,8 +3,7 @@ package module.syntactic;
 import module.Token;
 import module.Token.TypeToken;
 
-public class AnalyzerAssignment {
-	private SyntaticStrean sntStrean;
+public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 
 	private AnalyzerAssignment(SyntaticStrean strean){
 		this.sntStrean = strean;
@@ -32,6 +31,7 @@ public class AnalyzerAssignment {
 			this.sntStrean.nextToken();
 			return true;
 		}		
+		pushError("experava um tokem tipo");
 		return false;
 	}
 	
@@ -39,10 +39,12 @@ public class AnalyzerAssignment {
 	//CMD_ATRIBUICAO ->
 	//    TK_ID = CMD_ATRIBUICAO_b
 	private boolean cmdAssignmet(){
-		if(sntStrean.getCurrentToken()==null || 
-				sntStrean.getCurrentToken().getType()!=TypeToken.TK_ID)return false;
 		sntStrean.pushPosition();
-		sntStrean.nextToken();
+		if(!equalsAndHasNext(TypeToken.TK_ID)){
+			pushError("eperava um identificador");
+			sntStrean.popPosition();
+			return false;
+		}
 		if(! assignmentOperator()){
 			sntStrean.popPosition();
 			return false;
