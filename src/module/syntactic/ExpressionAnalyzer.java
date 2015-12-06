@@ -2,13 +2,7 @@ package module.syntactic;
 
 import module.Token.TypeToken;
 
-public class ExpressionAnalyzer {
-	private SyntaticStrean sntStrean;
-//
-//	public void setStrean(SyntaticStrean strean) {
-//		this.sntStrean = strean;
-//	}
-//
+public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 	private ExpressionAnalyzer(SyntaticStrean strean){
 		this.sntStrean = strean;
 	}
@@ -17,9 +11,24 @@ public class ExpressionAnalyzer {
 		return new ExpressionAnalyzer(strean).expressao();
 	}
 
-	public boolean expressao()	{
+	private boolean expressao()	{
 		sntStrean.pushPosition();
-		if (expressao2() && expressao_b()){
+		if(equalsAndHasNext(TypeToken.TK_ID) && 
+				AnalyzerAssignment.isAssignmetOperator(sntStrean) && expressao()	){
+			sntStrean.popPosition();
+			return true;
+		}
+		sntStrean.peekPosition();
+		if(expressao1()){
+			sntStrean.popPosition();
+			return true;
+		}
+		sntStrean.popPositionToToken();
+		return false;
+	}
+	private boolean expressao1()	{
+		sntStrean.pushPosition();
+		if (expressao2() && expressao1_b()){
 			sntStrean.popPosition();
 			return true;
 		}
@@ -27,13 +36,13 @@ public class ExpressionAnalyzer {
 		return false;
 	}
 
-	private boolean expressao_b(){
+	private boolean expressao1_b(){
 		if(sntStrean.getCurrentToken()==null)return true;//dedrivou vazil
 		switch (sntStrean.getCurrentToken().getType()) {
 		case TK_AND:
 		case TK_OR:
 			sntStrean.pushPosition();
-			if ( sntStrean.nextToken() && expressao2() &&  expressao_b()){
+			if ( sntStrean.nextToken() && expressao2() &&  expressao1_b()){
 				sntStrean.popPosition();
 				return true;
 			}
@@ -167,7 +176,7 @@ public class ExpressionAnalyzer {
 	}     
 
 	@SuppressWarnings("incomplete-switch")
-	public boolean isBaseExpressao()	{
+	private boolean isBaseExpressao()	{
 
 		switch ( sntStrean.getCurrentToken().getType() ) {
 		case CONST_NUM:

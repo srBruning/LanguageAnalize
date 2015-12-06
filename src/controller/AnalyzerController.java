@@ -15,7 +15,7 @@ import gui.AnalyzerViewInterface;
 import module.Token;
 import module.Token.TypeToken;
 import module.lexical.LexiconAnalyzer;
-import module.syntactic.SyntacticAnalyzer;
+import module.syntactic.SyntacticAnalyzerModule;
 import gui.AnalyzerView;
 
 public class AnalyzerController implements AnalyzerControllerInterface {
@@ -73,7 +73,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 
 	@Override
 	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
-		SyntacticAnalyzer sa = new SyntacticAnalyzer();
+		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
 		this.view.onResultSyntatic(sa.analyzer(entrada, tableids2), -1, -1);
 	}
 

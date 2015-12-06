@@ -9,6 +9,15 @@ public class AnalyzerAssignment {
 	private AnalyzerAssignment(SyntaticStrean strean){
 		this.sntStrean = strean;
 	}
+	
+	public static boolean isAssignmet(SyntaticStrean strean){
+		return new AnalyzerAssignment(strean).cmdAssignmet();
+	}
+	
+	public static boolean isAssignmetOperator(SyntaticStrean strean){
+		return new AnalyzerAssignment(strean).assignmentOperator();
+	}
+
 	//OPERADOR_ATRIB
 	//	TK_ASSINGMENT | TK_ADDASSIGNMENT | TK_SUBASSIGNMENT | TK_DIVASSIGNMENT | TK_MULTPASSIGNMENT | TK_MODASSIGNMENT
 	private boolean assignmentOperator(){
@@ -26,9 +35,6 @@ public class AnalyzerAssignment {
 		return false;
 	}
 	
-	public static boolean isAssignmet(SyntaticStrean strean){
-		return new AnalyzerAssignment(strean).cmdAssignmet();
-	}
 	
 	//CMD_ATRIBUICAO ->
 	//    TK_ID = CMD_ATRIBUICAO_b
