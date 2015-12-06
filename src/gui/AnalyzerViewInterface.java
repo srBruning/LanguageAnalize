@@ -14,5 +14,5 @@ public interface AnalyzerViewInterface  {
 
 	public void onResultLexicon(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids);
 	
-	public void onResultSyntatic(boolean valide, int line, int col);	
+	public void onResultSyntatic(boolean valide, int line, int col, String erro);	
 }

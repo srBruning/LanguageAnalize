@@ -237,6 +237,8 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 					sntStrean.popPosition();
 					setPositionErrors(p);
 					return true;
+				}else{
+					sntStrean.setErro("esperava fecha parentesis proximo a posição"+sntStrean.getCurrentPosition());
 				}
 			}
 			sntStrean.popPositionToToken();

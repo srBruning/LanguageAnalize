@@ -264,9 +264,9 @@ public class AnalyzerView extends JFrame implements AnalyzerViewInterface {
 	}
 
 	@Override
-	public void onResultSyntatic(boolean valide, int line, int col) {
+	public void onResultSyntatic(boolean valide, int line, int col, String erro) {
 		System.out.println("___________"+valide);
-		writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido"));
+		writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido: "+erro));
 				
 	}
 
