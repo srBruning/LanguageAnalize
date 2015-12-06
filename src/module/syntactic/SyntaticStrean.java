@@ -19,6 +19,7 @@ public class SyntaticStrean {
 	}
 	public void setErro(String erro) {
 		this.erro = erro;
+	}
 
 	public Stack<String> getErrors() {
 		return errors;

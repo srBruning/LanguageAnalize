@@ -17,6 +17,10 @@ public class SyntacticAnalyzerModule extends AbstractSyntacticAnalizer{
 	
 		return  start()   ;
 	}
+	
+	public String getErro(){
+		return this.sntStrean.getErro();		
+	}
 
 private boolean start(){
 	if(currentToken()==null)return false;
