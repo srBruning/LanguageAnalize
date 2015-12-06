@@ -18,6 +18,7 @@ import module.Token;
 import module.Token.TypeToken;
 import module.lexical.LexiconAnalyzer;
 import module.syntactic.SyntacticAnalyzerModule;
+import module.syntactic.SyntaticStrean;
 import gui.AnalyzerView;
 
 public class AnalyzerController implements AnalyzerControllerInterface {
@@ -76,12 +77,9 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	@Override
 	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
-		Stack<String> result = sa.analyzer(entrada, tableids2);
-		this.view.onResultSyntatic(result.size()==0, -1, -1,sa.getErro());
-		Iterator<String> it = result.iterator();
-		while(it.hasNext()){
-			this.view.onResultSyntatic(result.size()==0, -1, -1,it.next());			
-		}
+		 boolean result = sa.analyzer(new SyntaticStrean(entrada));
+		this.view.onResultSyntatic(result, -1, -1,sa.getErro());
+		
 	}
 
 }

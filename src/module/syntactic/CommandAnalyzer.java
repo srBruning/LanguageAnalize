@@ -174,16 +174,15 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 	}		
 	private boolean expressao_for(){
 		if(sntStrean.getCurrentToken()==null)return true;//accepts empty
-		int p = getPositionErrors();
+		
 		ExpressionAnalyzer.isExpressao(sntStrean);
-		setPositionErrors(p);
+		
 		return true;		
 	}
 
 
 	private boolean cmdWhile(){
 		if(sntStrean.getCurrentToken()== null) return false;
-		int p =getPositionErrors(); 
 		sntStrean.pushPosition();
 
 		if ( equalsAndHasNext( TypeToken.WHILE)  ){
@@ -198,7 +197,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 			}
 
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 
 		}
@@ -210,7 +209,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 						equalsAndHasNext(TypeToken.TK_CLOSEPARENTHESIS) && 
 						toNextIfEquals(TypeToken.TK_SEMICOLON) ){
 					sntStrean.popPosition();
-					setPositionErrors(p);
+					
 					return true;
 				}
 			}
@@ -222,17 +221,17 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean cmdWhile_B(){
 		sntStrean.pushPosition();
-		int p = getPositionErrors();
+		
 		if (equalsAndHasNext(TypeToken.TK_OPEN_BRAKET) && isListCommands() && 
 				toNextIfEquals( TypeToken.TK_CLOSE_BRAKET)  ){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}  
 		sntStrean.peekPosition();
 		if (iscommand()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -241,7 +240,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean cmdSwitch(){
 		if(currentToken()== null) return false;
-		int p = getPositionErrors();
+		
 		sntStrean.pushPosition();
 		if ( equalsAndHasNext(TypeToken.SWITCH) && 
 				equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS))
@@ -251,7 +250,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 				sntStrean.nextToken();
 				if(cmdSwitch_B()){
 					sntStrean.popPosition();
-					setPositionErrors(p);
+					
 					return true;
 				}
 			}
@@ -261,22 +260,22 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean cmdSwitch_B(){
 		if(currentToken() == null)return false;
-		int p = getPositionErrors();
+		
 		if(toNextIfEquals( TypeToken.TK_SEMICOLON)){
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.pushPosition();
 		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET )&& cmdSwitch_c() &&
 				toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}  
 		sntStrean.peekPosition();
 		if(cmdCase() || switchDefault()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -285,11 +284,11 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean cmdSwitch_c(){
 		if(currentToken() == null)return false;
-		int p = getPositionErrors();
+		
 		sntStrean.pushPosition();
 		if(switchDefault() 
 				|| (cmdCase() && listCmdCase())  ){
-			setPositionErrors(p);
+			
 			sntStrean.popPosition();
 			return true;
 		}
@@ -299,7 +298,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean listCmdCase(){	
 		sntStrean.pushPosition();
-		int p = getPositionErrors();
+		
 		if(cmdCase() && listCmdCase() ){
 			sntStrean.popPosition();
 			return true;
@@ -307,22 +306,22 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 		sntStrean.peekPosition();
 		if(switchDefault()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.popPositionToToken();
-		setPositionErrors(p);
+		
 		return true;
 	}
 
 	private boolean switchDefault() {
 		//default : SWITCH_Comandos
 		sntStrean.pushPosition();
-		int p = getPositionErrors();
+		
 		if(equalsAndHasNext(TypeToken.DEFAULT) && equalsAndHasNext(TypeToken.TK_COLON)
 				&& SwitchComands()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -331,12 +330,12 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 	private boolean cmdCase(){		
 		if(currentToken()== null) return false;
-		int p = getPositionErrors();
+		
 		sntStrean.pushPosition();
 		if(equalsAndHasNext(TypeToken.CASE) && ExpressionAnalyzer.isExpressao(sntStrean)&& 
 				equalsAndHasNext(TypeToken.TK_COLON) && SwitchComands()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 
@@ -345,11 +344,11 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 	}
 	private boolean SwitchComands(){
 		if(currentToken()==null)return false;
-		int p = getPositionErrors();
+		
 		sntStrean.pushPosition();
 		if (equalsAndHasNext(TypeToken.TK_OPEN_BRAKET)){
 			if(isListCommands() && equalsAndHasNext(TypeToken.TK_CLOSE_BRAKET)){
-				setPositionErrors(p);
+				
 				return true;
 			}
 			sntStrean.popPosition();
@@ -357,7 +356,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 		}
 		if (iscommand() ){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		} 
 		sntStrean.popPositionToToken();
@@ -366,19 +365,19 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 
 	private boolean cmdIfB(){
-		int p = getPositionErrors();
+		
 		if(currentToken()==null)return false;
 		sntStrean.pushPosition();
 		if (iscommand() && cmdElse()){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.peekPosition();
 		if (toNextIfEquals( TypeToken.TK_SEMICOLON)){
 			if(cmdElse() ){
 				sntStrean.popPosition();
-				setPositionErrors(p);
+				
 				return true;
 			}
 		}
@@ -387,7 +386,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 				toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)){
 			if ( cmdElse() ){
 				sntStrean.popPosition();
-				setPositionErrors(p);
+				
 				return true;
 			}
 		}  
@@ -397,30 +396,30 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 
 	private boolean cmdElse(){
-		int p = getPositionErrors();
+		
 		if(currentToken()==null) return true;// empyt
 		sntStrean.pushPosition();
 		if ( equalsAndHasNext(TypeToken.ELSE) && corpoElse()){
-			setPositionErrors(p);
+			
 			return true;
 		}
 		sntStrean.popPositionToToken();
-		setPositionErrors(p);
+		
 		return true;
 	}
 	private boolean corpoElse(){
 		if (iscommand())return true;
-		int p = getPositionErrors();
+		
 		sntStrean.pushPosition();
 		if (equalsAndHasNext(TypeToken.TK_SEMICOLON)){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}       
 		if (equalsAndHasNext( TypeToken.TK_OPEN_BRAKET) && 
 				isListCommands() && equalsAndHasNext(TypeToken.TK_CLOSE_BRAKET)){
 			sntStrean.popPosition();
-			setPositionErrors(p);
+			
 			return true;
 		}   
 		sntStrean.popPositionToToken();
@@ -431,14 +430,14 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 	private boolean cmdIf(){
 		if(currentToken()== null) return false;
 		sntStrean.pushPosition();
-		int p = getPositionErrors();
+		
 		if ( equalsAndHasNext(TypeToken.IF)){
 			if (equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS)){
 				if( ExpressionAnalyzer.isExpressao(sntStrean) && 
 						equalsAndHasNext(TypeToken.TK_CLOSEPARENTHESIS)){
 					if(cmdIfB()){
 						sntStrean.popPosition();
-						setPositionErrors(p);
+						
 						return true;
 					}
 				}

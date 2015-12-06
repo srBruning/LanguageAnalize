@@ -7,21 +7,13 @@ public abstract class AbstractSyntacticAnalizer {
 
 	protected SyntaticStrean sntStrean;
 
-	protected void pushError(String item){
+	protected void setError(String item){
 		if(currentToken()!=null)
 			item = item+", linha:"+currentToken().getLinha()+", coluna: "+currentToken().getPosIni();
-		sntStrean.getErrors().push(item);
+		sntStrean.setErro(item);
 	}
 
-	protected void popError(){
-		sntStrean.getErrors().pop();
-	}
-	protected int getPositionErrors(){
-		return sntStrean.getErrors().size();
-	}
-	protected void setPositionErrors(int p){
-		sntStrean.getErrors().setSize(p);
-	}
+
 	protected Token currentToken(){
 		return sntStrean.getCurrentToken();
 	}
@@ -29,7 +21,7 @@ public abstract class AbstractSyntacticAnalizer {
 		if(currentToken()!= null  && currentToken().getType() == type  && sntStrean.nextToken()  ){
 			return true;
 		};
-		pushError("esperava  "+type);
+		setError("esperava  "+type);
 		return false;
 	}
 
@@ -38,7 +30,7 @@ public abstract class AbstractSyntacticAnalizer {
 			sntStrean.nextToken();
 			return true;
 		}
-		pushError("esperava  "+type);
+		setError("esperava  "+type);
 		return false;
 	}
 
