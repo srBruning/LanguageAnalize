@@ -162,6 +162,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	@SuppressWarnings("incomplete-switch")
 	private boolean expressao5_b(){
+		
 		int p= getPositionErrors();
 		if(sntStrean.getCurrentToken()==null)return true;
 		switch (sntStrean.getCurrentToken().getType()){
@@ -238,7 +239,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 					setPositionErrors(p);
 					return true;
 				}else{
-					sntStrean.setErro("esperava fecha parentesis proximo a posição"+sntStrean.getCurrentPosition());
+					sntStrean.setErro("esperava fecha parentesis proximo a posiï¿½ï¿½o"+sntStrean.getCurrentPosition());
 				}
 			}
 			sntStrean.popPositionToToken();
