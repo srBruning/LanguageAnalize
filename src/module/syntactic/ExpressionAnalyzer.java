@@ -180,7 +180,20 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 		switch ( sntStrean.getCurrentToken().getType() ) {
 		case CONST_NUM:
+			sntStrean.nextToken();
+			return true;			
 		case TK_ID:
+			sntStrean.pushPosition();
+			if (sntStrean.nextToken() && sntStrean.getCurrentToken().getType() == TypeToken.TK_OPENPARENTHESIS){
+				if (sntStrean.nextToken() && expressao() || sntStrean.getCurrentToken()!=null && sntStrean.getCurrentToken().getType() == TypeToken.TK_CLOSEPARENTHESIS){
+					if (sntStrean.getCurrentToken()!=null && sntStrean.getCurrentToken().getType() == TypeToken.TK_CLOSEPARENTHESIS){
+						sntStrean.nextToken();
+						sntStrean.popPosition();
+						return true;
+					}
+				}			
+			}	
+			sntStrean.popPositionToToken();
 			sntStrean.nextToken();
 			return true;
 		case TK_OPENPARENTHESIS:
@@ -193,7 +206,6 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 				}
 			}
 			sntStrean.popPositionToToken();
-
 		}
 
 		return false;
