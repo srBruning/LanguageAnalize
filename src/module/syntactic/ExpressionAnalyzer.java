@@ -13,23 +13,29 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	private boolean expressao()	{
 		sntStrean.pushPosition();
+		int p = getPositionErrors();
 		if(equalsAndHasNext(TypeToken.TK_ID) && 
 				AnalyzerAssignment.isAssignmetOperator(sntStrean) && expressao()	){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;
 		}
 		sntStrean.peekPosition();
 		if(expressao1()){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;
 		}
+		
 		sntStrean.popPositionToToken();
 		return false;
 	}
 	private boolean expressao1()	{
 		sntStrean.pushPosition();
+		int p = getPositionErrors();
 		if (expressao2() && expressao1_b()){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -37,6 +43,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 	}
 
 	private boolean expressao1_b(){
+		int p = getPositionErrors();
 		if(sntStrean.getCurrentToken()==null)return true;//dedrivou vazil
 		switch (sntStrean.getCurrentToken().getType()) {
 		case TK_AND:
@@ -44,6 +51,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 			sntStrean.pushPosition();
 			if ( sntStrean.nextToken() && expressao2() &&  expressao1_b()){
 				sntStrean.popPosition();
+				setPositionErrors(p);
 				return true;
 			}
 			sntStrean.popPositionToToken();
@@ -53,8 +61,10 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	private boolean expressao2()	{
 		sntStrean.pushPosition();
+		int p = getPositionErrors();
 		if (expressao3() && expressao2_b()){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -63,6 +73,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	@SuppressWarnings("incomplete-switch")
 	private boolean expressao2_b(){
+		int p = getPositionErrors();
 		if(sntStrean.getCurrentToken() == null)return true;
 		switch (sntStrean.getCurrentToken().getType()) {
 		case TK_EQUALS:
@@ -70,6 +81,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 			sntStrean.pushPosition();
 			if (sntStrean.nextToken() && expressao3() &&  expressao2_b()){
 				sntStrean.popPosition();
+				setPositionErrors(p);
 				return true;				
 			}
 			sntStrean.popPositionToToken();
@@ -79,8 +91,10 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	private boolean expressao3(){
 		sntStrean.pushPosition();
+		int p = getPositionErrors();
 		if (expressao4() && expressao3_b()){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;
 		}
 
@@ -90,6 +104,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	private boolean expressao3_b(){
 		if(sntStrean.getCurrentToken()==null)return true;
+		int p = getPositionErrors();
 		switch (sntStrean.getCurrentToken().getType()){
 		case TK_BIGGEREQUAL:
 		case TK_LESSEQUAL:
@@ -98,6 +113,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 			sntStrean.pushPosition();
 			if(sntStrean.nextToken() && expressao4() && expressao3_b()){
 				sntStrean.popPosition();
+				setPositionErrors(p);
 				return true;
 			}
 			sntStrean.popPositionToToken();
@@ -107,8 +123,10 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	private boolean expressao4(){
 		sntStrean.pushPosition();
+		int p = getPositionErrors();
 		if (expressao5() && expressao4_b()){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;			
 		}
 		sntStrean.popPositionToToken();
@@ -132,8 +150,10 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	private boolean expressao5(){
 		sntStrean.pushPosition();
+		int p = getPositionErrors();
 		if (expressao6() && expressao5_b()){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;
 		}
 		sntStrean.popPositionToToken();
@@ -142,6 +162,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	@SuppressWarnings("incomplete-switch")
 	private boolean expressao5_b(){
+		int p= getPositionErrors();
 		if(sntStrean.getCurrentToken()==null)return true;
 		switch (sntStrean.getCurrentToken().getType()){
 		case TK_MULTP:
@@ -150,9 +171,11 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 			sntStrean.pushPosition();
 			if (sntStrean.nextToken() && expressao6() && expressao5_b() ){
 				sntStrean.popPosition();
+				setPositionErrors(p);
 				return true;
 			}
 			sntStrean.popPositionToToken();
+			pushError("esperava uma expreção apos operador");
 			return false;
 		}
 		return true;
@@ -160,6 +183,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 
 	@SuppressWarnings("incomplete-switch")
 	private boolean expressao6(){
+		int p = getPositionErrors();
 		switch (sntStrean.getCurrentToken().getType()) {
 		case TK_PLUS: 
 		case TK_SUB: 
@@ -167,17 +191,24 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 			sntStrean.pushPosition();
 			if( sntStrean.nextToken() && expressao6()){
 				sntStrean.popPosition();
+				setPositionErrors(p);
 				return true;
 			}
 			sntStrean.popPositionToToken();
+			pushError("esperava um expressao apos operador binario");
 			return false;
 		}
-		return isBaseExpressao();
+		if(isBaseExpressao()){
+			setPositionErrors(p);
+			return true;
+		}
+		pushError("esperava um operador binario");
+		return false;
 	}     
 
 	@SuppressWarnings("incomplete-switch")
 	private boolean isBaseExpressao()	{
-
+		int p = getPositionErrors();
 		switch ( sntStrean.getCurrentToken().getType() ) {
 		case CONST_NUM:
 			sntStrean.nextToken();
@@ -189,12 +220,14 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 					if (sntStrean.getCurrentToken()!=null && sntStrean.getCurrentToken().getType() == TypeToken.TK_CLOSEPARENTHESIS){
 						sntStrean.nextToken();
 						sntStrean.popPosition();
+						setPositionErrors(p);
 						return true;
 					}
 				}			
 			}	
 			sntStrean.popPositionToToken();
 			sntStrean.nextToken();
+			setPositionErrors(p);
 			return true;
 		case TK_OPENPARENTHESIS:
 			sntStrean.pushPosition();
@@ -202,12 +235,13 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 				if (sntStrean.getCurrentToken()!=null && sntStrean.getCurrentToken().getType() == TypeToken.TK_CLOSEPARENTHESIS){
 					sntStrean.nextToken();
 					sntStrean.popPosition();
+					setPositionErrors(p);
 					return true;
 				}
 			}
 			sntStrean.popPositionToToken();
 		}
-
+		pushError("esperava uma constante ou um identificador");
 		return false;
 	}
 

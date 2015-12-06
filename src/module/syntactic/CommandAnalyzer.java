@@ -4,7 +4,7 @@ import javafx.scene.SnapshotParameters;
 import module.Token.TypeToken;
 
 public class CommandAnalyzer extends AbstractSyntacticAnalizer {
-	
+
 	private CommandAnalyzer(SyntaticStrean strean ){
 		sntStrean = strean;
 	}
@@ -52,7 +52,7 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 		if(variablesDeclarations_d()){
 			sntStrean.popPosition();
 			return true;
-			
+
 		}
 		sntStrean.popPositionToToken();
 		return false;
@@ -66,12 +66,12 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 				variablesDeclarations_b()){
 			sntStrean.popPosition();
 			return true;
-			
+
 		}
 		sntStrean.popPositionToToken();
 		return false;
 	}
-	
+
 	private boolean isListCommands() {
 		sntStrean.pushPosition();
 		if(currentToken()==null ||
@@ -382,21 +382,21 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 
 		if(currentToken()==null) return true;// empyt
 		sntStrean.pushPosition();
-		if ( currentToken().getType() == TypeToken.ELSE && sntStrean.nextToken() && corpoElse()) return true;
+		if ( equalsAndHasNext(TypeToken.ELSE) && corpoElse()) return true;
 		sntStrean.popPositionToToken();
 		return true;
 	}
 	private boolean corpoElse(){
-		sntStrean.pushPosition();
 		if (iscommand())return true;
-		sntStrean.peekPosition();
-		if (currentToken().getType() == TypeToken.TK_SEMICOLON){
-			sntStrean.nextToken();
+		int p = getPositionErrors();
+		sntStrean.pushPosition();
+		if (equalsAndHasNext(TypeToken.TK_SEMICOLON)){
 			sntStrean.popPosition();
+			setPositionErrors(p);
 			return true;
 		}        
-		if (currentToken().getType() == TypeToken.TK_OPEN_BRAKET && sntStrean.nextToken()&& isListCommands() && currentToken().getType() == TypeToken.TK_CLOSE_BRAKET){
-			sntStrean.nextToken();
+		if (currentToken().getType() == TypeToken.TK_OPEN_BRAKET && sntStrean.nextToken()&& 
+				isListCommands() && equalsAndHasNext(TypeToken.TK_CLOSE_BRAKET)){
 			sntStrean.popPosition();
 			return true;
 		}  
@@ -408,16 +408,20 @@ public class CommandAnalyzer extends AbstractSyntacticAnalizer {
 	private boolean cmdIf(){
 		if(currentToken()== null) return false;
 		sntStrean.pushPosition();
-		if ( currentToken().getType() == TypeToken.IF)
-			if (sntStrean.nextToken() && 
-					currentToken().getType() == TypeToken.TK_OPENPARENTHESIS)
-				if(sntStrean.nextToken() && ExpressionAnalyzer.isExpressao(sntStrean) && currentToken()!=null && currentToken().getType() == TypeToken.TK_CLOSEPARENTHESIS){
-					sntStrean.nextToken();
+		int p = getPositionErrors();
+		if ( equalsAndHasNext(TypeToken.IF)){
+			if (equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS)){
+				if( ExpressionAnalyzer.isExpressao(sntStrean) && 
+						equalsAndHasNext(TypeToken.TK_CLOSEPARENTHESIS)){
 					if(cmdIfB()){
 						sntStrean.popPosition();
+						setPositionErrors(p);
 						return true;
 					}
-				}
+				}else pushError("esperava um ')' ");
+			}else pushError("esperava um '(' apos o if ");
+
+		}
 		sntStrean.popPositionToToken();
 		return false;
 	}

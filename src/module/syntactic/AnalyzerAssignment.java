@@ -8,11 +8,11 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 	private AnalyzerAssignment(SyntaticStrean strean){
 		this.sntStrean = strean;
 	}
-	
+
 	public static boolean isAssignmet(SyntaticStrean strean){
 		return new AnalyzerAssignment(strean).cmdAssignmet();
 	}
-	
+
 	public static boolean isAssignmetOperator(SyntaticStrean strean){
 		return new AnalyzerAssignment(strean).assignmentOperator();
 	}
@@ -34,8 +34,8 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 		pushError("experava um tokem tipo");
 		return false;
 	}
-	
-	
+
+
 	//CMD_ATRIBUICAO ->
 	//    TK_ID = CMD_ATRIBUICAO_b
 	private boolean cmdAssignmet(){
@@ -76,26 +76,29 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 		sntStrean.popPositionToToken();
 		return false;
 	}
-	
+
 	//CMD_ATRIBUICAO_c
 	//    , CMD_ATRIBUICAO
 	//    ø
 	private boolean cmdAssignmetAux2() {
-		Token cToken = sntStrean.getCurrentToken();
-		if(cToken==null )return false;
-		
-		if( cToken.getType()== TypeToken.TK_COMMA){
+		Token cToken = currentToken();
+		int pr = getPositionErrors();
+		if(cToken!=null ){
 			sntStrean.pushPosition();
-			if(sntStrean.nextToken() &&  cmdAssignmet()){
+			if( equalsAndHasNext(TypeToken.TK_COMMA) &&  cmdAssignmet()){
 				sntStrean.popPosition();
+				setPositionErrors(pr);
 				return true;
 			}
+			if( equalsAndHasNext(TypeToken.TK_SEMICOLON)){
+				sntStrean.popPosition();
+				setPositionErrors(pr);
+				return true;
+			}
+			sntStrean.popPositionToToken();
 		}
-		if( cToken.getType()== TypeToken.TK_SEMICOLON){
-			sntStrean.nextToken();
-			return true;
-		}
+		pushError("esperava uma virgula ou um ponto e virgula");
 		return false;
 	}
-	
+
 }

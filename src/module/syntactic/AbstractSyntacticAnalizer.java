@@ -16,6 +16,12 @@ public abstract class AbstractSyntacticAnalizer {
 	protected void popError(){
 		sntStrean.getErrors().pop();
 	}
+	protected int getPositionErrors(){
+		return sntStrean.getErrors().size();
+	}
+	protected void setPositionErrors(int p){
+		sntStrean.getErrors().setSize(p);
+	}
 	protected Token currentToken(){
 		return sntStrean.getCurrentToken();
 	}
