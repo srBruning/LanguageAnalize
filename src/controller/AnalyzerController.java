@@ -77,8 +77,9 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	@Override
 	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
-		 boolean result = sa.analyzer(new SyntaticStrean(entrada));
-		this.view.onResultSyntatic(result, -1, -1,sa.getErro());
+		 SyntaticStrean strean=new SyntaticStrean(entrada);
+		boolean result = sa.analyzer(strean);
+		this.view.onResultSyntatic(result, -1, -1,strean.getErro());
 		
 	}
 
