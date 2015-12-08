@@ -42,11 +42,11 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 		sntStrean.pushPosition();
 		if(!equalsAndHasNext(TypeToken.TK_ID)){
 			setError("eperava um identificador");
-			sntStrean.popPosition();
+			sntStrean.popPositionToToken();
 			return false;
 		}
 		if(! assignmentOperator()){
-			sntStrean.popPosition();
+			sntStrean.popPositionToToken();
 			return false;
 		}
 		if(!cmdAssignmetAux()){
@@ -91,6 +91,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 				return true;
 			}
 			if( equalsAndHasNext(TypeToken.TK_SEMICOLON)){
+				
 				sntStrean.popPosition();
 				
 				return true;

@@ -214,17 +214,15 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 			return true;			
 		case TK_ID:
 			sntStrean.pushPosition();
-			if (sntStrean.nextToken() && equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS) && expressao() &&
-					equalsAndHasNext(TypeToken.TK_CLOSEPARENTHESIS)){
-						sntStrean.popPosition();
-						
-						return true;
-					
-							
-			}	
-			sntStrean.popPositionToToken();
 			sntStrean.nextToken();
-			
+			if (equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS)){
+					if(functionParams() ){
+						sntStrean.popPosition();
+						return true;		
+					}
+					sntStrean.popPositionToToken();
+					return false;
+			}
 			return true;
 		case TK_OPENPARENTHESIS:
 			sntStrean.pushPosition();
@@ -244,5 +242,26 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 		return false;
 	}
 
+	private boolean functionParams(){
+		if(currentToken()==null)return false;
+		sntStrean.pushPosition();
+		if(ExpressionAnalyzer.isExpressao(sntStrean)){
+			sntStrean.popPosition();
+			if(equalsAndHasNext(TypeToken.TK_COMMA)) return functionParams();
+			
+		}
+		sntStrean.popPosition();
+		return functionParams2();
+	}
+
+	private boolean functionParams2() {
+		if(currentToken()==null)return false;
+		if(currentToken().getType()==TypeToken.TK_CLOSEPARENTHESIS){
+			sntStrean.nextToken();
+			return true;
+		}
+		
+		return false;
+	}
 
 }

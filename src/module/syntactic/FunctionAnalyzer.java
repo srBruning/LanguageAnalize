@@ -70,7 +70,8 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 			return true;
 		}
 		sntStrean.pushPosition();
-		if(equalsAndHasNext(TypeToken.TK_OPEN_BRAKET) && CommandAnalyzer.isListCommands(sntStrean) &&
+		if(equalsAndHasNext(TypeToken.TK_OPEN_BRAKET) && 
+				CommandAnalyzer.isListCommands(sntStrean) &&
 				toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)){
 			sntStrean.popPosition();
 			return true;

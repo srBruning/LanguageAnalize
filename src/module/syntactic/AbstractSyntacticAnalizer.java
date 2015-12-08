@@ -22,6 +22,7 @@ public abstract class AbstractSyntacticAnalizer {
 			return true;
 		};
 		setError("esperava  "+type);
+	
 		return false;
 	}
 

@@ -41,6 +41,11 @@ public class SyntacticAnalyzerTest {
 	}
 
 	@Test
+	public void chamadfaFuncaoTest() throws Exception {
+		assertTrue(	syntactic.analyzer(newfunctionInputSyntactic("funcao(a);"))  );
+		
+	}
+	@Test
 	public void variablesDeclaretionsTest() throws Exception {
 		assertTrue(	syntactic.analyzer(newfunctionInputSyntactic("int a;"))  );
 		assertTrue(	syntactic.analyzer(newfunctionInputSyntactic("int a=0;"))  );	
