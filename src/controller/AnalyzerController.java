@@ -16,15 +16,15 @@ import excptions.InvalidCharacterExcption;
 import gui.AnalyzerViewInterface;
 import module.Token;
 import module.Token.TypeToken;
-import module.lexical.LexiconAnalyzer;
+import module.lexical.AnalisadorLexico;
 import module.syntactic.SyntacticAnalyzerModule;
 import module.syntactic.SyntaticStrean;
 import gui.AnalyzerView;
 
 public class AnalyzerController implements AnalyzerControllerInterface {
-	LexiconAnalyzer numReal = new LexiconAnalyzer();
+	AnalisadorLexico numReal = new AnalisadorLexico();
 	private AnalyzerViewInterface view;
-	LexiconAnalyzer mLexiconAnalyzer;
+	AnalisadorLexico mAnalisadorLexico;
 	private PushbackInputStream entrada;
 	private ArrayList<Token> saida;
 	private HashMap<String, ArrayList<Token>> tableids;
@@ -32,7 +32,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	public AnalyzerController(AnalyzerViewInterface frame) {
 		this.view = frame;
 		view.setController(this);
-		this.mLexiconAnalyzer = new LexiconAnalyzer();
+		this.mAnalisadorLexico = new AnalisadorLexico();
 	}
 
 	public static void main(String[] args) {
@@ -58,12 +58,12 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	}
 
 	@Override
-	public void lexicalAnalyzerFile(File file) throws FileNotFoundException {
+	public void analiseLexicaArquivo(File file) throws FileNotFoundException {
 		InputStream stream = new FileInputStream(file);
 		this.entrada = new PushbackInputStream(stream);
 		try {
 			this.tableids =  new HashMap<String, ArrayList<Token>>();
-			this.saida = this.mLexiconAnalyzer.lexan(this.entrada, 0, this.tableids);
+			this.saida = this.mAnalisadorLexico.analisar(this.entrada, 0, this.tableids);
 			this.view.onResultLexicon(this.saida, this.tableids );
 			System.out.println(saida.size());
 		} catch (IOException   e) {
@@ -75,7 +75,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	}
 
 	@Override
-	public void syntacticAnalyzer(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
+	public void analiseSintatica(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
 		 boolean result = sa.analyzer(new SyntaticStrean(entrada));
 		this.view.onResultSyntatic(result, -1, -1,sa.getErro());

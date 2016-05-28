@@ -8,6 +8,6 @@ import java.util.HashMap;
 import module.Token;
 
 public interface AnalyzerControllerInterface {
-	public void lexicalAnalyzerFile(File file) throws FileNotFoundException ;
-	public void syntacticAnalyzer(ArrayList<Token> saida2, HashMap<String, ArrayList<Token>> tableids2);
+	public void analiseLexicaArquivo(File file) throws FileNotFoundException ;
+	public void analiseSintatica(ArrayList<Token> saida2, HashMap<String, ArrayList<Token>> tableids2);
 }

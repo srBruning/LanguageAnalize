@@ -14,13 +14,13 @@ import org.junit.Test;
 
 import module.Token;
 import module.Token.TypeToken;
-import module.lexical.LexiconAnalyzer;
+import module.lexical.AnalisadorLexico;
 
 public class AnalizadorLexicoTest {
-	LexiconAnalyzer numReal;
+	AnalisadorLexico numReal;
 	@Before
 	public void initialize(){
-		numReal = new LexiconAnalyzer();
+		numReal = new AnalisadorLexico();
 	}
 	
 	@Test
@@ -43,7 +43,7 @@ public class AnalizadorLexicoTest {
 	@Test
 	public void lexanTest2() throws Exception {
 		PushbackInputStream pbInput = newStrean("//comentario = ! - + 122 fimcomentario\n\t !{100/2+53}!= /*comentario 123 */< > >= <= = ==");
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.TK_NEG);
 		assertEquals(tks.get(1).getType(), TypeToken.TK_OPEN_BRAKET);
 		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
@@ -65,7 +65,7 @@ public class AnalizadorLexicoTest {
 	public void lexanTest3() throws Exception {
 		PushbackInputStream pbInput = newStrean(
 			"my_var = true && false || oi\nmai_var2+=6");
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
 		assertEquals(tks.get(1).getType(), TypeToken.TK_ASSINGMENT);
 		assertEquals(tks.get(2).getType(), TypeToken.TK_ID);
@@ -82,7 +82,7 @@ public class AnalizadorLexicoTest {
 	public void pusAtribTest() throws Exception {
 		PushbackInputStream pbInput = newStrean(
 			"my_var+=1");
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
 		assertEquals(tks.get(1).getType(), TypeToken.TK_ADDASSIGNMENT);
 		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
@@ -92,7 +92,7 @@ public class AnalizadorLexicoTest {
 	public void subAtribTest() throws Exception {
 		PushbackInputStream pbInput = newStrean(
 			"my_var-=1");
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
 		assertEquals(tks.get(1).getType(), TypeToken.TK_SUBASSIGNMENT);
 		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
@@ -102,7 +102,7 @@ public class AnalizadorLexicoTest {
 	public void multAtribTest() throws Exception {
 		PushbackInputStream pbInput = newStrean(
 			"my_var*=1");
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
 		assertEquals(tks.get(1).getType(), TypeToken.TK_MULTPASSIGNMENT);
 		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
@@ -111,7 +111,7 @@ public class AnalizadorLexicoTest {
 	public void divAtribTest() throws Exception {
 		PushbackInputStream pbInput = newStrean(
 			"my_var/=1");
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.TK_ID);
 		assertEquals(tks.get(1).getType(), TypeToken.TK_DIVASSIGNMENT);
 		assertEquals(tks.get(2).getType(), TypeToken.CONST_NUM);
@@ -121,14 +121,14 @@ public class AnalizadorLexicoTest {
 	public void palavresReservadasTest() throws Exception {
 		PushbackInputStream pbInput = newStrean(
 			"int char");
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.get(0).getType(), TypeToken.INT);
 		assertEquals(tks.get(1).getType(), TypeToken.CHAR);
 	}
 
 	private void lexanReconheceNumReal(String input, Token[] reconhecidos) throws Exception {
 		PushbackInputStream pbInput = newStrean(input);
-		ArrayList<Token> tks = numReal.lexan(pbInput, 0, new HashMap<>());
+		ArrayList<Token> tks = numReal.analisar(pbInput, 0, new HashMap<>());
 		assertEquals(tks.size(), reconhecidos.length);	
 		for(int i =0; i<reconhecidos.length; i++){
 			Token a = tks.get(i);

@@ -13,16 +13,16 @@ import org.junit.Before;
 import org.junit.Test;
 
 import module.Token;
-import module.lexical.LexiconAnalyzer;
+import module.lexical.AnalisadorLexico;
 import module.syntactic.SyntacticAnalyzerModule;
 import module.syntactic.SyntaticStrean;
 
 public class SyntacticAnalyzerTest {
-	LexiconAnalyzer lexico;
+	AnalisadorLexico lexico;
 	SyntacticAnalyzerModule syntactic;
 	@Before
 	public void initialize(){
-		lexico = new LexiconAnalyzer();
+		lexico = new AnalisadorLexico();
 		syntactic = new SyntacticAnalyzerModule();
 	}
 
@@ -139,7 +139,7 @@ public class SyntacticAnalyzerTest {
 	private SyntaticStrean  newInputSyntactic(String input) throws Exception {
 		InputStream stream = new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8));
 		PushbackInputStream pbInput =  new PushbackInputStream(stream);
-		return  new SyntaticStrean(lexico.lexan(pbInput, 0, new HashMap<>())); 
+		return  new SyntaticStrean(lexico.analisar(pbInput, 0, new HashMap<>())); 
 	}
 	
 	private SyntaticStrean  newfunctionInputSyntactic(String input) throws Exception {

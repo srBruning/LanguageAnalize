@@ -9,15 +9,16 @@ import excptions.InvalidCharacterExcption;
 import module.Token;
 import module.Token.TypeToken;
 
-public class LexiconAnalyzer {
+public class AnalisadorLexico {
 
 	Token token;
 	int atual, anterior, col;
 	final int RECONHECEU_SEM_TRANSICAO =-1;
 	final int RECONHECEU_COM_TRANSICAO =-2;
 	private ArrayList<Token> tks;
-	public ArrayList<Token> lexan(PushbackInputStream strean, int currentPosition, HashMap<String, ArrayList<Token>> tableIds) 
-			throws IOException, InvalidCharacterExcption {
+	
+	public ArrayList<Token> analisar(PushbackInputStream strean, int currentPosition, 
+			HashMap<String, ArrayList<Token>> tableIds) throws IOException, InvalidCharacterExcption {
 		tks = new ArrayList<>();
 
 		token = new Token();
