@@ -79,7 +79,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 			toNextToken();
 			PlaceCod d3 = new PlaceCod(d2);
 			
-			if (declaracao2(d3)){
+			if (declaracao3(d3)){
 				d2.cod = d3.cod;
 				d2.tipo = d3.tipo;
 				d2.place = d3.place;
@@ -88,6 +88,31 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 			addErro("Esperava uma declaração");
 			
 		}
+		return false;
+	}
+
+	private boolean declaracao3(PlaceCod d3) {
+		
+		PlaceCod e = new PlaceCod();
+		if (ExpressionAnalyzer.isExpressao(getSntStrean(), e)){
+			if (d3.tipo.equals(e.tipo)){
+				addErro("Esta tentando colocar um "+e.tipo+ "em um "+d3.tipo);
+				return false;
+			}
+			PlaceCod d4 = new PlaceCod();
+			d4.tipo = d3.tipo;
+			//  Declaracao3.cod + E.cod + gen(‘=’,Declaracao3.place,E.place);}
+			d4.addCods(d3.cod, e.cod, gen("=", d3.place, e.place));
+			
+			if (declaracao4(d4)){
+				
+			}
+		}
+		return false;
+	}
+
+	private boolean declaracao4(PlaceCod d4) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 }
