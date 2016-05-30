@@ -4,7 +4,7 @@ import module.Token.TypeToken;
 
 public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 	private FunctionAnalyzer(SyntaticStrean strean){
-		this.sntStrean = strean;
+		this.setSntStrean(strean);
 	}
 
 	public static boolean isListFunctions(SyntaticStrean strean){
@@ -18,65 +18,65 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 	private boolean listFunction(){
 		if(currentToken()==null)return true;
 		
-		sntStrean.pushPosition();
+		getSntStrean().pushPosition();
 		if(isFunction() && listFunction()){
-			sntStrean.popPosition();
+			getSntStrean().popPosition();
 			
 			return true;
 		}
-		sntStrean.popPositionToToken();
+		getSntStrean().popPositionToToken();
 		return true;
 	}
 
 	private boolean isFunction(){
-		sntStrean.pushPosition();
+		getSntStrean().pushPosition();
 		
 		if(typeFunction()&& equalsAndHasNext(TypeToken.TK_ID) && 
 				equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS) &&
 				declarationParamsFunction() && equalsAndHasNext(TypeToken.TK_CLOSEPARENTHESIS) &&
 				headerFunction()){
-			sntStrean.popPosition();
+			getSntStrean().popPosition();
 			
 			return true;
 		}
-		sntStrean.popPositionToToken();
+		getSntStrean().popPositionToToken();
 		return false;
 	}
 
 	private boolean declarationParamsFunction() {
-		sntStrean.pushPosition();
+		getSntStrean().pushPosition();
 
 		
 		if(type() && equalsAndHasNext(TypeToken.TK_ID) && listDeclarationParamsFunction()){
-			sntStrean.popPosition();
-		}else sntStrean.popPositionToToken();
+			getSntStrean().popPosition();
+		}else getSntStrean().popPositionToToken();
 
 		
 		return true;
 	}
 
 	private boolean listDeclarationParamsFunction() {
-		sntStrean.pushPosition();
+		getSntStrean().pushPosition();
 		if(equalsAndHasNext(TypeToken.TK_COMMA) && declarationParamsFunction() && listDeclarationParamsFunction()){
-			sntStrean.popPosition();
+			getSntStrean().popPosition();
 			
-		}else sntStrean.popPositionToToken();
+		}else getSntStrean().popPositionToToken();
 		
 		return true;
 	}
 
 	private boolean headerFunction() {
-		if(CommandAnalyzer.isCommand(sntStrean)){
+		if(CommandAnalyzer.isCommand(getSntStrean())){
 			return true;
 		}
-		sntStrean.pushPosition();
+		getSntStrean().pushPosition();
 		if(equalsAndHasNext(TypeToken.TK_OPEN_BRAKET) && 
-				CommandAnalyzer.isListCommands(sntStrean) &&
+				CommandAnalyzer.isListCommands(getSntStrean()) &&
 				toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)){
-			sntStrean.popPosition();
+			getSntStrean().popPosition();
 			return true;
 		}
-		sntStrean.popPositionToToken();
+		getSntStrean().popPositionToToken();
 		return false;
 	}
 	private boolean typeFunction(){

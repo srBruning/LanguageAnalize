@@ -137,7 +137,6 @@ public class AnalizadorLexicoTest {
 			assertEquals(a.getValue(), b.getValue());			
 			assertEquals(a.getEstado(), b.getEstado());
 			assertEquals(a.getLinha(), b.getLinha());
-			assertEquals(a.getPosFin(), b.getPosFin());
 		}
 	}
 	

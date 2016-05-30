@@ -1,267 +1,169 @@
 package module.syntactic;
 
+import module.PlaceCod;
+import module.Token;
 import module.Token.TypeToken;
 
 public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 	private ExpressionAnalyzer(SyntaticStrean strean){
-		this.sntStrean = strean;
+		setSntStrean(strean);
 	}
 
-	public static boolean isExpressao(SyntaticStrean strean){
-		return new ExpressionAnalyzer(strean).expressao();
+	public static boolean isExpressao(SyntaticStrean strean, PlaceCod ePlaceCod ){
+		return new ExpressionAnalyzer(strean).expressao(ePlaceCod);
 	}
 
-	private boolean expressao()	{
-		sntStrean.pushPosition();
-		
-		if(equalsAndHasNext(TypeToken.TK_ID) && 
-				AnalyzerAssignment.isAssignmetOperator(sntStrean) && expressao()	){
-			sntStrean.popPosition();
-			
-			return true;
-		}
-		sntStrean.peekPosition();
-		if(expressao1()){
-			sntStrean.popPosition();
-			
-			return true;
-		}
-		
-		sntStrean.popPositionToToken();
-		return false;
-	}
-	private boolean expressao1()	{
-		sntStrean.pushPosition();
-		
-		if (expressao2() && expressao1_b()){
-			sntStrean.popPosition();
-			
-			return true;
-		}
-		sntStrean.popPositionToToken();
-		return false;
+	private boolean expressao(PlaceCod ePlaceCod ) {
+		return e1(ePlaceCod);
 	}
 
-	private boolean expressao1_b(){
-		
-		if(sntStrean.getCurrentToken()==null)return true;//dedrivou vazil
-		switch (sntStrean.getCurrentToken().getType()) {
-		case TK_AND:
-		case TK_OR:
-			sntStrean.pushPosition();
-			if ( sntStrean.nextToken() && expressao2() &&  expressao1_b()){
-				sntStrean.popPosition();
-				
-				return true;
-			}
-			sntStrean.popPositionToToken();
-		}
-		return true;//dedrivou vazil
+	private boolean e1(PlaceCod e1PlaceCod ) {
+		return e2(e1PlaceCod);
 	}
 
-	private boolean expressao2()	{
-		sntStrean.pushPosition();
-		
-		if (expressao3() && expressao2_b()){
-			sntStrean.popPosition();
-			
-			return true;
-		}
-		sntStrean.popPositionToToken();
-		return false;
+	private boolean e2(PlaceCod e1PlaceCod) {
+		// TODO Auto-generated method stub
+		return e3(e1PlaceCod);
 	}
 
-	@SuppressWarnings("incomplete-switch")
-	private boolean expressao2_b(){
-		
-		if(sntStrean.getCurrentToken() == null)return true;
-		switch (sntStrean.getCurrentToken().getType()) {
-		case TK_EQUALS:
-		case TK_DIFF:
-			sntStrean.pushPosition();
-			if (sntStrean.nextToken() && expressao3() &&  expressao2_b()){
-				sntStrean.popPosition();
-				
-				return true;				
-			}
-			sntStrean.popPositionToToken();
-		}
-		return true;
-	} 
 
-	private boolean expressao3(){
-		sntStrean.pushPosition();
-		
-		if (expressao4() && expressao3_b()){
-			sntStrean.popPosition();
-			
-			return true;
-		}
-
-		sntStrean.popPositionToToken();
-		return false;
-	}
-
-	private boolean expressao3_b(){
-		if(sntStrean.getCurrentToken()==null)return true;
-		
-		switch (sntStrean.getCurrentToken().getType()){
-		case TK_BIGGEREQUAL:
-		case TK_LESSEQUAL:
-		case TK_LESS:
-		case TK_BIGGER:
-			sntStrean.pushPosition();
-			if(sntStrean.nextToken() && expressao4() && expressao3_b()){
-				sntStrean.popPosition();
-				
-				return true;
-			}
-			sntStrean.popPositionToToken();
-		}
-		return true;
-	}   
-
-	private boolean expressao4(){
-		sntStrean.pushPosition();
-		
-		if (expressao5() && expressao4_b()){
-			sntStrean.popPosition();
-			
-			return true;			
-		}
-		sntStrean.popPositionToToken();
-		return false;
-	}
-
-	private boolean expressao4_b(){
-		if(sntStrean.getCurrentToken()==null)return true;
-		sntStrean.pushPosition();
-		switch (sntStrean.getCurrentToken().getType()) {
-		case TK_PLUS: 
-		case TK_SUB: 
-			if(sntStrean.nextToken() && expressao5() && expressao4_b()){
-				sntStrean.popPosition();
-				return true;			
-			}
-		}
-		sntStrean.popPositionToToken();
-		return true;
-	}   
-
-	private boolean expressao5(){
-		sntStrean.pushPosition();
-		
-		if (expressao6() && expressao5_b()){
-			sntStrean.popPosition();
-			
-			return true;
-		}
-		sntStrean.popPositionToToken();
-		return false;
-	}
-
-	@SuppressWarnings("incomplete-switch")
-	private boolean expressao5_b(){
-		if(sntStrean.getCurrentToken()==null)return true;
-		switch (sntStrean.getCurrentToken().getType()){
-		case TK_MULTP:
-		case TK_DIV:
-		case TK_MOD:
-			sntStrean.pushPosition();
-			if (sntStrean.nextToken() && expressao6() && expressao5_b() ){
-				sntStrean.popPosition();
-				
-				return true;
-			}
-			sntStrean.popPositionToToken();
-			setError("esperava uma expreção apos operador");
-			return false;
-		}
-		return true;
-	} 	
-
-	@SuppressWarnings("incomplete-switch")
-	private boolean expressao6(){
-		
-		switch (sntStrean.getCurrentToken().getType()) {
-		case TK_PLUS: 
-		case TK_SUB: 
-		case TK_NEG: 
-			sntStrean.pushPosition();
-			if( sntStrean.nextToken() && expressao6()){
-				sntStrean.popPosition();
-				
-				return true;
-			}
-			sntStrean.popPositionToToken();
-			setError("esperava um expressao apos operador binario");
-			return false;
-		}
-		if(isBaseExpressao()){
-			
-			return true;
-		}
-		setError("esperava um operador binario");
-		return false;
-	}     
-
-	@SuppressWarnings("incomplete-switch")
-	private boolean isBaseExpressao()	{
-		
-		switch ( sntStrean.getCurrentToken().getType() ) {
-		case CONST_NUM:
-			sntStrean.nextToken();
-			return true;			
-		case TK_ID:
-			sntStrean.pushPosition();
-			sntStrean.nextToken();
-			if (equalsAndHasNext(TypeToken.TK_OPENPARENTHESIS)){
-					if(functionParams() ){
-						sntStrean.popPosition();
-						return true;		
-					}
-					sntStrean.popPositionToToken();
-					return false;
-			}
-			return true;
-		case TK_OPENPARENTHESIS:
-			sntStrean.pushPosition();
-			if (sntStrean.nextToken() && expressao()){
-				if (sntStrean.getCurrentToken()!=null && sntStrean.getCurrentToken().getType() == TypeToken.TK_CLOSEPARENTHESIS){
-					sntStrean.nextToken();
-					sntStrean.popPosition();
-					
+	private boolean u(PlaceCod hPlaceCod, PlaceCod sPlaceCod ) {
+		Token tk = currentToken();
+		if ( toNextIfEquals(TypeToken.TK_PLUS)  ||  toNextIfEquals(TypeToken.TK_SUB) ) {
+			PlaceCod e4PlaceCod = new PlaceCod();
+			if ( e4(e4PlaceCod)){
+				PlaceCod u1hPlaceCod = new PlaceCod();
+				u1hPlaceCod.place = criaTemp();
+				String op = tk.getType() == TypeToken.TK_PLUS ? "+" :"-";
+				u1hPlaceCod.addCods(hPlaceCod.cod, e4PlaceCod.cod,  gen(op, u1hPlaceCod.place, hPlaceCod.place, e4PlaceCod.place));
+				PlaceCod u1sPlaceCod = new PlaceCod();
+				if (u(u1hPlaceCod, u1sPlaceCod)){
+					sPlaceCod.place= u1sPlaceCod.place;
+					sPlaceCod.cod= u1sPlaceCod.cod;
 					return true;
-				}else{
-					sntStrean.setErro("esperava fecha parentesis proximo a posi��o"+sntStrean.getCurrentPosition());
 				}
+
 			}
-			sntStrean.popPositionToToken();
+			addErro("Expressão invalida!");
+			return false;
 		}
-		setError("esperava uma constante ou um identificador");
+		sPlaceCod.place = hPlaceCod.place;
+		sPlaceCod.cod = hPlaceCod.cod;
+		return true;
+	}
+
+
+	private boolean e3(PlaceCod e3PlaceCod) {
+
+		PlaceCod e4PlaceCod = new PlaceCod();
+		if ( e4(e4PlaceCod)){
+			PlaceCod uhPlaceCod = new PlaceCod(e4PlaceCod);
+			PlaceCod usPlaceCod = new PlaceCod();
+
+			if ( u(uhPlaceCod, usPlaceCod)){
+				e3PlaceCod.place = usPlaceCod.place;
+				e3PlaceCod.cod = usPlaceCod.cod;
+				return true;
+			}
+
+		}
+
 		return false;
+
 	}
 
-	private boolean functionParams(){
-		if(currentToken()==null)return false;
-		sntStrean.pushPosition();
-		if(ExpressionAnalyzer.isExpressao(sntStrean)){
-			sntStrean.popPosition();
-			if(equalsAndHasNext(TypeToken.TK_COMMA)) return functionParams();
-			
+	private boolean e4(PlaceCod e4PlaceCod) {
+
+		PlaceCod e5PlaceCod = new PlaceCod();
+		if ( e5(e5PlaceCod)){
+			PlaceCod vhPlaceCod = new PlaceCod(e5PlaceCod);
+			PlaceCod vsPlaceCod = new PlaceCod();
+
+			if ( v(vhPlaceCod, vsPlaceCod)){
+				e4PlaceCod.place = vsPlaceCod.place;
+				e4PlaceCod.cod = vsPlaceCod.cod;
+				return true;
+			}
+
 		}
-		sntStrean.popPosition();
-		return functionParams2();
+
+		return false;
+
 	}
 
-	private boolean functionParams2() {
-		if(currentToken()==null)return false;
-		if(currentToken().getType()==TypeToken.TK_CLOSEPARENTHESIS){
-			sntStrean.nextToken();
+	private boolean v(PlaceCod hPlaceCod, PlaceCod sPlaceCod) {
+		Token tk = currentToken();
+		if ( toNextIfEquals(TypeToken.TK_MULTP)  ||  toNextIfEquals(TypeToken.TK_DIV )
+				||  toNextIfEquals(TypeToken.TK_MOD ) ){
+			PlaceCod e5PlaceCod = new PlaceCod();
+			if ( e5(e5PlaceCod)){
+				PlaceCod v1hPlaceCod = new PlaceCod();
+				v1hPlaceCod.place = criaTemp();
+
+				String op = "*";
+				if ( tk.getType() == TypeToken.TK_DIV )
+					op = "/";
+				else if ( tk.getType() == TypeToken.TK_MOD )
+					op = "%";
+
+				v1hPlaceCod.addCods(e5PlaceCod.cod, hPlaceCod.cod,  gen(op, v1hPlaceCod.place, hPlaceCod.place, e5PlaceCod.place));
+				PlaceCod u1sPlaceCod = new PlaceCod();
+				if (v(v1hPlaceCod, u1sPlaceCod)){
+					sPlaceCod.place= u1sPlaceCod.place;
+					sPlaceCod.cod= u1sPlaceCod.cod;
+					return true;
+				}
+
+			}
+
+			addErro("Expressão invalida!");
+			return false;
+		}
+		sPlaceCod.cod = hPlaceCod.cod;
+		sPlaceCod.place = hPlaceCod.place;
+		return true;
+	}
+
+	private boolean e5(PlaceCod e5PlaceCod) {
+		Token tk = currentToken();
+		PlaceCod e6PlaceCod = new PlaceCod();
+		if ( toNextIfEquals(TypeToken.TK_SUB) || toNextIfEquals(TypeToken.TK_PLUS) 
+				|| toNextIfEquals(TypeToken.TK_NEG) ){
+			if ( e6(e6PlaceCod) ){
+				e5PlaceCod.place = criaTemp();
+				e5PlaceCod.cod = e6PlaceCod.cod+ gen(tk.getValue(), e5PlaceCod.place, e6PlaceCod.place);
+				return true;
+			}
+		}else if ( e6(e6PlaceCod) ){
+			e5PlaceCod.place = e6PlaceCod.place;
+			e5PlaceCod.cod = e6PlaceCod.cod;
 			return true;
 		}
-		
 		return false;
 	}
+
+
+	private boolean e6(PlaceCod e6PlaceCod) {
+		if (currentIsEquals(TypeToken.CONST_NUM)  ){
+			e6PlaceCod.place = criaTemp();
+			e6PlaceCod.cod = gen("=", e6PlaceCod.place, currentToken().getValue());
+			toNextToken();
+			return true;
+		}
+		if (currentIsEquals(TypeToken.TK_ID) ){
+			e6PlaceCod.place = currentToken().getValue();
+			e6PlaceCod.cod = "";
+			toNextToken();
+			return true;
+		}
+		if(toNextIfEquals(TypeToken.TK_OPENPARENTHESIS) ){
+			PlaceCod ePlaceCod = new PlaceCod();
+			if ( expressao(ePlaceCod) && toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS) )
+				return true;
+		}
+		return false;
+	}
+
+
 
 }

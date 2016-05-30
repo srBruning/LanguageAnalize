@@ -1,8 +1,13 @@
 package module.syntactic;
 
+import java.awt.Point;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Stack;
 
+import module.CausaErro;
 import module.Token;
 
 public class SyntaticStrean {
@@ -10,14 +15,15 @@ public class SyntaticStrean {
 	private int currentPosition;
 	Stack<Integer> stakPosition= new Stack<>();
 	Token currentToken;
-	private String erro;
+	private List<CausaErro> erro;
 
-
-	public String getErro() {
+	public List<CausaErro> getErro() {
+		if (erro == null )
+			erro = new ArrayList<>();
 		return erro;
 	}
-	public void setErro(String erro) {
-		this.erro = erro;
+	public void addErro(String msg, int linha, int colIni, int colFim) {
+		getErro().add(new CausaErro(msg, linha, colIni, colFim));
 	}
 
 	public ArrayList<Token> getEntrada() {
@@ -54,6 +60,14 @@ public class SyntaticStrean {
 		return true;
 	}	
 
+	public Token getLastToken(){
+		return entrada.get(entrada.size()-1);
+	}
+	
+	public Token getPreviwToken(){
+		return entrada.get(currentPosition >0 ? currentPosition-1 : currentPosition);
+	}
+	
 	public void pushPosition(){
 		this.stakPosition.push(currentPosition);		
 	}
@@ -69,4 +83,5 @@ public class SyntaticStrean {
 		currentPosition = this.stakPosition.pop();	
 		currentToken = entrada.get(currentPosition);
 	}
+
 }

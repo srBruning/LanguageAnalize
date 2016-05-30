@@ -1,5 +1,6 @@
 package gui;
 
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
@@ -10,6 +11,8 @@ import java.io.PrintWriter;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.imageio.ImageIO;
 import javax.swing.GroupLayout;
@@ -28,7 +31,10 @@ import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 
+import com.sun.javafx.logging.Logger;
+
 import controller.AnalyzerControllerInterface;
+import module.CausaErro;
 import module.Token;
 
 public class AnalyzerView extends AnalyzerViewLay {
@@ -81,17 +87,10 @@ public class AnalyzerView extends AnalyzerViewLay {
 	@Override
 	public void onResultLexicon(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids) {
 		System.out.println("on result");
-		this.myTableModel.setTokens(saida);
-		this.tabela.setModel(this.myTableModel);
-		this.myTableModel.fireTableDataChanged();
+//		this.myTableModel.setTokens(saida);
+//		this.tabela.setModel(this.myTableModel);
+//		this.myTableModel.fireTableDataChanged();
 		this.controller.analiseSintatica(saida, tableids);
-	}
-
-	@Override
-	public void onResultSyntatic(boolean valide, int line, int col, String erro) {
-		System.out.println("___________"+valide);
-		writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido: "+erro));
-
 	}
 
 	@Override
@@ -107,6 +106,19 @@ public class AnalyzerView extends AnalyzerViewLay {
 					JOptionPane.ERROR_MESSAGE);
 		}
 	
+		
+	}
+
+	@Override
+	public void onResultSyntatic(boolean valide, String codigoIntermediario,  List<CausaErro> erros) {
+		System.out.println("___________"+valide);
+		writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido: "));
+		if ( erros!=null)
+		for ( CausaErro c : erros){
+			writh_out(c.getFormatedMessage());
+		}
+		
+		editorPaneResult.setText(codigoIntermediario);
 		
 	}
 

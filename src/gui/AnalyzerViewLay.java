@@ -26,22 +26,22 @@ import javax.swing.JTextPane;
 
 import controller.AnalyzerControllerInterface;
 import module.Token;
+import java.awt.List;
 
 public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInterface {
 
 	private JTextField txtNomeArquivo;
 
 	protected JTextPane console;
-	protected JPanel panel;
+//	protected JPanel panel;
 	protected JEditorPane editorPane;
 
 
 	protected File entrada;
-	protected JTable tabela;
 
-	protected MyTableModel myTableModel;
+//	protected MyTableModel myTableModel;
 
-	protected JPanel panel_2;
+	protected JPanel panelLeft;
 
 	protected JPanel panel_1;
 
@@ -51,9 +51,11 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 
 	protected JButton btnSaveFile;
 
-	protected JPanel panel_3;
+	protected JPanel panelResult;
 
 	protected JPanel panel_4;
+
+	protected JEditorPane editorPaneResult;
 	
 	/**
 	 * Create the frame.
@@ -71,8 +73,8 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		
 
 
-		panel_1.add(panel_2);
-		panel_1.add(panel_3);
+		panel_1.add(panelLeft);
+		panel_1.add(panelResult);
 		panel_1.add(panel_4);
 		getContentPane().setLayout(getGroupLayout());
 		
@@ -81,29 +83,30 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 	}
 	
 	private void creatPanel4() {
-		this.myTableModel = new MyTableModel(new ArrayList<Token>());
-		tabela = new JTable(myTableModel);
+//		this.myTableModel = new MyTableModel(new ArrayList<Token>());
 		panel_4 = new JPanel();
-		panel_4.setBounds(469, 12, 376, 384);
+		panel_4.setBounds(469, 12, 376, 413);
 		panel_4.setLayout(null);
 
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(0, 5, 364, 367);
-		scrollPane_2.setViewportView(tabela);
+		scrollPane_2.setBounds(0, 5, 364, 396);
 		
 		panel_4.add(scrollPane_2);
+		
+		editorPaneResult = new JEditorPane();
+		scrollPane_2.setViewportView(editorPaneResult);
 		
 	}
 
 	private void creatPanel3() {
-		panel_3 = new JPanel();
-		panel_3.setBounds(12, 420, 555, 93);
-		panel_3.setLayout(null);
+		panelResult = new JPanel();
+		panelResult.setBounds(12, 448, 833, 113);
+		panelResult.setLayout(null);
 		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(10, 5, 533, 76);
+		scrollPane_1.setBounds(0, 0, 823, 113);
 		console = new JTextPane();
 		scrollPane_1.setViewportView(console);
-		panel_3.add(scrollPane_1);
+		panelResult.add(scrollPane_1);
 	}
 
 	private void addActions() {
@@ -133,13 +136,13 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 
 	private void createPanel2() {
 
-		panel_2 = new JPanel();
-		panel_2.setBounds(12, 12, 443, 384);
-		panel_2.setLayout(null);
+		panelLeft = new JPanel();
+		panelLeft.setBounds(12, 12, 443, 413);
+		panelLeft.setLayout(null);
 
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 49, 423, 336);
-		panel_2.add(scrollPane);
+		scrollPane.setBounds(10, 49, 423, 364);
+		panelLeft.add(scrollPane);
 
 		editorPane = new JEditorPane();
 		scrollPane.setViewportView(editorPane);
@@ -149,7 +152,7 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		txtNomeArquivo.setEnabled(false);
 		txtNomeArquivo.setEditable(false);
 		txtNomeArquivo.setBounds(53, 12, 106, 19);
-		panel_2.add(txtNomeArquivo);
+		panelLeft.add(txtNomeArquivo);
 		txtNomeArquivo.setText("File name");
 		txtNomeArquivo.setColumns(10);
 
@@ -173,23 +176,23 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		} 
 
 		btnSaveFile.setBounds(171, 12, 31, 25);
-		panel_2.add(btnSaveFile);		
+		panelLeft.add(btnSaveFile);		
 
 		btnInputfile.setBounds(10, 12, 31, 25);
-		panel_2.add(btnInputfile);
+		panelLeft.add(btnInputfile);
 
 		btnAnalizar.setBounds(332, 12, 54, 25);
-		panel_2.add(btnAnalizar);
+		panelLeft.add(btnAnalizar);
 		
 	}
 
 	private GroupLayout getGroupLayout() {
-		panel = new JPanel();
+//		panel = new JPanel();
 		
 		GroupLayout groupLayout = new GroupLayout(getContentPane());
 		groupLayout.setHorizontalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
-				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
+//				.addComponent(panel, GroupLayout.DEFAULT_SIZE, 732, Short.MAX_VALUE)
 				.addGroup(groupLayout.createSequentialGroup()
 						.addGap(12)
 						.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, 771, Short.MAX_VALUE)
@@ -198,7 +201,7 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		groupLayout.setVerticalGroup(
 				groupLayout.createParallelGroup(Alignment.LEADING)
 				.addGroup(groupLayout.createSequentialGroup()
-						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
+//						.addComponent(panel, GroupLayout.PREFERRED_SIZE, 52, GroupLayout.PREFERRED_SIZE)
 						.addGap(18)
 						.addComponent(panel_1, GroupLayout.DEFAULT_SIZE, GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 				);
@@ -235,5 +238,4 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 			}
 		}
 	}
-
 }
