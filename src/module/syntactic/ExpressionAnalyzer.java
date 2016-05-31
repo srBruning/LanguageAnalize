@@ -21,12 +21,46 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 		return e2(e1PlaceCod);
 	}
 
-	private boolean e2(PlaceCod e1PlaceCod) {
-		// TODO Auto-generated method stub
-		return e3(e1PlaceCod);
+	private boolean e2(PlaceCod e2Pc) {
+//		PlaceCod e3Pc = new PlaceCod();
+//		// TODO Auto-generated method stub
+//		if ( e3(e3Pc) ){
+//			PlaceCod t1h = new PlaceCod(e3Pc);
+//			PlaceCod t1s = new PlaceCod();
+//			if( T(t1h, t1s)){
+//				e2Pc.cod = t1s.cod;
+//				e2Pc.tipo = t1s.tipo;
+//				e2Pc.place = t1s.place;
+//				return true;
+//			}
+//		};
+//		 
+//		 return false;
+		return e3(e2Pc);
 	}
 
-
+	private boolean T(PlaceCod th, PlaceCod ts){
+		
+		if ( toNextIfEquals(TypeToken.TK_BIGGEREQUAL)){
+			PlaceCod pcE3 = new PlaceCod();
+			if (e3(pcE3)){
+				PlaceCod t1h = new PlaceCod();
+				t1h.place = criaTemp();
+				// T.hcod + E3.cod + gen(‘&&’,T¹.hplace,T.hplace,E3.place)
+				t1h.addCods(pcE3.cod, gen("&&", t1h.place, pcE3.place));
+				PlaceCod t1s = new PlaceCod();
+				if ( T(t1h, t1s)){
+					ts.place = t1s.place;
+					ts.cod = t1s.cod;
+					ts.tipo = t1s.tipo;
+				}else ts.erro = t1s.erro;
+			}
+			ts.erro = coalesce(pcE3.erro, "Esperava uma expreção");
+			return false;
+		}
+		return true;
+	}
+	
 	protected String selectTipo(PlaceCod h, PlaceCod e4){
 		if ( h.tipo == "INT" && e4.tipo == "INT")					
 			return "INT"; 
