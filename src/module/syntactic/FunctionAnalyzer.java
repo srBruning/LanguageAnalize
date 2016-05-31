@@ -44,14 +44,14 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 	}
 
 	private boolean declarationParamsFunction() {
-		getSntStrean().pushPosition();
-
-		
-		if(type() && equalsAndHasNext(TypeToken.TK_ID) && listDeclarationParamsFunction()){
-			getSntStrean().popPosition();
-		}else getSntStrean().popPositionToToken();
-
-		
+//		getSntStrean().pushPosition();
+//
+//		
+//		if(type() && equalsAndHasNext(TypeToken.TK_ID) && listDeclarationParamsFunction()){
+//			getSntStrean().popPosition();
+//		}else getSntStrean().popPositionToToken();
+//
+//		
 		return true;
 	}
 
@@ -80,10 +80,11 @@ public class FunctionAnalyzer extends AbstractSyntacticAnalizer {
 		return false;
 	}
 	private boolean typeFunction(){
+		return false;
 		
-		if(equalsAndHasNext(TypeToken.VOID)) return true;
-		
-		return type();
+//		if(equalsAndHasNext(TypeToken.VOID)) return true;
+//		
+//		return type();
 	}
 
 }

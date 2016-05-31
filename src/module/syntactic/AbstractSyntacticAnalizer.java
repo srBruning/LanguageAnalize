@@ -7,14 +7,6 @@ import module.Token;
 import module.Token.TypeToken;
 
 public abstract class AbstractSyntacticAnalizer {
-
-	private static HashMap<String, String> simbVaraibles;
-	
-	protected HashMap<String, String> getVariables(){
-		if ( simbVaraibles == null)
-			simbVaraibles = new HashMap<>();
-		return simbVaraibles;
-	}
 	
 	private int seqVar;
 	
@@ -68,19 +60,6 @@ public abstract class AbstractSyntacticAnalizer {
 			return true;
 		}
 		return false;
-	}
-	
-	
-	protected boolean addTabSimbulos(String place, String tipo){
-		if (findSimbolById(place)!=null)
-			return false;
-		
-		getVariables().put(place, tipo);
-		return true;
-	}
-	
-	protected String findSimbolById(String value) {
-		return getVariables().get(value);
 	}
 
 	protected boolean type(PlaceCod tipo){

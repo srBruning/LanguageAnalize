@@ -17,6 +17,8 @@ public class SyntaticStrean {
 	Token currentToken;
 	private List<CausaErro> erro;
 
+	private static HashMap<String, String> simbVaraibles;
+	
 	public List<CausaErro> getErro() {
 		if (erro == null )
 			erro = new ArrayList<>();
@@ -82,6 +84,24 @@ public class SyntaticStrean {
 	public void popPositionToToken(){
 		currentPosition = this.stakPosition.pop();	
 		currentToken = entrada.get(currentPosition);
+	}
+	
+	public HashMap<String, String> getVariables(){
+		if ( simbVaraibles == null)
+			simbVaraibles = new HashMap<>();
+		return simbVaraibles;
+	}
+	
+	protected boolean addTabSimbulos(String place, String tipo){
+		if (findSimbolById(place)!=null)
+			return false;
+		
+		getVariables().put(place, tipo);
+		return true;
+	}
+	
+	protected String findSimbolById(String value) {
+		return getVariables().get(value);
 	}
 
 }

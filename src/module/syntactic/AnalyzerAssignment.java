@@ -79,11 +79,11 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 	private boolean declaracao2(PlaceCod d2) {
 
 		if (currentIsEquals(TypeToken.TK_ID)){
-			if( findSimbolById(currentToken().getValue())!=null ){
+			if( getSntStrean().findSimbolById(currentToken().getValue())!=null ){
 				d2.erro = "Variavel ja existe!";
 				return false;
 			}
-			addTabSimbulos(currentToken().getValue(), d2.tipo);
+			getSntStrean().addTabSimbulos(currentToken().getValue(), d2.tipo);
 			PlaceCod d3 = new PlaceCod(d2);
 			d3.place = currentToken().getValue(); 
 			toNextToken();

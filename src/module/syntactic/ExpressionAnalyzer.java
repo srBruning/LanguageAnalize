@@ -175,7 +175,7 @@ public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
 			return true;
 		}
 		if (currentIsEquals(TypeToken.TK_ID) ){
-			String tipo = findSimbolById(currentToken().getValue());
+			String tipo = getSntStrean().findSimbolById(currentToken().getValue());
 			if ( tipo ==null){
 				addErro("Identificador não declarado");
 				return false;

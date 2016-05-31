@@ -78,7 +78,8 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	public void analiseSintatica(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
 		 String result = sa.analyzer(new SyntaticStrean(entrada));
-		this.view.onResultSyntatic(result!=null,result, sa.getErro());
+		 HashMap<String, String> variables = sa.getVariables();
+		this.view.onResultSyntatic(result!=null,result, sa.getErro(), variables);
 		
 	}
 

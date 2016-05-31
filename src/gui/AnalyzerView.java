@@ -1,37 +1,17 @@
 package gui;
 
-import java.awt.Point;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.PrintWriter;
-import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import javax.imageio.ImageIO;
-import javax.swing.GroupLayout;
-import javax.swing.GroupLayout.Alignment;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JEditorPane;
 import javax.swing.JFileChooser;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.JTextField;
-import javax.swing.JTextPane;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
-
-import com.sun.javafx.logging.Logger;
 
 import controller.AnalyzerControllerInterface;
 import module.CausaErro;
@@ -87,9 +67,9 @@ public class AnalyzerView extends AnalyzerViewLay {
 	@Override
 	public void onResultLexicon(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids) {
 		System.out.println("on result");
-//		this.myTableModel.setTokens(saida);
-//		this.tabela.setModel(this.myTableModel);
-//		this.myTableModel.fireTableDataChanged();
+		//		this.myTableModel.setTokens(saida);
+		//		this.tabela.setModel(this.myTableModel);
+		//		this.myTableModel.fireTableDataChanged();
 		this.controller.analiseSintatica(saida, tableids);
 	}
 
@@ -104,22 +84,26 @@ public class AnalyzerView extends AnalyzerViewLay {
 			e1.printStackTrace();
 			JOptionPane.showMessageDialog(null, e1.toString(), "Error",
 					JOptionPane.ERROR_MESSAGE);
-		}
-	
-		
+		}		
 	}
 
 	@Override
-	public void onResultSyntatic(boolean valide, String codigoIntermediario,  List<CausaErro> erros) {
+	public void onResultSyntatic(boolean valide, String codigoIntermediario, List<CausaErro> erros,
+			HashMap<String, String> variables) {
 		System.out.println("___________"+valide);
 		writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido: "));
 		if ( erros!=null)
-		for ( CausaErro c : erros){
-			writh_out(c.getFormatedMessage());
-		}
-		
+			for ( CausaErro c : erros){
+				writh_out(c.getFormatedMessage());
+			}
+		variablesTableModel.setTokens(variables);
 		editorPaneResult.setText(codigoIntermediario);
-		
 	}
 
 }
+
+
+
+
+
+
