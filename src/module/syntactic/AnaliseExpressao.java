@@ -4,13 +4,13 @@ import module.PlaceCod;
 import module.Token;
 import module.Token.TypeToken;
 
-public class ExpressionAnalyzer extends AbstractSyntacticAnalizer{
-	private ExpressionAnalyzer(SyntaticStrean strean){
+public class AnaliseExpressao extends AbstractAnaliseSintatica{
+	private AnaliseExpressao(SyntaticStrean strean){
 		setSntStrean(strean);
 	}
 
 	public static boolean isExpressao(SyntaticStrean strean, PlaceCod ePlaceCod ){
-		return new ExpressionAnalyzer(strean).expressao(ePlaceCod);
+		return new AnaliseExpressao(strean).expressao(ePlaceCod);
 	}
 
 	private boolean expressao(PlaceCod ePlaceCod ) {

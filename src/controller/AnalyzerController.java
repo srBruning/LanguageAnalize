@@ -79,7 +79,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
 		 String result = sa.analyzer(new SyntaticStrean(entrada));
 		 HashMap<String, String> variables = sa.getVariables();
-		this.view.onResultSyntatic(result!=null,result, sa.getErro(), variables);
+		this.view.onResultSyntatic(sa.getErro()!=null,result, sa.getErro(), variables);
 		
 	}
 

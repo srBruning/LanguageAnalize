@@ -6,7 +6,7 @@ import java.util.List;
 import module.CausaErro;
 import module.PlaceCod;
 
-public class SyntacticAnalyzerModule extends AbstractSyntacticAnalizer{
+public class SyntacticAnalyzerModule extends AbstractAnaliseSintatica{
 
 	public String analyzer(SyntaticStrean sntStrean) {
 		setSntStrean(sntStrean);
@@ -16,7 +16,7 @@ public class SyntacticAnalyzerModule extends AbstractSyntacticAnalizer{
 		}
 		getVariables().clear();		
 		PlaceCod d = new PlaceCod();
-		AnalyzerAssignment.isAssignmet(getSntStrean(), d);
+		AnaliseComando.isListCommands(getSntStrean(), d);
 		
 		return d.cod;
 	}

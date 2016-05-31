@@ -6,7 +6,7 @@ import module.PlaceCod;
 import module.Token;
 import module.Token.TypeToken;
 
-public abstract class AbstractSyntacticAnalizer {
+public abstract class AbstractAnaliseSintatica {
 	
 	private int seqVar;
 	
@@ -63,6 +63,7 @@ public abstract class AbstractSyntacticAnalizer {
 	}
 
 	protected boolean type(PlaceCod tipo){
+		if (currentToken()==null)return false;
 		switch (currentToken().getType()) {
 		case  INT:
 		case DOUBLE:

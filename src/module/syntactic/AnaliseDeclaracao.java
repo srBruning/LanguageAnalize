@@ -1,37 +1,29 @@
 package module.syntactic;
 
-import com.sun.org.apache.xerces.internal.jaxp.validation.ErrorHandlerAdaptor;
-
 import module.PlaceCod;
-import module.Token;
 import module.Token.TypeToken;
-import sun.net.www.content.text.plain;
 
-public class AnalyzerAssignment extends AbstractSyntacticAnalizer{	
-	private static AnalyzerAssignment instance;
+public class AnaliseDeclaracao extends AbstractAnaliseSintatica{	
+	private static AnaliseDeclaracao instance;
 
-	private AnalyzerAssignment(SyntaticStrean strean){
+	private AnaliseDeclaracao(SyntaticStrean strean){
 		setSntStrean(strean);
 	}
 
-	public static AnalyzerAssignment getInstance(SyntaticStrean strean){
+	public static AnaliseDeclaracao getInstance(SyntaticStrean strean){
 		if (instance == null)
-			instance = new AnalyzerAssignment(strean);
+			instance = new AnaliseDeclaracao(strean);
 		else instance.setSntStrean(strean);
 
 		return instance;
 	}
 
-	public static boolean isAssignmet(SyntaticStrean strean, PlaceCod d){
-		AnalyzerAssignment anlAssing = getInstance(strean);
+	public static boolean isDeclaracao(SyntaticStrean strean, PlaceCod d){
+		AnaliseDeclaracao anlAssing = getInstance(strean);
 		boolean r =  anlAssing.declaracao(d);
 		if (d.erro!=null)
 			anlAssing.addErro(d.erro);
 		return r;
-	}
-
-	public static boolean isAssignmetOperator(SyntaticStrean strean){
-		return false;
 	}
 
 	private boolean declaracao(PlaceCod d){
@@ -92,6 +84,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 				if (declaracao4(d4)){
 					d2.cod = d4.cod;
 					if (currentIsEquals(TypeToken.TK_SEMICOLON)){
+						toNextToken();
 						return true;
 					}
 					d2.erro = "Esperava ';'";
@@ -112,7 +105,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 
 		if ( toNextIfEquals(TypeToken.TK_ASSINGMENT)){
 			PlaceCod e = new PlaceCod();
-			if (ExpressionAnalyzer.isExpressao(getSntStrean(), e)){
+			if (AnaliseExpressao.isExpressao(getSntStrean(), e)){
 				if (!d3.tipo.equals(e.tipo)){
 					d3.erro = coalesce(d3.erro, "Esta tentando colocar um "+e.tipo+ "em um "+d3.tipo);
 					return false;
@@ -132,8 +125,9 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 				}
 
 			}
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	private boolean declaracao4(PlaceCod d4) {
