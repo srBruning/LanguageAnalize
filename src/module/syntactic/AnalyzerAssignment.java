@@ -117,13 +117,16 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 
 	private boolean declaracao4(PlaceCod d4) {
 		if (toNextIfEquals(TypeToken.TK_COMMA)){
-			PlaceCod d2 = new PlaceCod();
+			PlaceCod d2 = new PlaceCod(d4);
 			if(declaracao2(d2)){
 				d4.tipo = d2.tipo;
 				d4.cod = d2.cod;
 				return true;
 			}
+			return false;
 		}
+		d4.tipo = d2.tipo;
+		d4.cod = d2.cod;	
 		return true;
 	}
 }

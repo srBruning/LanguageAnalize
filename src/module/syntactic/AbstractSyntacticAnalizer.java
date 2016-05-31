@@ -64,11 +64,11 @@ public abstract class AbstractSyntacticAnalizer {
 	}
 	
 	
-	protected boolean addTabSimbulos(String place){
+	protected boolean addTabSimbulos(String place, String tipo){
 		if (findSimbolById(place)!=null)
 			return false;
 		
-		varaibles.put(place, place);
+		varaibles.put(place, tipo);
 		return true;
 	}
 	
