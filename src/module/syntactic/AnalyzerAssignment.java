@@ -33,7 +33,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 		if (type(pcType)){
 			PlaceCod d2 = new PlaceCod();
 			d2.tipo = pcType.tipo;
-			if( declaracao1(d2)){
+			if( declaracao2(d2)){
 				d.cod = d2.cod;
 				d.place = d2.place;
 				d.tipo = d2.tipo;
@@ -49,25 +49,25 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 		return false;
 	}
 	
-	private boolean  declaracao1(PlaceCod d1) {
-
-		PlaceCod df = new PlaceCod();
-		if (dec_funcao(df )){
-			d1.cod = df.cod;
-			d1.place = df.place;
-			d1.tipo = df.tipo;
-			return true;
-		}
-		
-		if (declaracao2(df )){
-			d1.cod = df.cod;
-			d1.place = df.place;
-			d1.tipo = df.tipo;
-			return true;
-		}
-		
-		return false;
-	}
+//	private boolean  declaracao1(PlaceCod d1) {
+//
+//		PlaceCod df = new PlaceCod();
+//		if (dec_funcao(df )){
+//			d1.cod = df.cod;
+//			d1.place = df.place;
+//			d1.tipo = df.tipo;
+//			return true;
+//		}
+//		
+//		if (declaracao2(df )){
+//			d1.cod = df.cod;
+//			d1.place = df.place;
+//			d1.tipo = df.tipo;
+//			return true;
+//		}
+//		
+//		return false;
+//	}
 
 	private boolean declaracao2(PlaceCod d2) {
 		
@@ -76,7 +76,7 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 				addErro("Variavel ja existe!");
 				return false;
 			}
-			addTabSimbulos(currentToken().getValue());
+			addTabSimbulos(currentToken().getValue(), d2.tipo);
 			toNextToken();
 			PlaceCod d3 = new PlaceCod(d2);
 			
