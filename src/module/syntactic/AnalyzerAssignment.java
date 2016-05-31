@@ -3,6 +3,7 @@ package module.syntactic;
 import module.PlaceCod;
 import module.Token;
 import module.Token.TypeToken;
+import sun.net.www.content.text.plain;
 
 public class AnalyzerAssignment extends AbstractSyntacticAnalizer{	
 	private static AnalyzerAssignment instance;
@@ -109,12 +110,20 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 				d3.place = d4.place;
 				return true;
 			}
+			
 		}
 		return false;
 	}
 
 	private boolean declaracao4(PlaceCod d4) {
-		// TODO aqui
+		if (toNextIfEquals(TypeToken.TK_COMMA)){
+			PlaceCod d2 = new PlaceCod();
+			if(declaracao2(d2)){
+				d4.tipo = d2.tipo;
+				d4.cod = d2.cod;
+				return true;
+			}
+		}
 		return false;
 	}
 }
