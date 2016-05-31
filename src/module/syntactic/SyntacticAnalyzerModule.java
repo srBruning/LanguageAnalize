@@ -17,15 +17,14 @@ public class SyntacticAnalyzerModule extends AbstractSyntacticAnalizer{
 			addErro("esta em branco ");
 			return null;
 		}
-
-		PlaceCod ePlaceCod = new PlaceCod();
-		if (! ExpressionAnalyzer.isExpressao(sntStrean, ePlaceCod) )
-			return null;
-		if (getSntStrean().hasNextToken()){
-			addErro("Esperava tokem de final de comando");
-			return null;
-		}
-		return ePlaceCod.cod;
+		
+		getVariables().clear();
+		
+		PlaceCod d = new PlaceCod();
+		AnalyzerAssignment.isAssignmet(getSntStrean(), d);
+		
+	
+		return d.cod;
 	}
 
 	public List<CausaErro> getErro(){

@@ -8,7 +8,14 @@ import module.Token.TypeToken;
 
 public abstract class AbstractSyntacticAnalizer {
 
-	private static HashMap<String, String> varaibles;
+	private static HashMap<String, String> simbVaraibles;
+	
+	protected HashMap<String, String> getVariables(){
+		if ( simbVaraibles == null)
+			simbVaraibles = new HashMap<>();
+		return simbVaraibles;
+	}
+	
 	private int seqVar;
 	
 	protected String  criaTemp() {
@@ -68,12 +75,12 @@ public abstract class AbstractSyntacticAnalizer {
 		if (findSimbolById(place)!=null)
 			return false;
 		
-		varaibles.put(place, tipo);
+		getVariables().put(place, tipo);
 		return true;
 	}
 	
-	protected Object findSimbolById(String value) {
-		return varaibles.get(value);
+	protected String findSimbolById(String value) {
+		return getVariables().get(value);
 	}
 
 	protected boolean type(PlaceCod tipo){
@@ -96,5 +103,10 @@ public abstract class AbstractSyntacticAnalizer {
 	public void setSntStrean(SyntaticStrean sntStrean) {
 		this.sntStrean = sntStrean;
 	}
-
+	
+	protected <T> T coalesce(T ob, T ob2){
+		if (ob!=null)
+			return ob;
+		return ob2;		
+	}
 }

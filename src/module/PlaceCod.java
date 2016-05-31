@@ -1,7 +1,7 @@
 package module;
 public class PlaceCod{
 
-	public String cod,  place, tipo;
+	public String cod,  place, tipo, erro;
 	
 	public PlaceCod(){	}
 	
@@ -9,13 +9,15 @@ public class PlaceCod{
 		cod = x.cod;
 		place = x.place;
 		tipo = x.tipo;
+		erro = x.erro;
 	}
 	
 	public void addCods(String...cods){
 		if (cods!= null && cods.length>0)
 			cod = "";
 			for( String c : cods){
-				cod += c+"\n";
+				if( c!=null)
+					cod += c+"\n";
 			}
 	}
 }
