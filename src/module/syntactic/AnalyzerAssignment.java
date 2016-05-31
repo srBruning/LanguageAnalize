@@ -124,6 +124,6 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 				return true;
 			}
 		}
-		return false;
+		return true;
 	}
 }
