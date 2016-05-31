@@ -105,14 +105,16 @@ public class AnalyzerAssignment extends AbstractSyntacticAnalizer{
 			d4.addCods(d3.cod, e.cod, gen("=", d3.place, e.place));
 			
 			if (declaracao4(d4)){
-				
+				d3.cod = d4.cod;
+				d3.place = d4.place;
+				return true;
 			}
 		}
 		return false;
 	}
 
 	private boolean declaracao4(PlaceCod d4) {
-		// TODO Auto-generated method stub
+		// TODO aqui
 		return false;
 	}
 }
