@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 
 import javax.imageio.ImageIO;
@@ -33,16 +34,19 @@ import java.awt.Panel;
 
 public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInterface {
 
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private JTextField txtNomeArquivo;
 
 	protected JTextPane console;
-//	protected JPanel panel;
+
 	protected JEditorPane editorPane;
 
 
 	protected File entrada;
-
-//	protected MyTableModel myTableModel;
 
 	protected JPanel panelLeft;
 
@@ -186,9 +190,9 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		BufferedImage buttonIconRun;
 
 		try {
-			buttonIconOpen = ImageIO.read(new File("src/img/open_icon.png"));
-			buttonIconSave = ImageIO.read(new File("src/img/save_icon.png"));
-			buttonIconRun = ImageIO.read(new File("src/img/run_icon.png"));
+			buttonIconOpen = ImageIO.read(getClass().getResourceAsStream("/resources/open_icon.png"));
+			buttonIconSave = ImageIO.read(getClass().getResourceAsStream("/resources/save_icon.png"));
+			buttonIconRun = ImageIO.read(getClass().getResourceAsStream("/resources/run_icon.png"));
 			btnAnalizar = new JButton(new ImageIcon(buttonIconRun));
 			btnInputfile= new JButton(new ImageIcon(buttonIconOpen));
 			btnSaveFile = new JButton(new ImageIcon(buttonIconSave));
