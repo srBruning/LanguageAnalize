@@ -21,8 +21,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 	public static boolean isDeclaracao(SyntaticStrean strean, PlaceCod d){
 		AnaliseDeclaracao anlAssing = getInstance(strean);
 		boolean r =  anlAssing.declaracao(d);
-		if (d.erro!=null)
-			anlAssing.addErro(d.erro);
+
 		return r;
 	}
 
@@ -38,7 +37,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 				d.erro = d2.erro;
 				return true;
 			}
-			d.erro = coalesce(d2.erro, "Esperava uma declaração!.");
+			d.erro = coalesce(d2.erro, formateErro("Esperava uma declaração!."));
 		}
 
 		return false;
@@ -72,7 +71,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 
 		if (currentIsEquals(TypeToken.TK_ID)){
 			if( getSntStrean().findSimbolById(currentToken().getValue())!=null ){
-				d2.erro = "Variavel ja existe!";
+				d2.erro = formateErro("Variavel ja existe!");
 				return false;
 			}
 			getSntStrean().addTabSimbulos(currentToken().getValue(), d2.tipo);
@@ -83,11 +82,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 				PlaceCod d4= new PlaceCod(d3);
 				if (declaracao4(d4)){
 					d2.cod = d4.cod;
-					if (currentIsEquals(TypeToken.TK_SEMICOLON)){
-						toNextToken();
-						return true;
-					}
-					d2.erro = "Esperava ';'";
+					return true;
 				}else{
 					d2.erro = d4.erro;
 				}
@@ -95,7 +90,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 				d2.erro = d3.erro;
 			}
 			if (d2.erro == null)
-				d2.erro ="Esperava uma declaração";
+				d2.erro =formateErro("Esperava uma declaração");
 
 		}
 		return false;
@@ -107,25 +102,13 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 			PlaceCod e = new PlaceCod();
 			if (AnaliseExpressao.isExpressao(getSntStrean(), e)){
 				if (!d3.tipo.equals(e.tipo)){
-					d3.erro = coalesce(d3.erro, "Esta tentando colocar um "+e.tipo+ "em um "+d3.tipo);
+					d3.erro = coalesce(d3.erro, formateErro("Esta tentando colocar um "+e.tipo+ "em um "+d3.tipo));
 					return false;
 				}
-				PlaceCod d4 = new PlaceCod();
-				d4.tipo = d3.tipo;
-
-				d4.addCods(d3.cod, e.cod, gen("=", d3.place, e.place));
-
-				if (declaracao4(d4)){
-					d3.cod = d4.cod;
-					d3.place = d4.place;
-					d3.erro = d4.erro;
-					return true;
-				}else{
-					d3.erro = d4.erro;
-				}
-
+				d3.cod = gen("=", d3.place, e.place);
+				return true;
 			}
-			return false;
+			
 		}
 		return true;
 	}
@@ -137,10 +120,13 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 				d4.tipo = d2.tipo;
 				return true;
 			}
-			d4.erro = coalesce(d2.erro, "Esperava um valor para atribuição!");
+			d4.erro = coalesce(d2.erro, formateErro("Esperava um valor para atribuição!"));
 			return false;
 		}
-
-		return true;
+		if (toNextIfEquals(TypeToken.TK_SEMICOLON)){
+			return true;
+		}
+		d4.erro = formateErro("Esperava ';'");
+		return false;
 	}
 }

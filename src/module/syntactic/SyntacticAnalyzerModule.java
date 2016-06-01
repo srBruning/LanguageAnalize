@@ -8,21 +8,18 @@ import module.PlaceCod;
 
 public class SyntacticAnalyzerModule extends AbstractAnaliseSintatica{
 
-	public String analyzer(SyntaticStrean sntStrean) {
+	public PlaceCod  analyzer(SyntaticStrean sntStrean) {
 		setSntStrean(sntStrean);
+		PlaceCod d = new PlaceCod();
+		
 		if(!sntStrean.nextToken()){
-			addErro("esta em branco ");
-			return null;
+			d.erro = new CausaErro("esta em branco ", 0, 0, 0);
+			return d;
 		}
 		getVariables().clear();		
-		PlaceCod d = new PlaceCod();
 		AnaliseComando.isListCommands(getSntStrean(), d);
 		
-		return d.cod;
-	}
-
-	public List<CausaErro> getErro(){
-		return getSntStrean().getErro();		
+		return d;
 	}
 
 	public HashMap<String, String> getVariables(){

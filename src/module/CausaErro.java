@@ -37,5 +37,4 @@ public class CausaErro{
 		return "[row: "+getLinha()+"| col:"+getColIni()+"-"+getColFim()+"] "+getMsg();
 	}
 	
-	
 }

@@ -55,18 +55,10 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 					ts.tipo = t1s.tipo;
 				}else ts.erro = t1s.erro;
 			}
-			ts.erro = coalesce(pcE3.erro, "Esperava uma expreção");
+			ts.erro = coalesce(pcE3.erro, formateErro("Esperava uma expreção"));
 			return false;
 		}
 		return true;
-	}
-	
-	protected String selectTipo(PlaceCod h, PlaceCod e4){
-		if ( h.tipo == "INT" && e4.tipo == "INT")					
-			return "INT"; 
-		else if ( h.tipo == "FLOAT" || e4.tipo == "FLOAT")					
-			return  "FLOAT"; 
-		else return "DOUBLE";
 	}
 	
 	private boolean u(PlaceCod h, PlaceCod s ) {
@@ -89,7 +81,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 				}
 
 			}
-			addErro("Expressão invalida!");
+			s.erro = formateErro("Expressão invalida!");
 			return false;
 		}
 		s.place = h.place;
@@ -165,7 +157,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 
 			}
 
-			addErro("Expressão invalida!");
+			s.erro = formateErro("Expressão invalida!");
 			return false;
 		}
 		s.cod = h.cod;
@@ -211,7 +203,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 		if (currentIsEquals(TypeToken.TK_ID) ){
 			String tipo = getSntStrean().findSimbolById(currentToken().getValue());
 			if ( tipo ==null){
-				addErro("Identificador não declarado");
+				e6.erro = formateErro("Identificador não declarado");
 				return false;
 			}
 			e6.place = currentToken().getValue();

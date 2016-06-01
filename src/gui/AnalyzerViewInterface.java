@@ -15,6 +15,6 @@ public interface AnalyzerViewInterface  {
 
 	public void onResultLexicon(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids);
 	
-	public void onResultSyntatic(boolean valide, String codigoIntermediario, List<CausaErro> map, HashMap<String, String> hashMap);	
+	public void onResultSyntatic(boolean valide, String codigoIntermediario, CausaErro map, HashMap<String, String> hashMap);	
 }
 
