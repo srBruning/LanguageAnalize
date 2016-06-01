@@ -7,15 +7,35 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 	private AnaliseComando(SyntaticStrean strean ){
 		setSntStrean(strean);
 	}
-	public static boolean isCommand(SyntaticStrean strean, PlaceCod c){
-		return AnaliseDeclaracao.isDeclaracao(strean, c);
-	}
+	private boolean isCommand(SyntaticStrean strean, PlaceCod c){
+		if( AnaliseDeclaracao.isDeclaracao(strean, c))
+			return true;
+		if(c.erro == null && AnaliseAtribuicao.isAtribicao(strean, c))
+			return true;		
 
-	public static boolean isListCommands(SyntaticStrean strean, PlaceCod lc){
-		if ( isCommand(strean, lc)){
-			isListCommands(strean, lc);
+		return false;
+	}
+	
+	private static AnaliseComando instan;
+	private static AnaliseComando getInstancia(SyntaticStrean strean){
+		if (instan == null){
+			instan =  new AnaliseComando(strean);
+		}else{
+			instan.setSntStrean(strean);
 		}
-		return true;
+		return instan;
+	}
+	
+	public static boolean isListCommands(SyntaticStrean strean, PlaceCod lc){
+		
+		
+		PlaceCod lc1 = new PlaceCod();
+		if ( getInstancia(strean).isCommand(strean, lc1)){
+			isListCommands(strean, lc1);
+		}
+			lc.addCods( lc1.cod, lc.cod);	
+			lc.erro = lc1.erro;
+		return lc.erro ==null;
 	}
 
 }

@@ -1,7 +1,8 @@
 package module;
 public class PlaceCod{
 
-	public String cod,  place, tipo, erro;
+	public String cod,  place, tipo;
+	public CausaErro erro;
 	
 	public PlaceCod(){	}
 	

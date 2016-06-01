@@ -13,62 +13,170 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 		return new AnaliseExpressao(strean).expressao(ePlaceCod);
 	}
 
-	private boolean expressao(PlaceCod ePlaceCod ) {
-		return e1(ePlaceCod);
-	}
-
-	private boolean e1(PlaceCod e1PlaceCod ) {
-		return e2(e1PlaceCod);
-	}
-
-	private boolean e2(PlaceCod e2Pc) {
-//		PlaceCod e3Pc = new PlaceCod();
-//		// TODO Auto-generated method stub
-//		if ( e3(e3Pc) ){
-//			PlaceCod t1h = new PlaceCod(e3Pc);
-//			PlaceCod t1s = new PlaceCod();
-//			if( T(t1h, t1s)){
-//				e2Pc.cod = t1s.cod;
-//				e2Pc.tipo = t1s.tipo;
-//				e2Pc.place = t1s.place;
-//				return true;
-//			}
-//		};
-//		 
-//		 return false;
-		return e3(e2Pc);
-	}
-
-	private boolean T(PlaceCod th, PlaceCod ts){
+private boolean expressao(PlaceCod ePlaceCod ) {
 		
-		if ( toNextIfEquals(TypeToken.TK_BIGGEREQUAL)){
-			PlaceCod pcE3 = new PlaceCod();
-			if (e3(pcE3)){
-				PlaceCod t1h = new PlaceCod();
-				t1h.place = criaTemp();
-				// T.hcod + E3.cod + gen(‘&&’,T¹.hplace,T.hplace,E3.place)
-				t1h.addCods(pcE3.cod, gen("&&", t1h.place, pcE3.place));
-				PlaceCod t1s = new PlaceCod();
-				if ( T(t1h, t1s)){
-					ts.place = t1s.place;
-					ts.cod = t1s.cod;
-					ts.tipo = t1s.tipo;
-				}else ts.erro = t1s.erro;
+		PlaceCod e1PlaceCod = new PlaceCod();
+		if ( e1(e1PlaceCod)){
+			PlaceCod rhPlaceCod = new PlaceCod(e1PlaceCod);
+			PlaceCod rsPlaceCod = new PlaceCod();
+
+			if ( r(rhPlaceCod, rsPlaceCod)){
+				ePlaceCod.place = rsPlaceCod.place;
+				ePlaceCod.cod = rsPlaceCod.cod;
+				ePlaceCod.tipo = rsPlaceCod.tipo;
+				return true;
 			}
-			ts.erro = coalesce(pcE3.erro, "Esperava uma expreção");
+
+		}
+
+		return false;		
+		//return e1(ePlaceCod);
+	}
+
+	private boolean r(PlaceCod h, PlaceCod s ) {
+		Token tk = currentToken();
+		if ( toNextIfEquals(TypeToken.TK_AND)  ||  toNextIfEquals(TypeToken.TK_OR) ) {
+			PlaceCod e1 = new PlaceCod();
+			if ( e1(e1)){
+				PlaceCod r1h = new PlaceCod();
+				r1h.place = criaTemp();
+				r1h.tipo = selectTipo(h, e1);
+				
+				String op = tk.getType() == TypeToken.TK_AND ? "&&" :"||";
+				r1h.addCods(h.cod, e1.cod,  gen(op, r1h.place, h.place, e1.place));
+				PlaceCod r1s = new PlaceCod();
+				if (r(r1h, r1s)){
+					s.place= r1s.place;
+					s.cod= r1s.cod;
+					s.tipo= r1s.tipo;
+					return true;
+				}
+
+			}
+			s.erro = formateErro("Expressão invalida!");
 			return false;
 		}
+		s.place = h.place;
+		s.cod = h.cod;
+		s.tipo = h.tipo;
 		return true;
 	}
-	
-	protected String selectTipo(PlaceCod h, PlaceCod e4){
-		if ( h.tipo == "INT" && e4.tipo == "INT")					
-			return "INT"; 
-		else if ( h.tipo == "FLOAT" || e4.tipo == "FLOAT")					
-			return  "FLOAT"; 
-		else return "DOUBLE";
+
+private boolean e1(PlaceCod e1PlaceCod ) {
+		
+		PlaceCod e2PlaceCod = new PlaceCod();
+		if ( e2(e2PlaceCod)){
+			PlaceCod shPlaceCod = new PlaceCod(e2PlaceCod);
+			PlaceCod ssPlaceCod = new PlaceCod();
+
+			if ( s(shPlaceCod, ssPlaceCod)){
+				e1PlaceCod.place = ssPlaceCod.place;
+				e1PlaceCod.cod = ssPlaceCod.cod;
+				e1PlaceCod.tipo = ssPlaceCod.tipo;
+				return true;
+			}
+
+		}
+
+		return false;
 	}
-	
+
+	private boolean s(PlaceCod h, PlaceCod s ) {
+		Token tk = currentToken();
+		if ( toNextIfEquals(TypeToken.TK_EQUALS)  ||  toNextIfEquals(TypeToken.TK_DIFF) ) {
+			PlaceCod e2 = new PlaceCod();
+			if ( e2(e2)){
+				PlaceCod s1h = new PlaceCod();
+				s1h.place = criaTemp();
+				s1h.tipo = selectTipo(h, e2);
+				
+				String op = tk.getType() == TypeToken.TK_EQUALS ? "==" :"!=";
+				s1h.addCods(h.cod, e2.cod,  gen(op, s1h.place, h.place, e2.place));
+				PlaceCod s1s = new PlaceCod();
+				if (s(s1h, s1s)){
+					s.place= s1s.place;
+					s.cod= s1s.cod;
+					s.tipo= s1s.tipo;
+					return true;
+				}
+
+			}
+			s.erro = formateErro("Expressão invalida!");
+			return false;
+		}
+		s.place = h.place;
+		s.cod = h.cod;
+		s.tipo = h.tipo;
+		return true;
+	}	
+
+	private boolean e2(PlaceCod e2PlaceCod) {
+		PlaceCod e3PlaceCod = new PlaceCod();
+		if ( e3(e3PlaceCod)){
+			PlaceCod thPlaceCod = new PlaceCod(e3PlaceCod);
+			PlaceCod tsPlaceCod = new PlaceCod();
+
+			if ( t(thPlaceCod, tsPlaceCod)){
+				e2PlaceCod.place = tsPlaceCod.place;
+				e2PlaceCod.cod = tsPlaceCod.cod;
+				e2PlaceCod.tipo = tsPlaceCod.tipo;
+				return true;
+			}
+
+		}
+
+		return false;
+	}
+
+	private boolean t(PlaceCod h, PlaceCod s ) {
+		Token tk = currentToken();
+		if ( toNextIfEquals(TypeToken.TK_BIGGEREQUAL)  ||  toNextIfEquals(TypeToken.TK_LESSEQUAL) ) {
+			PlaceCod e3 = new PlaceCod();
+			if ( e3(e3)){
+				PlaceCod t1h = new PlaceCod();
+				t1h.place = criaTemp();
+				t1h.tipo = selectTipo(h, e3);
+				
+				String op = tk.getType() == TypeToken.TK_BIGGEREQUAL ? ">=" :"<=";
+				t1h.addCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
+				PlaceCod t1s = new PlaceCod();
+				if (t(t1h, t1s)){
+					s.place= t1s.place;
+					s.cod= t1s.cod;
+					s.tipo= t1s.tipo;
+					return true;
+				}
+
+			}
+			s.erro = formateErro("Expressão invalida!");
+			return false;
+		}
+			if ( toNextIfEquals(TypeToken.TK_LESS)  ||  toNextIfEquals(TypeToken.TK_BIGGER) ) {
+				PlaceCod e3 = new PlaceCod();
+				if ( e3(e3)){
+					PlaceCod t1h = new PlaceCod();
+					t1h.place = criaTemp();
+					t1h.tipo = selectTipo(h, e3);
+					
+					String op = tk.getType() == TypeToken.TK_LESS ? ">" :"<";
+					t1h.addCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
+					PlaceCod t1s = new PlaceCod();
+					if (t(t1h, t1s)){
+						s.place= t1s.place;
+						s.cod= t1s.cod;
+						s.tipo= t1s.tipo;
+						return true;
+					}
+
+				}			
+			s.erro = formateErro("Expressão invalida!");
+			return false;
+		}
+		s.place = h.place;
+		s.cod = h.cod;
+		s.tipo = h.tipo;
+		return true;
+	}
 	private boolean u(PlaceCod h, PlaceCod s ) {
 		Token tk = currentToken();
 		if ( toNextIfEquals(TypeToken.TK_PLUS)  ||  toNextIfEquals(TypeToken.TK_SUB) ) {
@@ -89,7 +197,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 				}
 
 			}
-			addErro("Expressão invalida!");
+			s.erro = formateErro("Expressão invalida!");
 			return false;
 		}
 		s.place = h.place;
@@ -160,12 +268,13 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 				if (v(v1h, u1sPlaceCod)){
 					s.place= u1sPlaceCod.place;
 					s.cod= u1sPlaceCod.cod;
+					s.tipo= u1sPlaceCod.tipo;
 					return true;
 				}
 
 			}
 
-			addErro("Expressão invalida!");
+			s.erro = formateErro("Expressão invalida!");
 			return false;
 		}
 		s.cod = h.cod;
@@ -211,7 +320,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 		if (currentIsEquals(TypeToken.TK_ID) ){
 			String tipo = getSntStrean().findSimbolById(currentToken().getValue());
 			if ( tipo ==null){
-				addErro("Identificador não declarado");
+				e6.erro = formateErro("Identificador não declarado");
 				return false;
 			}
 			e6.place = currentToken().getValue();
@@ -223,6 +332,8 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 		if(toNextIfEquals(TypeToken.TK_OPENPARENTHESIS) ){
 			PlaceCod e = new PlaceCod();
 			if ( expressao(e) && toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS) ){
+				e6.place = e.place;
+				e6.cod = e.cod;
 				e6.tipo = e.tipo;
 				return true;
 			}
