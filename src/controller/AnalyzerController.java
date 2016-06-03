@@ -15,6 +15,7 @@ import java.util.Stack;
 import excptions.InvalidCharacterExcption;
 import gui.AnalyzerViewInterface;
 import module.PlaceCod;
+import module.ResultadoAnalizeBean;
 import module.Token;
 import module.Token.TypeToken;
 import module.lexical.AnalisadorLexico;
@@ -78,9 +79,9 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	@Override
 	public void analiseSintatica(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
-		  PlaceCod result = sa.analyzer(new SyntaticStrean(entrada));
+		  ResultadoAnalizeBean result = sa.analyzer(new SyntaticStrean(entrada));
 		 HashMap<String, String> variables = sa.getVariables();
-		this.view.onResultSyntatic(result.erro==null,result.cod, result.erro, variables);
+		this.view.onResultSyntatic(result.getErros()!=null,result.getCodigo(), result.getErros(), variables);
 		
 	}
 

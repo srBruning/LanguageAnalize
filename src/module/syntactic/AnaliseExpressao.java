@@ -43,7 +43,7 @@ private boolean expressao(PlaceCod ePlaceCod ) {
 				r1h.tipo = selectTipo(h, e1);
 				
 				String op = tk.getType() == TypeToken.TK_AND ? "&&" :"||";
-				r1h.addCods(h.cod, e1.cod,  gen(op, r1h.place, h.place, e1.place));
+				r1h.setCods(h.cod, e1.cod,  gen(op, r1h.place, h.place, e1.place));
 				PlaceCod r1s = new PlaceCod();
 				if (r(r1h, r1s)){
 					s.place= r1s.place;
@@ -91,7 +91,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				s1h.tipo = selectTipo(h, e2);
 				
 				String op = tk.getType() == TypeToken.TK_EQUALS ? "==" :"!=";
-				s1h.addCods(h.cod, e2.cod,  gen(op, s1h.place, h.place, e2.place));
+				s1h.setCods(h.cod, e2.cod,  gen(op, s1h.place, h.place, e2.place));
 				PlaceCod s1s = new PlaceCod();
 				if (s(s1h, s1s)){
 					s.place= s1s.place;
@@ -138,7 +138,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				t1h.tipo = selectTipo(h, e3);
 				
 				String op = tk.getType() == TypeToken.TK_BIGGEREQUAL ? ">=" :"<=";
-				t1h.addCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
+				t1h.setCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
 				PlaceCod t1s = new PlaceCod();
 				if (t(t1h, t1s)){
 					s.place= t1s.place;
@@ -159,7 +159,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 					t1h.tipo = selectTipo(h, e3);
 					
 					String op = tk.getType() == TypeToken.TK_LESS ? ">" :"<";
-					t1h.addCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
+					t1h.setCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
 					PlaceCod t1s = new PlaceCod();
 					if (t(t1h, t1s)){
 						s.place= t1s.place;
@@ -187,7 +187,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				u1h.tipo = selectTipo(h, e4);
 				
 				String op = tk.getType() == TypeToken.TK_PLUS ? "+" :"-";
-				u1h.addCods(h.cod, e4.cod,  gen(op, u1h.place, h.place, e4.place));
+				u1h.setCods(h.cod, e4.cod,  gen(op, u1h.place, h.place, e4.place));
 				PlaceCod u1s = new PlaceCod();
 				if (u(u1h, u1s)){
 					s.place= u1s.place;
@@ -263,7 +263,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				else if ( tk.getType() == TypeToken.TK_MOD )
 					op = "%";
 
-				v1h.addCods(e5.cod, h.cod,  gen(op, v1h.place, h.place, e5.place));
+				v1h.setCods(e5.cod, h.cod,  gen(op, v1h.place, h.place, e5.place));
 				PlaceCod u1sPlaceCod = new PlaceCod();
 				if (v(v1h, u1sPlaceCod)){
 					s.place= u1sPlaceCod.place;

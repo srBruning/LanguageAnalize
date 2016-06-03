@@ -1,26 +1,40 @@
 package module.syntactic;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 import module.CausaErro;
 import module.PlaceCod;
+import module.ResultadoAnalizeBean;
 
 public class SyntacticAnalyzerModule extends AbstractAnaliseSintatica{
 
-	public PlaceCod  analyzer(SyntaticStrean sntStrean) {
+	private List<CausaErro> erros;
+	
+	public ResultadoAnalizeBean  analyzer(SyntaticStrean sntStrean) {
+		
+		erros = new ArrayList<>();
+		
 		setSntStrean(sntStrean);
-		PlaceCod d = new PlaceCod();
 		
 		if(!sntStrean.nextToken()){
-			d.erro = new CausaErro("esta em branco ", 0, 0, 0);
-			return d;
+			erros.add( new CausaErro("esta em branco ", 0, 0, 0) );
+			return new ResultadoAnalizeBean(null, erros);
 		}
 		getVariables().clear();	
 		clear();
-		AnaliseComando.isListCommands(getSntStrean(), d);
 		
-		return d;
+		PlaceCod mPlaceCod = new PlaceCod();
+		while(getSntStrean().hasNextToken()){
+			PlaceCod d = new PlaceCod();
+			AnaliseComando.isCommands(getSntStrean(), d);
+			if (d.erro!=null)
+				erros.add(d.erro);
+			mPlaceCod.addCods(d.cod);
+		}
+		
+		return new ResultadoAnalizeBean(mPlaceCod.cod, erros);
 	}
 
 	

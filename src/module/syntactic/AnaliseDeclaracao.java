@@ -85,7 +85,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 					d3.erro = coalesce(d3.erro, formateErro("Esta tentando colocar um "+e.tipo+ "em um "+d3.tipo));
 					return false;
 				}
-				d3.addCods(e.cod,  gen("=", d3.place, e.place) );
+				d3.setCods(e.cod,  gen("=", d3.place, e.place) );
 				return true;
 			}
 			
@@ -107,7 +107,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 		if (toNextIfEquals(TypeToken.TK_SEMICOLON)){
 			return true;
 		}
-		d4.erro = formateErro("Esperava ';'");
+		d4.erro = formateErro("Esperava token de Fim de Sentença!");
 		return false;
 	}
 }

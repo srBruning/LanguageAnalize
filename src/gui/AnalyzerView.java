@@ -88,12 +88,13 @@ public class AnalyzerView extends AnalyzerViewLay {
 	}
 
 	@Override
-	public void onResultSyntatic(boolean valide, String codigoIntermediario, CausaErro erros,
+	public void onResultSyntatic(boolean valide, String codigoIntermediario, List<CausaErro> erros,
 			HashMap<String, String> variables) {
 		System.out.println("___________"+valide);
 		writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido: "));
 		if ( erros!=null)
-				writh_out(erros.getFormatedMessage());
+			for (CausaErro erro : erros)
+				writh_out(erro.getFormatedMessage());
 
 		variablesTableModel.setTokens(variables);
 		editorPaneResult.setText(codigoIntermediario);

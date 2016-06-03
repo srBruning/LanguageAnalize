@@ -26,16 +26,18 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		return instan;
 	}
 	
-	public static boolean isListCommands(SyntaticStrean strean, PlaceCod lc){
+	public static boolean isCommands(SyntaticStrean strean, PlaceCod lc){
 		
+//		PlaceCod lc1 = new PlaceCod();
 		
-		PlaceCod lc1 = new PlaceCod();
-		if ( getInstancia(strean).isCommand(strean, lc1)){
-			isListCommands(strean, lc1);
-		}
-			lc.addCods( lc1.cod, lc.cod);	
-			lc.erro = lc1.erro;
-		return lc.erro ==null;
+		return getInstancia(strean).isCommand(strean, lc);
+		
+//		if ( getInstancia(strean).isCommand(strean, lc1)){
+//			isListCommands(strean, lc1);
+//		}
+//			lc.addCods( lc1.cod, lc.cod);	
+//			lc.erro = lc1.erro;
+//		return lc.erro ==null;
 	}
 
 }
