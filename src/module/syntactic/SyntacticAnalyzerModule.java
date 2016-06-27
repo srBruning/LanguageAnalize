@@ -11,32 +11,36 @@ import module.ResultadoAnalizeBean;
 public class SyntacticAnalyzerModule extends AbstractAnaliseSintatica{
 
 	private List<CausaErro> erros;
-	
+
 	public ResultadoAnalizeBean  analyzer(SyntaticStrean sntStrean) {
-		
+
 		erros = new ArrayList<>();
-		
+
 		setSntStrean(sntStrean);
-		
+
 		if(!sntStrean.nextToken()){
 			erros.add( new CausaErro("esta em branco ", 0, 0, 0) );
 			return new ResultadoAnalizeBean(null, erros);
 		}
 		getVariables().clear();	
 		clear();
-		
+
 		PlaceCod mPlaceCod = new PlaceCod();
+
 		while(getSntStrean().hasNextToken()){
 			PlaceCod d = new PlaceCod();
-			AnaliseComando.isCommands(getSntStrean(), d);
-			if (d.erro!=null)
-				erros.add(d.erro);
+
+			if (!AnaliseComando.isCommands(getSntStrean(), d)){
+				if (d.erro!=null)
+					erros.add(d.erro);
+				getSntStrean().nextToken();
+			}
 			mPlaceCod.addCods(d.cod);
 		}
-		
+
 		return new ResultadoAnalizeBean(mPlaceCod.cod, erros);
 	}
 
-	
-	
+
+
 }

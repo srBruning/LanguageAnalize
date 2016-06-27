@@ -75,11 +75,8 @@ public abstract class AbstractAnaliseSintatica {
 	}
 
 	protected boolean type(PlaceCod tipo){
-		if (currentToken()==null)return false;
-		switch (currentToken().getType()) {
-		case  INT:
-		case DOUBLE:
-		case FLOAT:
+				
+		if ( currentToken() != null &&  currentToken().isType() ) {
 			tipo.tipo = currentToken().getType().toString();
 			this.sntStrean.nextToken();
 			return true;

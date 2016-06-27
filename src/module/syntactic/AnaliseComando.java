@@ -1,18 +1,24 @@
 package module.syntactic;
 
 import module.PlaceCod;
+import module.Token.TypeToken;
 
 public class AnaliseComando extends AbstractAnaliseSintatica {
 	
 	private AnaliseComando(SyntaticStrean strean ){
 		setSntStrean(strean);
 	}
-	private boolean isCommand(SyntaticStrean strean, PlaceCod c){
-		if( AnaliseDeclaracao.isDeclaracao(strean, c))
-			return true;
-		if(c.erro == null && AnaliseAtribuicao.isAtribicao(strean, c))
-			return true;		
-
+	private boolean isCommand(PlaceCod c){
+		
+		Object typeToken = currentToken().getType();
+		if ( typeToken .equals(TypeToken.TK_ID) ){
+			return AnaliseAtribuicao.isAtribicao(getSntStrean(), c);
+		}
+		if (currentToken().isType()){
+			return AnaliseDeclaracao.isDeclaracao(getSntStrean(), c);
+		}
+		
+		c.erro = formateErro("Esperava um ID ou um TIPO");
 		return false;
 	}
 	
@@ -30,7 +36,7 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		
 //		PlaceCod lc1 = new PlaceCod();
 		
-		return getInstancia(strean).isCommand(strean, lc);
+		return getInstancia(strean).isCommand( lc);
 		
 //		if ( getInstancia(strean).isCommand(strean, lc1)){
 //			isListCommands(strean, lc1);

@@ -29,7 +29,6 @@ public class AnaliseAtribuicao extends AbstractAnaliseSintatica {
 				return false;
 			}
 			
-			toNextToken();
 			if( AnaliseExpressao.isExpressao(getSntStrean(), e) ) {
 				if (!e.tipo.equals(tipo_id) && !tipo_id.equals(selectTipo(tipo_id, e.tipo))){
 					a.erro = formateErro("Tipo imcompativel!");
@@ -60,9 +59,12 @@ public class AnaliseAtribuicao extends AbstractAnaliseSintatica {
 	}
 
 	private String operador() {
-
+		Token tk = currentToken();
+		toNextToken();
+		if ( tk==null)
+			return null;
 		String vl =null;
-		switch (currentToken().getType()) {
+		switch (tk.getType()) {
 		case TK_ADDASSIGNMENT:
 			vl =  "+";
 			break;

@@ -1,12 +1,14 @@
 package controller;
 
 import java.awt.EventQueue;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -60,9 +62,9 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	}
 
 	@Override
-	public void analiseLexicaArquivo(File file) throws FileNotFoundException {
-		InputStream stream = new FileInputStream(file);
-		this.entrada = new PushbackInputStream(stream);
+	public void analiseLexicaArquivo(InputStream entrada) throws FileNotFoundException {
+
+		this.entrada = new PushbackInputStream(entrada);
 		try {
 			this.tableids =  new HashMap<String, ArrayList<Token>>();
 			this.saida = this.mAnalisadorLexico.analisar(this.entrada, 0, this.tableids);
@@ -77,12 +79,15 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 	}
 
 	@Override
-	public void analiseSintatica(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
-		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
-		  ResultadoAnalizeBean result = sa.analyzer(new SyntaticStrean(entrada));
-		 HashMap<String, String> variables = sa.getVariables();
-		this.view.onResultSyntatic(result.getErros()!=null,result.getCodigo(), result.getErros(), variables);
+	public void analisarSintatico(ArrayList<Token> entrada, HashMap<String, ArrayList<Token>> tableids2) {
 		
+		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
+		ResultadoAnalizeBean result = sa.analyzer(new SyntaticStrean(entrada));
+		
+		HashMap<String, String> variables = sa.getVariables();
+		boolean valid = result.getErros()==null || result.getErros().isEmpty();
+		this.view.onResultSyntatic(valid,result.getCodigo(), result.getErros(), variables);
+
 	}
 
 }

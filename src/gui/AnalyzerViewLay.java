@@ -24,11 +24,16 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.JTextPane;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Document;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
 
 import controller.AnalyzerControllerInterface;
 import module.Token;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.List;
 import java.awt.Panel;
 
@@ -39,14 +44,14 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 	 */
 	private static final long serialVersionUID = 1L;
 
-	private JTextField txtNomeArquivo;
+	protected JTextField txtNomeArquivo;
 
 	protected JTextPane console;
 
-	protected JEditorPane editorPane;
+	protected JTextPane editorPane;
 
 
-	protected File entrada;
+	protected File fileEntrada;
 
 	protected JPanel panelLeft;
 
@@ -67,6 +72,8 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 
 	protected VariablesTableModel variablesTableModel;
 	private JTable variablesTable;
+	
+	protected abstract void inputFile();
 	
 	/**
 	 * Create the frame.
@@ -107,9 +114,12 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		variablesTableModel = new VariablesTableModel();
 		tableVariables  =  new JTable(variablesTableModel);
 		addActions();
+		init();
 
 	}
 	
+	protected abstract void init() ;
+
 	private void creatPanel4() {
 //		this.myTableModel = new MyTableModel(new ArrayList<Token>());
 		panel_4 = new JPanel();
@@ -143,7 +153,14 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 				fazAnalizeLexica();
 			}
 		});
-		btnInputfile.addActionListener(new OpenL());
+		btnInputfile.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				inputFile();
+				
+			}
+		});
 		btnSaveFile.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				try {
@@ -157,6 +174,7 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		});
 		
 	}
+
 
 	protected abstract void fazAnalizeLexica() ;
 
@@ -172,7 +190,7 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		scrollPane.setBounds(10, 49, 423, 364);
 		panelLeft.add(scrollPane);
 
-		editorPane = new JEditorPane();
+		editorPane = new JTextPane();
 		scrollPane.setViewportView(editorPane);
 
 
@@ -234,34 +252,5 @@ public abstract class AnalyzerViewLay extends JFrame  implements AnalyzerViewInt
 		return groupLayout;
 	}
 
-	private void setFileIputStrean(File file){
-		try {
-			this.entrada= file;
-			editorPane.setPage(file.toURI().toURL());			
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-
-	}
 	
-	class OpenL implements ActionListener {
-
-		public void actionPerformed(ActionEvent e) {
-			JFileChooser c = new JFileChooser();
-			// Demonstrate "Open" dialog:
-			int rVal = c.showOpenDialog(AnalyzerViewLay.this);
-			if (rVal == JFileChooser.APPROVE_OPTION) {
-				AnalyzerViewLay.this.entrada = c.getSelectedFile();
-				txtNomeArquivo.setText(AnalyzerViewLay.this.entrada.getName());
-				setFileIputStrean(AnalyzerViewLay.this.entrada);
-			}
-			if (rVal == JFileChooser.CANCEL_OPTION) {
-				txtNomeArquivo.setText("You pressed cancel");
-			}
-		}
-	}
 }

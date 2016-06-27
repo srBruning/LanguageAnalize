@@ -1,5 +1,7 @@
 package module;
 
+import module.Token.TypeToken;
+
 public class Token {
 	public Token(){
 	}
@@ -21,8 +23,12 @@ public class Token {
 		TK_SUB, TK_NEG, TK_EQUALS,TK_ASSINGMENT, TK_DIFF,TK_OPENPARENTHESIS,TK_CLOSEPARENTHESIS,
 		TK_SEMICOLON,TK_ID,TK_MOD,TK_ADDASSIGNMENT,
 		TK_SUBASSIGNMENT,TK_MULTP,TK_MULTPASSIGNMENT,TK_DIVASSIGNMENT,TK_COMMA,TK_AND,TK_OR, NULL,VAR,
-		AUTO,BREAK,CASE,CHAR,CONST,CONTINUE,DEFAULT,DO,INT,LONG,REGISTER,RETURN,SHORT,SIGNED,
-		SWITCH,VOID,WHILE,DOUBLE,ELSE,FLOAT,FOR,IF, TK_COLON
+		AUTO,BREAK,CASE,CONST,CONTINUE,DEFAULT,LONG,REGISTER,RETURN,SHORT,SIGNED,
+		SWITCH,VOID,ELSE, TK_COLON,
+		/*tipo*/
+		INT, FLOAT, CHAR, DOUBLE,
+		/*comandos*/
+		FOR,IF, WHILE, DO
 		};		
 	
 	int linha;
@@ -31,6 +37,11 @@ public class Token {
 	int posIni; 
 	int posFin; 
 	TypeToken type = TypeToken.NONE;
+	
+	public boolean isType(){
+		TypeToken t = getType();
+		return t.compareTo(TypeToken.INT) >= 0 &&  t.compareTo(TypeToken.DOUBLE) <= 0 ;
+	}
 	
 	public TypeToken getType() {
 		return type;

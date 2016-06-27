@@ -13,8 +13,8 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 		return new AnaliseExpressao(strean).expressao(ePlaceCod);
 	}
 
-private boolean expressao(PlaceCod ePlaceCod ) {
-		
+	private boolean expressao(PlaceCod ePlaceCod ) {
+
 		PlaceCod e1PlaceCod = new PlaceCod();
 		if ( e1(e1PlaceCod)){
 			PlaceCod rhPlaceCod = new PlaceCod(e1PlaceCod);
@@ -25,8 +25,12 @@ private boolean expressao(PlaceCod ePlaceCod ) {
 				ePlaceCod.cod = rsPlaceCod.cod;
 				ePlaceCod.tipo = rsPlaceCod.tipo;
 				return true;
+			}else{
+				ePlaceCod.erro = rsPlaceCod.erro;
 			}
 
+		}else{
+			ePlaceCod.erro = e1PlaceCod.erro;
 		}
 
 		return false;		
@@ -41,7 +45,7 @@ private boolean expressao(PlaceCod ePlaceCod ) {
 				PlaceCod r1h = new PlaceCod();
 				r1h.place = criaTemp();
 				r1h.tipo = selectTipo(h, e1);
-				
+
 				String op = tk.getType() == TypeToken.TK_AND ? "&&" :"||";
 				r1h.setCods(h.cod, e1.cod,  gen(op, r1h.place, h.place, e1.place));
 				PlaceCod r1s = new PlaceCod();
@@ -62,8 +66,8 @@ private boolean expressao(PlaceCod ePlaceCod ) {
 		return true;
 	}
 
-private boolean e1(PlaceCod e1PlaceCod ) {
-		
+	private boolean e1(PlaceCod e1PlaceCod ) {
+
 		PlaceCod e2PlaceCod = new PlaceCod();
 		if ( e2(e2PlaceCod)){
 			PlaceCod shPlaceCod = new PlaceCod(e2PlaceCod);
@@ -74,8 +78,12 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				e1PlaceCod.cod = ssPlaceCod.cod;
 				e1PlaceCod.tipo = ssPlaceCod.tipo;
 				return true;
+			}else{
+				e1PlaceCod.erro = ssPlaceCod.erro;
 			}
 
+		}else{
+			e1PlaceCod.erro = e2PlaceCod.erro;
 		}
 
 		return false;
@@ -89,7 +97,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				PlaceCod s1h = new PlaceCod();
 				s1h.place = criaTemp();
 				s1h.tipo = selectTipo(h, e2);
-				
+
 				String op = tk.getType() == TypeToken.TK_EQUALS ? "==" :"!=";
 				s1h.setCods(h.cod, e2.cod,  gen(op, s1h.place, h.place, e2.place));
 				PlaceCod s1s = new PlaceCod();
@@ -123,6 +131,8 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				return true;
 			}
 
+		}else{
+			e2PlaceCod.erro = e3PlaceCod.erro;
 		}
 
 		return false;
@@ -136,7 +146,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				PlaceCod t1h = new PlaceCod();
 				t1h.place = criaTemp();
 				t1h.tipo = selectTipo(h, e3);
-				
+
 				String op = tk.getType() == TypeToken.TK_BIGGEREQUAL ? ">=" :"<=";
 				t1h.setCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
 				PlaceCod t1s = new PlaceCod();
@@ -151,24 +161,24 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 			s.erro = formateErro("Expressão invalida!");
 			return false;
 		}
-			if ( toNextIfEquals(TypeToken.TK_LESS)  ||  toNextIfEquals(TypeToken.TK_BIGGER) ) {
-				PlaceCod e3 = new PlaceCod();
-				if ( e3(e3)){
-					PlaceCod t1h = new PlaceCod();
-					t1h.place = criaTemp();
-					t1h.tipo = selectTipo(h, e3);
-					
-					String op = tk.getType() == TypeToken.TK_LESS ? ">" :"<";
-					t1h.setCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
-					PlaceCod t1s = new PlaceCod();
-					if (t(t1h, t1s)){
-						s.place= t1s.place;
-						s.cod= t1s.cod;
-						s.tipo= t1s.tipo;
-						return true;
-					}
+		if ( toNextIfEquals(TypeToken.TK_LESS)  ||  toNextIfEquals(TypeToken.TK_BIGGER) ) {
+			PlaceCod e3 = new PlaceCod();
+			if ( e3(e3)){
+				PlaceCod t1h = new PlaceCod();
+				t1h.place = criaTemp();
+				t1h.tipo = selectTipo(h, e3);
 
-				}			
+				String op = tk.getType() == TypeToken.TK_LESS ? ">" :"<";
+				t1h.setCods(h.cod, e3.cod,  gen(op, t1h.place, h.place, e3.place));
+				PlaceCod t1s = new PlaceCod();
+				if (t(t1h, t1s)){
+					s.place= t1s.place;
+					s.cod= t1s.cod;
+					s.tipo= t1s.tipo;
+					return true;
+				}
+
+			}			
 			s.erro = formateErro("Expressão invalida!");
 			return false;
 		}
@@ -185,7 +195,7 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				PlaceCod u1h = new PlaceCod();
 				u1h.place = criaTemp();
 				u1h.tipo = selectTipo(h, e4);
-				
+
 				String op = tk.getType() == TypeToken.TK_PLUS ? "+" :"-";
 				u1h.setCods(h.cod, e4.cod,  gen(op, u1h.place, h.place, e4.place));
 				PlaceCod u1s = new PlaceCod();
@@ -221,6 +231,8 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				return true;
 			}
 
+		}else{
+			e3PlaceCod.erro = e4PlaceCod.erro;
 		}
 
 		return false;
@@ -239,9 +251,14 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				e4.cod = vs.cod;
 				e4.tipo = vs.tipo;
 				return true;
+			}else{
+				e4.erro = vs.erro;
 			}
 
+		}else{
+			e4.erro = e5.erro;
 		}
+
 
 		return false;
 
@@ -260,8 +277,13 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 				String op = "*";
 				if ( tk.getType() == TypeToken.TK_DIV )
 					op = "/";
-				else if ( tk.getType() == TypeToken.TK_MOD )
+				else if ( tk.getType() == TypeToken.TK_MOD ){
 					op = "%";
+					if (h.tipo.equals("FLOAT") || e5.tipo.equals("FLOAT")){
+						s.erro = formateErro("Resto de divizão so aplica a tipos inteiros");
+						return false;
+					}
+				}
 
 				v1h.setCods(e5.cod, h.cod,  gen(op, v1h.place, h.place, e5.place));
 				PlaceCod u1sPlaceCod = new PlaceCod();
@@ -286,12 +308,26 @@ private boolean e1(PlaceCod e1PlaceCod ) {
 	private boolean e5(PlaceCod e5) {
 		Token tk = currentToken();
 		PlaceCod e6 = new PlaceCod();
-		if ( toNextIfEquals(TypeToken.TK_SUB) || toNextIfEquals(TypeToken.TK_PLUS) 
+		if ( currentIsEquals(TypeToken.TK_SUB) || currentIsEquals(TypeToken.TK_PLUS) 
 				|| toNextIfEquals(TypeToken.TK_NEG) ){
+			TypeToken op = currentToken().getType();
 			if ( e6(e6) ){
 				e5.place = criaTemp();
 				e5.tipo = e6.tipo;
-				e5.cod = e6.cod+ gen(tk.getValue(), e5.place, e6.place);
+				switch(op){
+				case TK_PLUS:				
+					e5.cod = e6.cod+ gen("=",  e5.place, e6.place);
+					break;
+				case TK_SUB:
+					e5.cod = e6.cod+ gen("-",  e5.place,"0",  e6.place);
+					break;
+				case TK_NEG:// TODO AQUI
+					e5.cod = "if "+e6.place+"= 0 goto false\n"+
+							gen("=", e5.place, "1")+"\ngoto fim\n"+
+							"false:"+gen("=", e5.place, "0")+
+							"fim:";
+
+				}
 				return true;
 			}
 		}else if ( e6(e6) ){

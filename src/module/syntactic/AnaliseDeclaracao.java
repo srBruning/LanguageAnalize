@@ -1,6 +1,7 @@
 package module.syntactic;
 
 import module.PlaceCod;
+import module.Token;
 import module.Token.TypeToken;
 
 public class AnaliseDeclaracao extends AbstractAnaliseSintatica{	
@@ -25,53 +26,60 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 		return r;
 	}
 
-	private boolean declaracao(PlaceCod d){
-		PlaceCod pcType = new PlaceCod();
-		if (type(pcType)){
-			PlaceCod d2 = new PlaceCod();
-			d2.tipo = pcType.tipo;
-			if( declaracao2(d2)){
-				d.cod = d2.cod;
-//				d.place = d2.place;
-				d.tipo = d2.tipo;
-				d.erro = d2.erro;
-				return true;
-			}
-			d.erro = coalesce(d2.erro, formateErro("Esperava uma declaração!."));
-		}
 
+
+	private boolean declaracao(PlaceCod d) {
+		// TODO Auto-generated method stub
 		return false;
 	}
 
-	private boolean dec_funcao(PlaceCod df){
+	private boolean corpoFuncao(PlaceCod cf) {
+		
+		PlaceCod t =new PlaceCod();
+		if (type(t)){
+			Token ct = currentToken();
+			if (toNextIfEquals(TypeToken.TK_ID) ){
+				PlaceCod d2 = new PlaceCod();
+				d2.tipo = t.tipo;
+				d2.place = ct.getValue();
+				if ( declaracao2(d2)){
+					
+				}else{
+					cf.erro = d2.erro; 
+				}
+			}else{
+				cf.erro  = formateErro("Esperava um identificador depois de um tipo!");
+				return false;
+			}
+			
+		}
 		return false;
 	}
 
 	private boolean declaracao2(PlaceCod d2) {
-
-		if (currentIsEquals(TypeToken.TK_ID)){
+		PlaceCod cf = new PlaceCod();
+		cf.returnType = d2.tipo;
+		cf.place = d2.place;
+		if ( corpoFuncao(cf) ){
+			d2.cod = d2.cod+ cf.cod;
+			d2.address = cf.address;
+			return true;
+		}else{
 			if( getSntStrean().findSimbolById(currentToken().getValue())!=null ){
-				d2.erro = formateErro("Variavel ja existe!");
+				d2.erro  = formateErro("Já há uma varivel com o nome "+currentToken().getValue());
 				return false;
 			}
-			getSntStrean().addTabSimbulos(currentToken().getValue(), d2.tipo);
+			getSntStrean().addTabSimbulos(currentToken().getValue(), d2.tipo, d2.address);
+			if ( d2.address!=null)
+				d2.address++;
+			
 			PlaceCod d3 = new PlaceCod(d2);
 			d3.place = currentToken().getValue(); 
-			toNextToken();
+			toNextToken();			
 			if (declaracao3(d3)){
-				PlaceCod d4= new PlaceCod(d3);
-				if (declaracao4(d4)){
-					d2.cod = d4.cod;
-					return true;
-				}else{
-					d2.erro = d4.erro;
-				}
-			}else{
-				d2.erro = d3.erro;
+				d2.cod = d3.cod;
+				d2.address = d3.address;
 			}
-			if (d2.erro == null)
-				d2.erro =formateErro("Esperava uma declaração");
-
 		}
 		return false;
 	}
@@ -86,28 +94,74 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 					return false;
 				}
 				d3.setCods(e.cod,  gen("=", d3.place, e.place) );
-				return true;
-			}
+				PlaceCod d4 = new PlaceCod(d3);
+				if (declaracao4(d4)){
+					d3.cod = d3.cod + gen("=", d3.place, e.place) + d4.cod;
+					d3.address = d4.address;
+					
+				}else{
+					d3.erro = d4.erro;
+				}
+			}else{
+				d3.erro = coalesce(e.erro, formateErro("Esperava um valor para a atribuição"));
+				return false;
+			}		
 			
+
+		}else{
+			PlaceCod d4 = new PlaceCod(d3);
+			if ( declaracao4(d4)){
+				d3.cod = d4.cod;
+				d3.address = d4.address;
+				return true;
+				
+			}
+			d3.erro = d4.erro;
 		}
-		return true;
+		return false;
 	}
 
 	private boolean declaracao4(PlaceCod d4) {
 		if (toNextIfEquals(TypeToken.TK_COMMA)){
-			PlaceCod d2 = new PlaceCod(d4);
-			if(declaracao2(d2)){
-				d4.tipo = d2.tipo;
-				d4.cod = d2.cod;
+			PlaceCod d5 = new PlaceCod(d4);
+			if(declaracao5(d5)){
+				d4.tipo = d5.tipo;
+				d4.cod = d5.cod;
+				d4.address = d5.address;
+
 				return true;
 			}
-			d4.erro = coalesce(d2.erro, formateErro("Esperava um valor para atribuição!"));
+			d4.erro = coalesce(d5.erro, formateErro("Esperava uma declaração!"));
 			return false;
 		}
 		if (toNextIfEquals(TypeToken.TK_SEMICOLON)){
 			return true;
 		}
 		d4.erro = formateErro("Esperava token de Fim de Sentença!");
+		return false;
+	}
+
+	private boolean declaracao5(PlaceCod d5) {
+		if (currentIsEquals(TypeToken.TK_ID)){
+			if( getSntStrean().findSimbolLocalTableById(currentToken().getValue())!=null ){
+				d5.erro  = formateErro("Já há uma varivel com o nome "+currentToken().getValue());
+				return false;
+			}
+			
+			getSntStrean().addTabSimbulos(d5.place	, d5.tipo, d5.address);
+			if (d5.address != null){
+				d5.address += 4;
+			}
+			PlaceCod d3 = new PlaceCod(d5);
+			
+			if (declaracao3(d3)){
+				d5.cod = d3.cod;
+				d5.address = d3.address;
+				return true;
+			}else{
+				d5.erro = d3.erro;
+			}
+		}
 		return false;
 	}
 }

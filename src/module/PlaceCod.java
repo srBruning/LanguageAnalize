@@ -4,10 +4,14 @@ import java.util.Arrays;
 
 import org.apache.commons.lang3.ArrayUtils;
 
+import module.Token.TypeToken;
+
 public class PlaceCod{
 
 	public String cod,  place, tipo;
 	public CausaErro erro;
+	public String  returnType;
+	public Integer address = null;
 	
 	public PlaceCod(){	}
 	
@@ -16,6 +20,8 @@ public class PlaceCod{
 		place = x.place;
 		tipo = x.tipo;
 		erro = x.erro;
+		address = x.address;
+		returnType = x.returnType;
 	}
 
 	public void addCods(String...cods){

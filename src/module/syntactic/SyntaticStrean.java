@@ -3,8 +3,10 @@ package module.syntactic;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Stack;
 
 import module.CausaErro;
@@ -18,7 +20,9 @@ public class SyntaticStrean {
 	private List<CausaErro> erro;
 
 	private static HashMap<String, String> simbVaraibles;
-	
+
+	private Stack<HashMap<String, String>> stackSimbVaraibles = new Stack<>();
+
 	public List<CausaErro> getErro() {
 		if (erro == null )
 			erro = new ArrayList<>();
@@ -65,11 +69,11 @@ public class SyntaticStrean {
 	public Token getLastToken(){
 		return entrada.get(entrada.size()-1);
 	}
-	
+
 	public Token getPreviwToken(){
 		return entrada.get(currentPosition >0 ? currentPosition-1 : currentPosition);
 	}
-	
+
 	public void pushPosition(){
 		this.stakPosition.push(currentPosition);		
 	}
@@ -85,23 +89,31 @@ public class SyntaticStrean {
 		currentPosition = this.stakPosition.pop();	
 		currentToken = entrada.get(currentPosition);
 	}
-	
+
 	public HashMap<String, String> getVariables(){
 		if ( simbVaraibles == null)
 			simbVaraibles = new HashMap<>();
 		return simbVaraibles;
 	}
-	
-	protected boolean addTabSimbulos(String place, String tipo){
+
+	protected boolean addTabSimbulos(String place, String tipo, Integer address){
 		if (findSimbolById(place)!=null)
 			return false;
-		
+		// FIXME salvar valor do endereço
 		getVariables().put(place, tipo);
 		return true;
 	}
-	
+
 	protected String findSimbolById(String value) {
 		return getVariables().get(value);
+	}
+
+	protected String findSimbolLocalTableById(String value) {
+		return stackSimbVaraibles.peek().get(value);
+	}
+
+	protected void pushTabSimbulo(){
+		stackSimbVaraibles.push(new HashMap<>());
 	}
 
 }
