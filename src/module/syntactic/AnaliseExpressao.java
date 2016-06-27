@@ -306,26 +306,27 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 	}
 
 	private boolean e5(PlaceCod e5) {
-		Token tk = currentToken();
+
 		PlaceCod e6 = new PlaceCod();
 		if ( currentIsEquals(TypeToken.TK_SUB) || currentIsEquals(TypeToken.TK_PLUS) 
 				|| toNextIfEquals(TypeToken.TK_NEG) ){
 			TypeToken op = currentToken().getType();
+			toNextToken();
 			if ( e6(e6) ){
 				e5.place = criaTemp();
 				e5.tipo = e6.tipo;
 				switch(op){
 				case TK_PLUS:				
-					e5.cod = e6.cod+ gen("=",  e5.place, e6.place);
+					e5.addCods( e6.cod,  gen("=",  e5.place, e6.place));
 					break;
 				case TK_SUB:
-					e5.cod = e6.cod+ gen("-",  e5.place,"0",  e6.place);
+					e5.addCods(e6.cod, gen("-",  e5.place,"0",  e6.place) );
 					break;
 				case TK_NEG:// TODO AQUI
-					e5.cod = "if "+e6.place+"= 0 goto false\n"+
-							gen("=", e5.place, "1")+"\ngoto fim\n"+
-							"false:"+gen("=", e5.place, "0")+
-							"fim:";
+					e5.addCods( "if "+e6.place+"= 0 goto false\n", 
+							gen("=", e5.place, "1")+"\ngoto fim\n", 
+							"false:"+gen("=", e5.place, "0"),
+							"fim:");
 
 				}
 				return true;
@@ -354,7 +355,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 			return true;
 		}
 		if (currentIsEquals(TypeToken.TK_ID) ){
-			 Object[] tipo = getSntStrean().findSimbolById(currentToken().getValue());
+			Object[] tipo = getSntStrean().findSimbolById(currentToken().getValue());
 			if ( tipo ==null){
 				e6.erro = formateErro("Identificador não declarado");
 				return false;
