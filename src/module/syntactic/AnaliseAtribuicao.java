@@ -15,7 +15,7 @@ public class AnaliseAtribuicao extends AbstractAnaliseSintatica {
 
 	private boolean atribuicao(PlaceCod a) {
 		if (currentIsEquals(TypeToken.TK_ID)){
-			String tipo_id = getSntStrean().findSimbolById(currentToken().getValue());
+			Object[] tipo_id = getSntStrean().findSimbolById(currentToken().getValue());
 			if( tipo_id ==null ){
 				a.erro = formateErro("Variavel não declarada!");
 				return false;
@@ -30,7 +30,7 @@ public class AnaliseAtribuicao extends AbstractAnaliseSintatica {
 			}
 			
 			if( AnaliseExpressao.isExpressao(getSntStrean(), e) ) {
-				if (!e.tipo.equals(tipo_id) && !tipo_id.equals(selectTipo(tipo_id, e.tipo))){
+				if (!e.tipo.equals(tipo_id) && !tipo_id.equals(selectTipo((String)tipo_id[0], e.tipo))){
 					a.erro = formateErro("Tipo imcompativel!");
 					return false;
 				}
@@ -49,7 +49,7 @@ public class AnaliseAtribuicao extends AbstractAnaliseSintatica {
 				//TODO aqui
 				a.addCods( gen("=",tk_id.getValue(),t1));
 				a.place = e.place;
-				a.tipo = tipo_id;
+				a.tipo = (String) tipo_id[0];
 				return true;
 			}
 			a.erro = coalesce(e.erro, formateErro("Esperava uma atribuição"));

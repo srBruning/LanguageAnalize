@@ -354,14 +354,14 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 			return true;
 		}
 		if (currentIsEquals(TypeToken.TK_ID) ){
-			String tipo = getSntStrean().findSimbolById(currentToken().getValue());
+			 Object[] tipo = getSntStrean().findSimbolById(currentToken().getValue());
 			if ( tipo ==null){
 				e6.erro = formateErro("Identificador não declarado");
 				return false;
 			}
 			e6.place = currentToken().getValue();
 			e6.cod = "";
-			e6.tipo = tipo;
+			e6.tipo = (String) tipo[0];
 			toNextToken();
 			return true;
 		}

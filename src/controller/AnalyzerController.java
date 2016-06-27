@@ -84,9 +84,8 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 		SyntacticAnalyzerModule sa = new SyntacticAnalyzerModule();
 		ResultadoAnalizeBean result = sa.analyzer(new SyntaticStrean(entrada));
 		
-		HashMap<String, String> variables = sa.getVariables();
 		boolean valid = result.getErros()==null || result.getErros().isEmpty();
-		this.view.onResultSyntatic(valid,result.getCodigo(), result.getErros(), variables);
+		this.view.onResultSyntatic(valid,result.getCodigo(), result.getErros());
 
 	}
 

@@ -23,7 +23,7 @@ public abstract class AbstractAnaliseSintatica {
 	}
 	
 	
-	public HashMap<String, String> getVariables(){
+	public HashMap<String, Object[]> getVariables(){
 		return getSntStrean().getVariables();
 	}
 	
@@ -34,12 +34,22 @@ public abstract class AbstractAnaliseSintatica {
 		return new CausaErro(erro, tk.getLinha(), tk.getPosIni(), tk.getPosFin());
 	}
 
-	protected String gen(String op, String place, String place2, String place3) {		
-		return place + "=" + place2 + op + place3;   
+	protected String gen(String op, String place, String place2, String place3) {	
+		
+		return getPlaceBp(place )+ "=" + getPlaceBp(place2) + op + getPlaceBp(place3);   
+	}
+	
+	private String getPlaceBp(String place){
+		Object[] op1 = this.sntStrean.findSimbolById(place);
+		if ( op1!=null && op1[1]!=null)
+			place = "[_Bp + "+op1[1]+"]";	
+		
+		return place;
 	}
 
 	protected String gen(String op, String  place, String place2) {
-		return place + op + place2;
+	
+		return getPlaceBp(place) + op + getPlaceBp(place2);
 	}
 	
 	protected Token currentToken(){

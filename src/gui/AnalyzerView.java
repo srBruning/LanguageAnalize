@@ -127,8 +127,7 @@ public class AnalyzerView extends AnalyzerViewLay {
 	}
 
 	@Override
-	public void onResultSyntatic(boolean valide, String codigoIntermediario, List<CausaErro> erros,
-			HashMap<String, String> variables) {
+	public void onResultSyntatic(boolean valide, String codigoIntermediario, List<CausaErro> erros) {
 		System.out.println("sintatico");
 		console.setText("");
 		// TODO sintatico
@@ -144,7 +143,6 @@ public class AnalyzerView extends AnalyzerViewLay {
 						writh_out(erro.getFormatedMessage());
 					}
 
-				variablesTableModel.setTokens(variables);
 				editorPaneResult.setText(codigoIntermediario);				
 			}
 		});

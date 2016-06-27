@@ -1,12 +1,8 @@
 package module.syntactic;
 
-import java.awt.Point;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.Queue;
 import java.util.Stack;
 
 import module.CausaErro;
@@ -19,9 +15,9 @@ public class SyntaticStrean {
 	Token currentToken;
 	private List<CausaErro> erro;
 
-	private static HashMap<String, String> simbVaraibles;
+	private static HashMap<String, Object[]> simbVaraibles;
 
-	private Stack<HashMap<String, String>> stackSimbVaraibles = new Stack<>();
+	private Stack<HashMap<String, Object[]>> stackSimbVaraibles = new Stack<>();
 
 	public List<CausaErro> getErro() {
 		if (erro == null )
@@ -90,7 +86,7 @@ public class SyntaticStrean {
 		currentToken = entrada.get(currentPosition);
 	}
 
-	public HashMap<String, String> getVariables(){
+	public HashMap<String, Object[]> getVariables(){
 		if ( simbVaraibles == null)
 			simbVaraibles = new HashMap<>();
 		return simbVaraibles;
@@ -99,16 +95,16 @@ public class SyntaticStrean {
 	protected boolean addTabSimbulos(String place, String tipo, Integer address){
 		if (findSimbolById(place)!=null)
 			return false;
-		// FIXME salvar valor do endereço
-		getVariables().put(place, tipo);
+
+		getVariables().put(place, new Object[]{tipo, address});
 		return true;
 	}
 
-	protected String findSimbolById(String value) {
+	protected Object[] findSimbolById(String value) {
 		return getVariables().get(value);
 	}
 
-	protected String findSimbolLocalTableById(String value) {
+	protected Object[] findSimbolLocalTableById(String value) {
 		return stackSimbVaraibles.peek().get(value);
 	}
 

@@ -28,12 +28,11 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 
 
 
-	private boolean declaracao(PlaceCod d) {
-		// TODO Auto-generated method stub
+	private boolean corpoFuncao(PlaceCod cf) {
+		// FIXME implementar
 		return false;
 	}
-
-	private boolean corpoFuncao(PlaceCod cf) {
+	private boolean declaracao(PlaceCod d) {
 		
 		PlaceCod t =new PlaceCod();
 		if (type(t)){
@@ -42,16 +41,35 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 				PlaceCod d2 = new PlaceCod();
 				d2.tipo = t.tipo;
 				d2.place = ct.getValue();
+				d2.address = d.address;
 				if ( declaracao2(d2)){
-					
+					d.cod = d2.cod;
+					return true;
 				}else{
-					cf.erro = d2.erro; 
+					d.erro = d2.erro; 
+					return false;
 				}
 			}else{
-				cf.erro  = formateErro("Esperava um identificador depois de um tipo!");
+				d.erro  = formateErro("Esperava um identificador depois de um tipo!");
 				return false;
 			}
 			
+		}else if (toNextIfEquals(TypeToken.VOID)){
+			Token ct = currentToken();
+			if ( toNextIfEquals(TypeToken.TK_ID)){
+				PlaceCod cf = new PlaceCod();
+				cf.returnType = null;
+				cf.place = ct.getValue();	
+				if (corpoFuncao(cf)){
+					d.cod = cf.cod;
+				}else{
+					d.erro = coalesce(cf.erro, formateErro("Esperava a declaração de uma função "));
+					return false;
+				}
+			}else{
+				d.erro = formateErro("esperava um identificador apos um token void!");
+				return false;
+			}
 		}
 		return false;
 	}
@@ -65,20 +83,20 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 			d2.address = cf.address;
 			return true;
 		}else{
-			if( getSntStrean().findSimbolById(currentToken().getValue())!=null ){
+			if( getSntStrean().findSimbolById(d2.place)!=null ){
 				d2.erro  = formateErro("Já há uma varivel com o nome "+currentToken().getValue());
 				return false;
 			}
-			getSntStrean().addTabSimbulos(currentToken().getValue(), d2.tipo, d2.address);
+			getSntStrean().addTabSimbulos(d2.place, d2.tipo, d2.address);
 			if ( d2.address!=null)
-				d2.address++;
+				d2.address++;//TODO
 			
 			PlaceCod d3 = new PlaceCod(d2);
-			d3.place = currentToken().getValue(); 
-			toNextToken();			
+			d3.place = d2.place; 			
 			if (declaracao3(d3)){
 				d2.cod = d3.cod;
 				d2.address = d3.address;
+				return true;
 			}
 		}
 		return false;
@@ -89,15 +107,15 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 		if ( toNextIfEquals(TypeToken.TK_ASSINGMENT)){
 			PlaceCod e = new PlaceCod();
 			if (AnaliseExpressao.isExpressao(getSntStrean(), e)){
-				if (!d3.tipo.equals(selectTipo(d3,  e)) ){
+				if (!d3.tipo.equals(e.tipo) ){
 					d3.erro = coalesce(d3.erro, formateErro("Esta tentando colocar um "+e.tipo+ "em um "+d3.tipo));
 					return false;
 				}
-				d3.setCods(e.cod,  gen("=", d3.place, e.place) );
 				PlaceCod d4 = new PlaceCod(d3);
 				if (declaracao4(d4)){
-					d3.cod = d3.cod + gen("=", d3.place, e.place) + d4.cod;
+					d3.setCods(d3.cod, e.cod,  gen("=", d3.place, e.place) , d4.cod);
 					d3.address = d4.address;
+					return true;
 					
 				}else{
 					d3.erro = d4.erro;
