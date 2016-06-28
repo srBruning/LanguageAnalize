@@ -16,12 +16,18 @@ public abstract class AbstractAnaliseSintatica {
 	}
 	
 	private SyntaticStrean sntStrean;
+	private int countLabel;
 
 	protected void clear(){
 		getVariables().clear();	
 		seqVar =0;
 	}
-	
+
+	protected String creatLabel() {
+		// FIXME tratar
+		return "LABEL"+(countLabel++);
+	}
+
 	
 	public HashMap<String, Object[]> getVariables(){
 		return getSntStrean().getVariables();

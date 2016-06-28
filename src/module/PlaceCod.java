@@ -12,6 +12,10 @@ public class PlaceCod{
 	public CausaErro erro;
 	public String  returnType;
 	public Integer address = null;
+	public String lbInicio =null;
+	public String lbFim=null;
+	public String lbContinue =null;
+	public String lbBreak=null;
 	
 	public PlaceCod(){	}
 	
