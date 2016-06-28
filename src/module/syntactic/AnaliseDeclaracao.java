@@ -98,6 +98,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica{
 				d2.address = d3.address;
 				return true;
 			}
+			d2.erro = d3.erro;
 		}
 		return false;
 	}

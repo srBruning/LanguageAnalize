@@ -327,7 +327,6 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 							gen("=", e5.place, "1")+"\ngoto fim\n", 
 							"false:"+gen("=", e5.place, "0"),
 							"fim:");
-
 				}
 				return true;
 			}
