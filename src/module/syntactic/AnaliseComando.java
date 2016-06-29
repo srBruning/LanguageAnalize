@@ -21,6 +21,9 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		if (typeToken.equals(TypeToken.IF)) {
 			return AnaliseIf.isIf(getSntStrean(), c);
 		}
+		if (typeToken.equals(TypeToken.WHILE)) {
+			return AnaliseWhile.isWhile(getSntStrean(), c);
+		}		
 		c.erro = formateErro("Um comando");
 		return false;
 	}
@@ -29,8 +32,47 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		// FIXME alterar
 		if (toNextIfEquals(TypeToken.TK_SEMICOLON))
 			return true;
+		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET)){
+			PlaceCod lc1 = new PlaceCod();
+			lc1.lbBreak = clc.lbBreak;
+			lc1.lbContinue = clc.lbBreak;			
+			if (listaComando(lc1)){
+				if (toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)){
+					clc.cod = lc1.cod;
+					return true;
+				}
+			}else {
+				clc.erro = coalesce(lc1.erro, formateErro("Esperava Lista Comandos"));
+				return false;
+			}			
+		}
+		PlaceCod lc1 = new PlaceCod();
+		lc1.lbBreak = clc.lbBreak;
+		lc1.lbContinue = clc.lbBreak;			
+		if (isCommand(lc1)){
+			if (toNextIfEquals(TypeToken.TK_SEMICOLON)){
+				clc.cod = lc1.cod;
+				return true;
+			}
+		}
+		clc.erro = coalesce(lc1.erro, formateErro("Esperava comando ou Lista Comando"));
 		return false;
 	}
+	public boolean listaComando(PlaceCod lc) {
+		// FIXME alterar
+		PlaceCod c = new PlaceCod();
+		c.lbContinue = lc.lbContinue;
+		c.lbBreak = lc.lbBreak;
+		if (isCommand(c)){
+			PlaceCod lc1 = new PlaceCod();
+			lc1.cod = c.cod;
+			if (listaComando(lc1)){
+				lc.cod = lc1.cod;
+				return true;
+			}
+		}
+		return true;
+	}	
 
 	private static AnaliseComando instan;
 

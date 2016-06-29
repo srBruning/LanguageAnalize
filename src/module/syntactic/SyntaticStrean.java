@@ -11,19 +11,24 @@ import module.Token;
 public class SyntaticStrean {
 	private ArrayList<Token> entrada;
 	private int currentPosition;
-	Stack<Integer> stakPosition= new Stack<>();
+	// Stack<Integer> stakPosition= new Stack<>();
 	Token currentToken;
 	private List<CausaErro> erro;
 
 	private static HashMap<String, Object[]> simbVaraibles;
 
+	private static HashMap<String, FuncaoBean> tabFunc;
+
 	private Stack<HashMap<String, Object[]>> stackSimbVaraibles = new Stack<>();
 
+	private Stack<FuncaoBean> pilhaFunc = new Stack<>();
+
 	public List<CausaErro> getErro() {
-		if (erro == null )
+		if (erro == null)
 			erro = new ArrayList<>();
 		return erro;
 	}
+
 	public void addErro(String msg, int linha, int colIni, int colFim) {
 		getErro().add(new CausaErro(msg, linha, colIni, colFim));
 	}
@@ -31,85 +36,113 @@ public class SyntaticStrean {
 	public ArrayList<Token> getEntrada() {
 		return entrada;
 	}
+
 	public int getCurrentPosition() {
 		return currentPosition;
 	}
+
 	public Token getCurrentToken() {
 		return currentToken;
 	}
-	public SyntaticStrean(ArrayList<Token> entrada){
+
+	public SyntaticStrean(ArrayList<Token> entrada) {
 		this.entrada = entrada;
-		stakPosition= new Stack<>();
-		currentPosition= -1;
+		currentPosition = -1;
 
 	}
-	public void peekPosition(){
-		currentPosition = this.stakPosition.peek();		
-		currentToken = entrada.get(currentPosition);
+
+	public boolean hasNextToken() {
+		return currentPosition <= entrada.size() - 1;
 	}
 
-	public boolean hasNextToken(){
-		return currentPosition <= entrada.size()-1;
-	}
-
-	public boolean nextToken(){
+	public boolean nextToken() {
 		currentPosition++;
-		if(currentPosition >= entrada.size()){
-			currentToken=null;
+		if (currentPosition >= entrada.size()) {
+			currentToken = null;
 			return false;
 		}
 		currentToken = entrada.get(currentPosition);
 		return true;
-	}	
-
-	public Token getLastToken(){
-		return entrada.get(entrada.size()-1);
 	}
 
-	public Token getPreviwToken(){
-		return entrada.get(currentPosition >0 ? currentPosition-1 : currentPosition);
+	public Token getLastToken() {
+		return entrada.get(entrada.size() - 1);
 	}
 
-	public void pushPosition(){
-		this.stakPosition.push(currentPosition);		
-	}
-
-	public void popPosition(){
-		this.stakPosition.pop();		
+	public Token getPreviwToken() {
+		return entrada.get(currentPosition > 0 ? currentPosition - 1 : currentPosition);
 	}
 
 	public void setCurrentToken(Token currentToken) {
 		this.currentToken = currentToken;
 	}
-	public void popPositionToToken(){
-		currentPosition = this.stakPosition.pop();	
-		currentToken = entrada.get(currentPosition);
-	}
 
-	public HashMap<String, Object[]> getVariables(){
-		if ( simbVaraibles == null)
+	public HashMap<String, Object[]> getVariables() {
+		if (simbVaraibles == null)
 			simbVaraibles = new HashMap<>();
 		return simbVaraibles;
 	}
 
-	protected boolean addTabSimbulos(String place, String tipo, Integer address){
-		if (findSimbolById(place)!=null)
+	protected boolean addTabSimbulos(String place, String tipo, Integer address) {
+		if (findSimbolById(place) != null)
 			return false;
 
-		getVariables().put(place, new Object[]{tipo, address});
+		getVariables().put(place, new Object[] { tipo, address });
 		return true;
 	}
 
 	protected Object[] findSimbolById(String value) {
-		return getVariables().get(value);
+		Object[] r = findSimbolLocalTableById(value);
+		if (r == null)
+			r = getVariables().get(value);
+		return r;
 	}
 
 	protected Object[] findSimbolLocalTableById(String value) {
-		return stackSimbVaraibles.peek().get(value);
+		return getStackSimbVaraibles().peek().get(value);
 	}
 
-	protected void pushTabSimbulo(){
-		stackSimbVaraibles.push(new HashMap<>());
+	protected void pushTabSimbulo() {
+		getStackSimbVaraibles().push(new HashMap<>());
+	}
+
+	protected void removTabSimbulo() {
+		getStackSimbVaraibles().pop();
+	}
+
+	public Stack<HashMap<String, Object[]>> getStackSimbVaraibles() {
+		if (stackSimbVaraibles == null)
+			stackSimbVaraibles = new Stack<>();
+		return stackSimbVaraibles;
+	}
+
+	public static HashMap<String, FuncaoBean> getTabFunc() {
+		if (tabFunc == null)
+			tabFunc = new HashMap<>();
+
+		return tabFunc;
+	}
+
+	public FuncaoBean findFuncao(String place) {
+		return getTabFunc().get(place);
+	}
+
+	public void addTabFunc(FuncaoBean bean) {
+		getTabFunc().put(bean.getName(), bean);
+	}
+	
+
+	public void pushFuncao(FuncaoBean funcBean) {
+		pilhaFunc.push(funcBean);
+
+	}
+	public FuncaoBean peekFuncao() {
+		return pilhaFunc.peek();
+
+	}
+	public FuncaoBean popFuncao(FuncaoBean funcBean) {
+		return pilhaFunc.pop();				
+
 	}
 
 }

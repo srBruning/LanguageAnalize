@@ -1,7 +1,6 @@
 package module.syntactic;
 
 import module.PlaceCod;
-import module.Token;
 import module.Token.TypeToken;
 
 public class AnaliseIf extends AbstractAnaliseSintatica {
@@ -15,31 +14,40 @@ public class AnaliseIf extends AbstractAnaliseSintatica {
 
 	private boolean isIf(PlaceCod a) {
 		if (toNextIfEquals(TypeToken.IF)) {
-
 			if (toNextIfEquals(TypeToken.TK_OPENPARENTHESIS)) {
-
 				PlaceCod e = new PlaceCod();
 				if (AnaliseExpressao.isExpressao(getSntStrean(), e)) {
 					if (toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS)) {
-						// criar labels
-						// comando ou lista comando
 						PlaceCod clc = new PlaceCod();
-						clc.lbContinue = a.lbContinue;
+						clc.lbContinue = a.lbContinue;  
 						clc.lbBreak = a.lbBreak;
 						PlaceCod pcElse = new PlaceCod();
 						if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
 							if (isElse(pcElse)) {
-								
+								if (pcElse.cod == null || pcElse.cod.isEmpty()){
+									String lbFinal = creatLabel();
+									a.addCods( e.cod , "if" + e.place + "==" + "0" + "goto" + lbFinal ,
+										      clc.cod ,lbFinal + ":");
+								} else{
+									String lbElse = creatLabel();
+									String lbFinal = creatLabel();
+									a.addCods( e.cod + "if" + e.place + "==" + "0" + "goto" + lbElse ,
+							        clc.cod , "goto" + lbFinal , lbElse + ":" , pcElse.cod , lbFinal + ":");									
+								}
+								return true;
 							}
-
 							a.erro = coalesce(clc.erro, formateErro("Esperava um comando"));
+							//a.erro = clc.erro;
+							return false;
 						}
 					} else {
 						a.erro = formateErro("Esperava fecha parentesis depois do If");
 						return false;
 					}
 				} else {
-					a.erro = coalesce(e.erro, formateErro("Esperava uma Expreção"));
+					a.erro = coalesce(e.erro, formateErro("Esperava uma ExpreÃ§Ã£o"));
+					//a.erro = e.erro;
+					return false;
 				}
 			} else {
 				a.erro = formateErro("Esperava abre parentesis depois do If");
@@ -52,11 +60,18 @@ public class AnaliseIf extends AbstractAnaliseSintatica {
 
 
 	private boolean isElse(PlaceCod a) {
-		// criar labels
-		if (currentIsEquals(TypeToken.ELSE)) {
-			// comando ou lista de comando
+		if (toNextIfEquals(TypeToken.ELSE)) {
+			PlaceCod clc = new PlaceCod();
+			clc.lbContinue = a.lbContinue;
+			clc.lbBreak = a.lbBreak;
+			if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
+				a.cod = clc.cod;
+			}else{
+				a.erro = coalesce(clc.erro, formateErro("Esperava um comando"));
+			}
 		}
-		return false;
+		a.cod = null;
+		return true;
 	}
 
 }

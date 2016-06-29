@@ -335,6 +335,8 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 			e5.cod = e6.cod;
 			e5.tipo = e6.tipo;
 			return true;
+		}else{
+			e5.erro = e6.erro;
 		}
 		return false;
 	}
