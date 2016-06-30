@@ -35,10 +35,12 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET)){
 			PlaceCod lc1 = new PlaceCod();
 			lc1.lbBreak = clc.lbBreak;
-			lc1.lbContinue = clc.lbBreak;			
+			lc1.lbContinue = clc.lbBreak;	
+			lc1.address = clc.address;
 			if (listaComando(lc1)){
 				if (toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)){
 					clc.cod = lc1.cod;
+					clc.address = lc1.address;
 					return true;
 				}
 			}else {

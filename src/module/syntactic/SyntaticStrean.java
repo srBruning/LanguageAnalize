@@ -99,11 +99,17 @@ public class SyntaticStrean {
 	}
 
 	protected Object[] findSimbolLocalTableById(String value) {
+		if( getStackSimbVaraibles().isEmpty() )
+			return null;
 		return getStackSimbVaraibles().peek().get(value);
 	}
 
 	protected void pushTabSimbulo() {
 		getStackSimbVaraibles().push(new HashMap<>());
+	}
+
+	protected void popTabSimbulo() {
+		getStackSimbVaraibles().pop();
 	}
 
 	protected void removTabSimbulo() {
@@ -140,7 +146,7 @@ public class SyntaticStrean {
 		return pilhaFunc.peek();
 
 	}
-	public FuncaoBean popFuncao(FuncaoBean funcBean) {
+	public FuncaoBean popFuncao() {
 		return pilhaFunc.pop();				
 
 	}

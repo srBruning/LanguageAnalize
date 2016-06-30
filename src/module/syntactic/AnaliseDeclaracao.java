@@ -34,57 +34,63 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 	private boolean corpoFuncao(PlaceCod cf) {
 		// FIXME implementar
 		getSntStrean().pushTabSimbulo();
-		
-	
-		PlaceCod lp = new PlaceCod();
-		lp.address = 8;
-		FuncaoBean funcBean = new FuncaoBean();
-		funcBean.setName(cf.place);
-		funcBean.setType(cf.returnType);
-		funcBean.setLbRetutn(creatLabel());
-		getSntStrean().pushFuncao(funcBean);
+		try {
 
-		if (toNextIfEquals(TypeToken.TK_OPENPARENTHESIS)) {
-			PlaceCod clc = new PlaceCod();
-			clc.address = 0;
-			if (listParameters(lp) && toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS)) {
+			PlaceCod lp = new PlaceCod();
+			lp.address = 8;
+			FuncaoBean funcBean = new FuncaoBean();
+			funcBean.setName(cf.place);
+			funcBean.setType(cf.returnType);
+			funcBean.setLbRetutn(creatLabel());
+			getSntStrean().pushFuncao(funcBean);
 
-				if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
-					if (getSntStrean().findFuncao(cf.place) != null) {
-						cf.erro = formateErro("Metodo " + cf.place + "duplicado!");
-						return false;
+			if (toNextIfEquals(TypeToken.TK_OPENPARENTHESIS)) {
+				PlaceCod clc = new PlaceCod();
+				clc.address = 0;
+				if (listParameters(lp) && toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS)) {
+
+					if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
+						if (getSntStrean().findFuncao(cf.place) != null) {
+							cf.erro = formateErro("Metodo " + cf.place + "duplicado!");
+							return false;
+						}
+						String labelFim = creatLabel();
+						getSntStrean().addTabFunc(funcBean);
+						cf.addCods("goto " + labelFim, funcBean.getName() + ":");
+						cf.addCods("push _Bp ");
+						cf.addCods(gen("=", "_Bp", "_Sp"));
+						for (ParametrosBean p : funcBean.getParametros()) {
+							cf.addCods(gen("=", p.varTemp, "[_Bp +" + p.addres + "]"));
+						}
+						
+						return true;
 					}
-					String labelFim = creatLabel();
-					getSntStrean().addTabFunc(funcBean);
-					cf.addCods("goto " + labelFim, funcBean.getName()+":");
-					cf.addCods("push _Bp ");
-					cf.addCods(gen("=", "_Bp", "_Sp"));
-					for ( ParametrosBean p: funcBean.getParametros()){
-						cf.addCods(gen("=", p.varTemp,  "[_Bp +"+ p.addres+"]"));
-					}
+				} else {
+					cf.erro = formateErro("esperava um token fecha parentes");
 				}
-			} else {
-				cf.erro = formateErro("esperava um token fecha parentes");
 			}
-		}
 
-		return false;
+			return false;
+		} finally {
+			getSntStrean().popFuncao();
+			getSntStrean().popTabSimbulo();
+		}
 	}
 
 	private boolean listParameters(PlaceCod lp) {
 		PlaceCod t = new PlaceCod();
 
-		if (type(t) ){
+		if (type(t)) {
 			Token crt = currentToken();
-			if(toNextIfEquals(TypeToken.TK_ID)){
-				if( getSntStrean().peekFuncao().findParam(crt.getValue()) !=null){
+			if (toNextIfEquals(TypeToken.TK_ID)) {
+				if (getSntStrean().peekFuncao().findParam(crt.getValue()) != null) {
 					lp.erro = formateErro("Ja ha um parametro com esse nome");
 					return false;
 				}
-				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, lp.address, criaTemp()  );
-				getSntStrean().peekFuncao().getParametros().add( bean);
+				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, lp.address, criaTemp());
+				getSntStrean().peekFuncao().getParametros().add(bean);
 				lp.address += 4;
-			}else{
+			} else {
 				lp.erro = formateErro("Esperava um identificador deposide um tipo");
 				return false;
 			}
