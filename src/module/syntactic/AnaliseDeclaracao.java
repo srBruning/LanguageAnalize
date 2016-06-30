@@ -1,8 +1,5 @@
 package module.syntactic;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-
 import module.ParametrosBean;
 import module.PlaceCod;
 import module.Token;
@@ -64,6 +61,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 						}
 						cf.addCods(clc.cod, funcBean.getLbRetutn()+":", gen("-", "_Sp", "_Sp", clc.address.toString())  );
 						cf.addCods("pop _Bp", "return");
+						cf.addCods(labelFim+":");
 						return true;
 					}else{
 						cf.erro = coalesce(clc.erro, formateErro("Esperava um comando!"));

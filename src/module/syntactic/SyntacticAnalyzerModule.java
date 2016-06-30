@@ -30,13 +30,15 @@ public class SyntacticAnalyzerModule extends AbstractAnaliseSintatica{
 		while(getSntStrean().hasNextToken()){
 			PlaceCod d = new PlaceCod();
 
-			if (!AnaliseComando.isCommands(getSntStrean(), d)){
+			if (!AnaliseDeclaracao.isDeclaracao(getSntStrean(), d)){
 				if (d.erro!=null)
 					erros.add(d.erro);
 				getSntStrean().nextToken();
 			}
+			
 			mPlaceCod.addCods(d.cod);
 		}
+		mPlaceCod.addCods("goto main");
 
 		return new ResultadoAnalizeBean(mPlaceCod.cod, erros);
 	}
