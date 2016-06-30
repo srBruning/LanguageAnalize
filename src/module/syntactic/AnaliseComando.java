@@ -53,12 +53,12 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				if (func.getType() != null) {
 					c.erro = formateErro("Deve retornar um valor valido.");
 					return false;
-				} else if (!er.returnType.equals(func.getType())) {
-					c.erro = formateErro("Tipo de retorno incompativel");
-					return false;
 				}
 
 				c.addCods(gen("=", "[_Bp+" + func.getEndReturn() + "]", er.place), "goto " + func.getLbRetutn());
+			} else if (!er.returnType.equals(func.getType())) {
+				c.erro = formateErro("Tipo de retorno incompativel");
+				return false;
 			}
 			return true;
 		}
@@ -81,9 +81,7 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 	}
 
 	public boolean comandOrListComand(PlaceCod clc) {
-		// FIXME alterar
-		if (toNextIfEquals(TypeToken.TK_SEMICOLON))
-			return true;
+	
 		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET)) {
 			PlaceCod lc1 = new PlaceCod();
 			lc1.lbBreak = clc.lbBreak;
@@ -100,16 +98,18 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				return false;
 			}
 		}
-		PlaceCod lc1 = new PlaceCod();
-		lc1.lbBreak = clc.lbBreak;
-		lc1.lbContinue = clc.lbBreak;
-		if (isCommand(lc1)) {
-			if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
-				clc.cod = lc1.cod;
-				return true;
-			}
+		
+		PlaceCod cmd =new PlaceCod();
+		cmd.address = clc.address;
+		cmd.returnType = clc.returnType;
+		if ( isCommand(cmd)){
+			clc.cod = cmd.cod;
+			clc.address = cmd.address;
+			return true;
+		}else{
+			clc.erro = cmd.erro;
 		}
-		clc.erro = coalesce(lc1.erro, formateErro("Esperava comando ou Lista Comando"));
+		
 		return false;
 	}
 

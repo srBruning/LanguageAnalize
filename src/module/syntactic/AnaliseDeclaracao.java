@@ -65,6 +65,8 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 						cf.addCods(clc.cod, funcBean.getLbRetutn()+":", gen("-", "_Sp", "_Sp", clc.address.toString())  );
 						cf.addCods("pop _Bp", "return");
 						return true;
+					}else{
+						cf.erro = coalesce(clc.erro, formateErro("Esperava um comando!"));
 					}
 				} else {
 					cf.erro = formateErro("esperava um token fecha parentes");
