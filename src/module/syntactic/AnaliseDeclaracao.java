@@ -48,21 +48,22 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				PlaceCod clc = new PlaceCod();
 				clc.address = 0;
 				if (listParameters(lp) && toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS)) {
-
+					funcBean.setEndReturn(lp.address+4);
+					if (getSntStrean().findFuncao(cf.place) != null) {
+						cf.erro = formateErro("Metodo " + cf.place + "duplicado!");
+						return false;
+					}
+					getSntStrean().addTabFunc(funcBean);
 					if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
-						if (getSntStrean().findFuncao(cf.place) != null) {
-							cf.erro = formateErro("Metodo " + cf.place + "duplicado!");
-							return false;
-						}
 						String labelFim = creatLabel();
-						getSntStrean().addTabFunc(funcBean);
 						cf.addCods("goto " + labelFim, funcBean.getName() + ":");
 						cf.addCods("push _Bp ");
-						cf.addCods(gen("=", "_Bp", "_Sp"));
+						cf.addCods(gen("=", "_Bp", "_Sp"), gen("+", "_Sp", "_Sp", clc.address.toString()));
 						for (ParametrosBean p : funcBean.getParametros()) {
 							cf.addCods(gen("=", p.varTemp, "[_Bp +" + p.addres + "]"));
 						}
-						
+						cf.addCods(clc.cod, funcBean.getLbRetutn()+":", gen("-", "_Sp", "_Sp", clc.address.toString())  );
+						cf.addCods("pop _Bp", "return");
 						return true;
 					}
 				} else {
@@ -89,6 +90,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				}
 				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, lp.address, criaTemp());
 				getSntStrean().peekFuncao().getParametros().add(bean);
+				getSntStrean().addTabSimbulos(crt.getValue(), t.tipo, lp.address);
 				lp.address += 4;
 			} else {
 				lp.erro = formateErro("Esperava um identificador deposide um tipo");
@@ -145,7 +147,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 		cf.returnType = d2.tipo;
 		cf.place = d2.place;
 		if (corpoFuncao(cf)) {
-			d2.cod = d2.cod + cf.cod;
+			d2.addCods(d2.cod , cf.cod);
 			d2.address = cf.address;
 			return true;
 		} else {

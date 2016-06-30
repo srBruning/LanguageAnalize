@@ -86,7 +86,13 @@ public class SyntaticStrean {
 	protected boolean addTabSimbulos(String place, String tipo, Integer address) {
 		if (findSimbolById(place) != null)
 			return false;
-
+		
+		if( !getStackSimbVaraibles().isEmpty() ){
+			 getStackSimbVaraibles().peek().put(place, new Object[] { tipo, address });
+			 return true;
+		}
+		
+		
 		getVariables().put(place, new Object[] { tipo, address });
 		return true;
 	}
@@ -122,7 +128,7 @@ public class SyntaticStrean {
 		return stackSimbVaraibles;
 	}
 
-	public static HashMap<String, FuncaoBean> getTabFunc() {
+	public  HashMap<String, FuncaoBean> getTabFunc() {
 		if (tabFunc == null)
 			tabFunc = new HashMap<>();
 
@@ -146,9 +152,24 @@ public class SyntaticStrean {
 		return pilhaFunc.peek();
 
 	}
+	public boolean isFunction(){
+		return pilhaFunc.size() >0;
+	}
 	public FuncaoBean popFuncao() {
 		return pilhaFunc.pop();				
 
+	}
+
+	public Stack<FuncaoBean> getPilhaFunc() {
+		return pilhaFunc;
+	}
+
+	public void setPilhaFunc(Stack<FuncaoBean> pilhaFunc) {
+		this.pilhaFunc = pilhaFunc;
+	}
+
+	public void setStackSimbVaraibles(Stack<HashMap<String, Object[]>> stackSimbVaraibles) {
+		this.stackSimbVaraibles = stackSimbVaraibles;
 	}
 
 }

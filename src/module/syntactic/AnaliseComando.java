@@ -23,36 +23,88 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		}
 		if (typeToken.equals(TypeToken.WHILE)) {
 			return AnaliseWhile.isWhile(getSntStrean(), c);
-		}		
+		}
+
+		if (typeToken.equals(TypeToken.RETURN)) {
+			return isCmsReturn(c);
+		}
+
 		c.erro = formateErro("Um comando");
 		return false;
+	}
+
+	private boolean isCmsReturn(PlaceCod c) {
+
+		if (toNextIfEquals(TypeToken.RETURN)) {
+			PlaceCod er = new PlaceCod();
+			if (!eReturn(er)) {
+				c.erro = er.erro;
+				return false;
+			}
+			;
+
+			if (!getSntStrean().isFunction()) {
+				c.erro = formateErro("Deve estar em uma função!");
+				return false;
+			}
+
+			FuncaoBean func = getSntStrean().peekFuncao();
+			if (er.returnType == null) {
+				if (func.getType() != null) {
+					c.erro = formateErro("Deve retornar um valor valido.");
+					return false;
+				} else if (!er.returnType.equals(func.getType())) {
+					c.erro = formateErro("Tipo de retorno incompativel");
+					return false;
+				}
+
+				c.addCods(gen("=", "[_Bp+" + func.getEndReturn() + "]", er.place), "goto " + func.getLbRetutn());
+			}
+			return true;
+		}
+
+		return false;
+	}
+
+	private boolean eReturn(PlaceCod er) {
+		PlaceCod e = new PlaceCod();
+		if (AnaliseExpressao.isExpressao(getSntStrean(), e)) {
+			er.cod = e.cod;
+			er.returnType = e.tipo;
+			er.place = e.place;
+			if (!toNextIfEquals(TypeToken.TK_SEMICOLON)) {
+				er.erro = formateErro("esperava um token de fim de sentença");
+				return false;
+			}
+		}
+		return true;
 	}
 
 	public boolean comandOrListComand(PlaceCod clc) {
 		// FIXME alterar
 		if (toNextIfEquals(TypeToken.TK_SEMICOLON))
 			return true;
-		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET)){
+		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET)) {
 			PlaceCod lc1 = new PlaceCod();
 			lc1.lbBreak = clc.lbBreak;
-			lc1.lbContinue = clc.lbBreak;	
+			lc1.lbContinue = clc.lbBreak;
 			lc1.address = clc.address;
-			if (listaComando(lc1)){
-				if (toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)){
+			if (listaComando(lc1)) {
+				if (toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)) {
 					clc.cod = lc1.cod;
 					clc.address = lc1.address;
 					return true;
 				}
-			}else {
+			} else {
 				clc.erro = coalesce(lc1.erro, formateErro("Esperava Lista Comandos"));
 				return false;
-			}			
+			}
 		}
 		PlaceCod lc1 = new PlaceCod();
 		lc1.lbBreak = clc.lbBreak;
-		lc1.lbContinue = clc.lbBreak;			
-		if (isCommand(lc1)){
-			if (toNextIfEquals(TypeToken.TK_SEMICOLON)){
+		lc1.lbContinue = clc.lbBreak;
+		if (isCommand(lc1)) {
+			if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
 				clc.cod = lc1.cod;
 				return true;
 			}
@@ -60,24 +112,24 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		clc.erro = coalesce(lc1.erro, formateErro("Esperava comando ou Lista Comando"));
 		return false;
 	}
+
 	public boolean listaComando(PlaceCod lc) {
 		// FIXME alterar
 		PlaceCod c = new PlaceCod();
 		c.lbContinue = lc.lbContinue;
 		c.lbBreak = lc.lbBreak;
-		if (isCommand(c)){
+		if (isCommand(c)) {
 			PlaceCod lc1 = new PlaceCod();
 			lc1.cod = c.cod;
-			if (listaComando(lc1)){
+			if (listaComando(lc1)) {
 				lc.cod = lc1.cod;
 				return true;
 			}
 		}
 		return true;
-	}	
+	}
 
 	private static AnaliseComando instan;
-
 
 	public static AnaliseComando getInstancia(SyntaticStrean strean) {
 		if (instan == null) {

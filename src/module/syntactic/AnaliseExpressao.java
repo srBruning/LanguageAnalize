@@ -269,6 +269,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 		if ( toNextIfEquals(TypeToken.TK_MULTP)  ||  toNextIfEquals(TypeToken.TK_DIV )
 				||  toNextIfEquals(TypeToken.TK_MOD ) ){
 			PlaceCod e5 = new PlaceCod();
+			Token crt = currentToken();
 			if ( e5(e5)){
 				PlaceCod v1h = new PlaceCod();
 				v1h.tipo = selectTipo(h, e5);				
@@ -356,15 +357,26 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 			return true;
 		}
 		if (currentIsEquals(TypeToken.TK_ID) ){
-			Object[] tipo = getSntStrean().findSimbolById(currentToken().getValue());
+			
+			Token tkCurrent = currentToken();
+			toNextToken();
+			PlaceCod cf = new PlaceCod();
+			cf.place = tkCurrent.getValue();
+			if ( isChamadaFuncao(cf) ){
+				
+				e6.cod = cf.cod;
+				e6.tipo = cf.tipo;
+				return true;
+			}
+			
+			Object[] tipo = getSntStrean().findSimbolLocalTableById(tkCurrent.getValue());
 			if ( tipo ==null){
 				e6.erro = formateErro("Identificador não declarado");
 				return false;
 			}
-			e6.place = currentToken().getValue();
+			e6.place = tkCurrent.getValue();
 			e6.cod = "";
 			e6.tipo = (String) tipo[0];
-			toNextToken();
 			return true;
 		}
 		if(toNextIfEquals(TypeToken.TK_OPENPARENTHESIS) ){
@@ -376,6 +388,52 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 				return true;
 			}
 		}
+		return false;
+	}
+
+	private boolean isChamadaFuncao(PlaceCod cf) {
+
+		if (toNextIfEquals(TypeToken.TK_OPENPARENTHESIS)){
+			FuncaoBean func = getSntStrean().findFuncao(cf.place);
+			if ( func == null){
+				cf.erro = formateErro("Funcao não declarada. ");
+				return false;
+			}
+			PlaceCod lp = new PlaceCod();
+			if( listParametros(lp, func,1)){
+				cf.cod = lp.cod;
+				cf.addCods("call "+cf.place);
+				cf.place = criaTemp();
+				cf.addCods(gen("+", "_Sp","_Sp", "8"));
+				cf.addCods("pop "+cf.place);				
+				cf.tipo = func.getType();
+				return true;
+			}
+			
+		}
+		return false;
+	}
+
+	private boolean listParametros(PlaceCod lp, FuncaoBean func, int p) {
+	
+		PlaceCod ex = new PlaceCod();
+		if( AnaliseExpressao.isExpressao(getSntStrean(), ex)){
+			lp.addCods(ex.cod);
+			lp.addCods("push "+ex.place);
+			lp.addCods(gen("-", "_Sp","_Sp", "4"));
+			if(toNextIfEquals(TypeToken.TK_COMMA) ){
+				if(listParametros(lp, func, p+1)){
+					return true;
+				}
+				return false;
+			}
+			
+		}
+		if( p == func.getParametros().size()){
+			toNextToken();
+			return true;
+		}
+		lp.erro = formateErro("numero invalido de argumentos");
 		return false;
 	}
 

@@ -20,6 +20,8 @@ public abstract class AbstractAnaliseSintatica {
 
 	protected void clear(){
 		getVariables().clear();	
+		getSntStrean().getPilhaFunc().clear();
+		getSntStrean().getTabFunc().clear();
 		seqVar =0;
 	}
 

@@ -14,6 +14,7 @@ public class FuncaoBean {
 	private String type;
 	private List<ParametrosBean> parametros;
 	private String lbRetutn;
+	private Integer endReturn;
 
 	public String getName() {
 		return name;
@@ -50,12 +51,20 @@ public class FuncaoBean {
 	}
 
 	public ParametrosBean findParam(String id){
-		for (ParametrosBean p : parametros){
+		for (ParametrosBean p : getParametros()){
 			if ( p.tokenId.equals(id))
 				return p;
 		}
 		return null;
 	
+	}
+
+	public Integer getEndReturn() {
+		return endReturn;
+	}
+
+	public void setEndReturn(Integer endReturn) {
+		this.endReturn = endReturn;
 	}
 	
 }
