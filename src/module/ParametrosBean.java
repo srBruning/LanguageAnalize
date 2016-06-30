@@ -7,10 +7,11 @@ public class ParametrosBean {
 	public ParametrosBean(){
 		
 	}
-	public ParametrosBean(	 String tokenId, String type,  Integer addres){
+	public ParametrosBean(	 String tokenId, String type,  Integer addres, String vartemp){
 		this.type = type;
 		this.tokenId = tokenId;
 		this.addres = addres;
+		this.varTemp = vartemp;
 	}
 	public String type;
 	public String tokenId;

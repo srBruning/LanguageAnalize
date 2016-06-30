@@ -60,8 +60,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 					cf.addCods("push _Bp ");
 					cf.addCods(gen("=", "_Bp", "_Sp"));
 					for ( ParametrosBean p: funcBean.getParametros()){
-						p.varTemp = criaTemp();
-						cf.addCods(gen);
+						cf.addCods(gen("=", p.varTemp,  "[_Bp +"+ p.addres+"]"));
 					}
 				}
 			} else {
@@ -82,7 +81,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 					lp.erro = formateErro("Ja ha um parametro com esse nome");
 					return false;
 				}
-				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, lp.address );
+				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, lp.address, criaTemp()  );
 				getSntStrean().peekFuncao().getParametros().add( bean);
 				lp.address += 4;
 			}else{
