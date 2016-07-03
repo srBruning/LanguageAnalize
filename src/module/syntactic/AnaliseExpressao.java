@@ -5,12 +5,22 @@ import module.Token;
 import module.Token.TypeToken;
 
 public class AnaliseExpressao extends AbstractAnaliseSintatica{
+	private static AnaliseExpressao instance;
+
 	private AnaliseExpressao(SyntaticStrean strean){
 		setSntStrean(strean);
 	}
 
+	public static AnaliseExpressao getInstance(SyntaticStrean strean) {
+		if (instance == null)
+			instance = new AnaliseExpressao(strean);
+		else
+			instance.setSntStrean(strean);
+
+		return instance;
+	}
 	public static boolean isExpressao(SyntaticStrean strean, PlaceCod ePlaceCod ){
-		return new AnaliseExpressao(strean).expressao(ePlaceCod);
+		return getInstance(strean).expressao(ePlaceCod);
 	}
 
 	private boolean expressao(PlaceCod ePlaceCod ) {
@@ -391,7 +401,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica{
 		return false;
 	}
 
-	private boolean isChamadaFuncao(PlaceCod cf) {
+	public boolean isChamadaFuncao(PlaceCod cf) {
 
 		if (toNextIfEquals(TypeToken.TK_OPENPARENTHESIS)){
 			FuncaoBean func = getSntStrean().findFuncao(cf.place);

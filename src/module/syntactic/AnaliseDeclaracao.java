@@ -28,7 +28,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 		return r;
 	}
 
-	private boolean corpoFuncao(PlaceCod cf) {
+	public boolean corpoFuncao(PlaceCod cf) {
 		// FIXME implementar
 		getSntStrean().pushTabSimbulo();
 		try {
@@ -151,6 +151,11 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 			d2.address = cf.address;
 			return true;
 		} else {
+			
+			if ( cf.erro !=null){
+				d2.erro = cf.erro;
+				return false;			}
+			
 			if (getSntStrean().findSimbolById(d2.place) != null) {
 				d2.erro = formateErro("Já há uma varivel com o nome " + currentToken().getValue());
 				return false;

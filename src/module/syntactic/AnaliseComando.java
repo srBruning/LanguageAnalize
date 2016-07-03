@@ -11,8 +11,16 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 
 	private boolean isCommand(PlaceCod c) {
 
+		if ( currentToken() == null)
+			return false;
+		
 		Object typeToken = currentToken().getType();
-		if (typeToken.equals(TypeToken.TK_ID)) {
+		if (toNextIfEquals(TypeToken.TK_ID)) {
+			PlaceCod cf =new PlaceCod();
+			if (! AnaliseExpressao.getInstance(getSntStrean()).isChamadaFuncao(cf) &&  cf.erro !=null){
+				c.erro = cf.erro;
+				return false;
+			}
 			return AnaliseAtribuicao.isAtribicao(getSntStrean(), c);
 		}
 		if (currentToken().isType()) {
@@ -29,7 +37,6 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 			return isCmsReturn(c);
 		}
 
-		c.erro = formateErro("Um comando");
 		return false;
 	}
 
@@ -76,6 +83,10 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				er.erro = formateErro("esperava um token de fim de sentença");
 				return false;
 			}
+		}
+		if( e.erro !=null){
+			er.erro  = e.erro;
+			return false;
 		}
 		return true;
 	}
@@ -126,6 +137,12 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				return true;
 			}
 		}
+		
+		if(c.erro!=null){
+			lc.erro = c.erro;
+			return false;
+		}
+		
 		return true;
 	}
 

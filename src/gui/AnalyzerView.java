@@ -140,7 +140,7 @@ public class AnalyzerView extends AnalyzerViewLay {
 				writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido: "));
 				if ( erros!=null)
 					for (CausaErro erro : erros){
-						writh_out(erro.getFormatedMessage());
+						writh_out(erro.getFormatedMessage()+"\t("+erro.getMetadataLog()+")");
 					}
 
 				editorPaneResult.setText(codigoIntermediario);				
