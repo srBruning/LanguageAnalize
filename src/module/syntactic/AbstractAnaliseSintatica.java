@@ -10,13 +10,13 @@ import module.Token.TypeToken;
 public abstract class AbstractAnaliseSintatica {
 
 	private static int seqVar;
+	private SyntaticStrean sntStrean;
+	private int countLabel;
 
 	protected String criaTemp() {
 		return "T" + seqVar++;
 	}
 
-	private SyntaticStrean sntStrean;
-	private int countLabel;
 
 	protected void clear() {
 		getVariables().clear();

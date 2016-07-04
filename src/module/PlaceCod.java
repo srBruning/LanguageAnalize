@@ -15,6 +15,7 @@ public class PlaceCod{
 	public String lbFim=null;
 	public String lbContinue =null;
 	public String lbBreak=null;
+	public String testeCod=null;
 	
 	public PlaceCod(){	}
 	

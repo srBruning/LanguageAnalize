@@ -10,33 +10,88 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 	}
 
 	private boolean isCommand(PlaceCod c) {
-
-		if ( currentToken() == null)
-			return false;
+		PlaceCod lc1 = new PlaceCod();
+		lc1.lbBreak = c.lbBreak;
+		lc1.lbContinue = c.lbContinue;		
 		
-		Object typeToken = currentToken().getType();
-		if (toNextIfEquals(TypeToken.TK_ID)) {
-			PlaceCod cf =new PlaceCod();
-			if (! AnaliseExpressao.getInstance(getSntStrean()).isChamadaFuncao(cf) &&  cf.erro !=null){
-				c.erro = cf.erro;
+		if ( currentIsEquals(TypeToken.TK_ID)) {
+			lc1.place = currentToken().getValue();
+			toNextToken();
+			if ( AnaliseExpressao.getInstance(getSntStrean()).isChamadaFuncao(lc1)){
+				
+				if(toNextIfEquals(TypeToken.TK_SEMICOLON)){
+				c.cod = lc1.cod;
+				return true;
+				}else{
+					c.erro = formateErro("Esperava um token de fim de sentença!");
+					return false;
+				}
+			}
+			if( lc1.erro !=null){
+				c.erro = lc1.erro;
+				return false;				
+			}
+	
+			if (  AnaliseAtribuicao.isCmdAtribicao(getSntStrean(), lc1) ){
+				c.cod = lc1.cod;
+				return true;
+			}if (lc1.erro != null){
+				c.erro = lc1.erro;
 				return false;
 			}
-			return AnaliseAtribuicao.isAtribicao(getSntStrean(), c);
 		}
-		if (currentToken().isType()) {
-			return AnaliseDeclaracao.isDeclaracao(getSntStrean(), c);
+	
+		if (AnaliseDeclaracao.isDeclaracao(getSntStrean(), lc1)) {
+			c.cod = lc1.cod;
+			return true;
+		}if (lc1.erro != null){
+			c.erro = lc1.erro;
+			return false;
+		}		
+		if (AnaliseIf.isIf(getSntStrean(), lc1)) {
+			c.cod = lc1.cod;
+			return true;
+		}if (lc1.erro != null){
+			c.erro = lc1.erro;
+			return false;
+		}	
+		if (AnaliseWhile.isWhile(getSntStrean(), lc1)) {
+			c.cod = lc1.cod;
+			return true;
+		}if (lc1.erro != null){
+			c.erro = lc1.erro;
+			return false;
 		}
-		if (typeToken.equals(TypeToken.IF)) {
-			return AnaliseIf.isIf(getSntStrean(), c);
-		}
-		if (typeToken.equals(TypeToken.WHILE)) {
-			return AnaliseWhile.isWhile(getSntStrean(), c);
-		}
-
-		if (typeToken.equals(TypeToken.RETURN)) {
-			return isCmsReturn(c);
-		}
-
+		if (AnaliseSwitch.isSwitch(getSntStrean(), lc1)) {
+			c.cod = lc1.cod;
+			return true;
+		}if (lc1.erro != null){
+			c.erro = lc1.erro;
+			return false;
+		}			
+		if (AnaliseFor.isFor(getSntStrean(), lc1)) {
+			c.cod = lc1.cod;
+			return true;
+		}if (lc1.erro != null){
+			c.erro = lc1.erro;
+			return false;
+		}	
+		if (isCmsReturn(lc1)) {
+			c.cod = lc1.cod;
+			return true;
+		}if (lc1.erro != null){
+			c.erro = lc1.erro;
+			return false;
+		}		
+		if (isBreakContinue(lc1)) {
+			c.cod = lc1.cod;
+			return true;
+		}if (lc1.erro != null){
+			c.erro = lc1.erro;
+			return false;
+		}				
+			
+		//c.erro = coalesce(lc1.erro, formateErro("Esperava um Comando"));
 		return false;
 	}
 
@@ -51,7 +106,7 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 			;
 
 			if (!getSntStrean().isFunction()) {
-				c.erro = formateErro("Deve estar em uma função!");
+				c.erro = formateErro("Deve estar em uma funÃ§Ã£o!");
 				return false;
 			}
 
@@ -80,23 +135,59 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 			er.returnType = e.tipo;
 			er.place = e.place;
 			if (!toNextIfEquals(TypeToken.TK_SEMICOLON)) {
-				er.erro = formateErro("esperava um token de fim de sentença");
+				er.erro = formateErro("esperava um token de fim de sentenÃ§a");
 				return false;
 			}
-		}
-		if( e.erro !=null){
-			er.erro  = e.erro;
+			
+			
+			
+		}else if(e.erro !=null){
+			er.erro = e.erro;
 			return false;
 		}
 		return true;
 	}
+	
+	private boolean isBreakContinue(PlaceCod bc) {
+
+		if (toNextIfEquals(TypeToken.BREAK)) {
+			if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
+				if (bc.lbBreak == null || bc.lbBreak.isEmpty()) {
+					bc.erro = formateErro("Break Fora de Contexto");
+					return false;
+				}else{
+					bc.cod = "goto "+bc.lbBreak;
+					return true;
+				}
+			}else{
+				bc.erro = formateErro("Esperava Ponto e Virgula");
+				return false;
+			}
+			
+		}
+		if (toNextIfEquals(TypeToken.CONTINUE)) {
+			if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
+				if (bc.lbContinue == null || bc.lbContinue.isEmpty()) {
+					bc.erro = formateErro("Continue Fora de Contexto");
+					return false;
+				}else{
+					bc.cod = "goto "+bc.lbContinue;
+					return true;
+				}
+			}else{
+				bc.erro = formateErro("Esperava Ponto e Virgula");
+				return false;
+			}
+		}		
+		return false;
+	}	
 
 	public boolean comandOrListComand(PlaceCod clc) {
 	
 		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET)) {
 			PlaceCod lc1 = new PlaceCod();
 			lc1.lbBreak = clc.lbBreak;
-			lc1.lbContinue = clc.lbBreak;
+			lc1.lbContinue = clc.lbContinue;
 			lc1.address = clc.address;
 			if (listaComando(lc1)) {
 				if (toNextIfEquals(TypeToken.TK_CLOSE_BRAKET)) {
@@ -108,19 +199,27 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				clc.erro = coalesce(lc1.erro, formateErro("Esperava Lista Comandos"));
 				return false;
 			}
-		}
-		
-		PlaceCod cmd =new PlaceCod();
-		cmd.address = clc.address;
-		cmd.returnType = clc.returnType;
-		if ( isCommand(cmd)){
-			clc.cod = cmd.cod;
-			clc.address = cmd.address;
-			return true;
 		}else{
-			clc.erro = cmd.erro;
-		}
 		
+			PlaceCod cmd =new PlaceCod();
+			cmd.address = clc.address;
+			cmd.returnType = clc.returnType;
+			cmd.lbBreak = clc.lbBreak;
+			cmd.lbContinue = clc.lbContinue;
+			if ( isCommand(cmd)){
+				clc.cod = cmd.cod;
+				clc.address = cmd.address;
+				return true;
+			}else{
+				if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
+					return true;
+				}			
+				clc.erro = cmd.erro;
+			}
+			
+			return false;
+		}
+		clc.erro = formateErro("Comando ou ListaComando");
 		return false;
 	}
 
@@ -131,18 +230,21 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		c.lbBreak = lc.lbBreak;
 		if (isCommand(c)) {
 			PlaceCod lc1 = new PlaceCod();
-			lc1.cod = c.cod;
+			lc1.lbContinue = c.lbContinue;
+			lc1.lbBreak = c.lbBreak;
+			if (lc.cod != null)	lc1.cod = lc.cod + c.cod; else lc1.cod = c.cod;			
 			if (listaComando(lc1)) {
 				lc.cod = lc1.cod;
 				return true;
+			}else if(lc1.erro !=null){
+				lc.erro = lc1.erro;
+				return false;
 			}
-		}
-		
-		if(c.erro!=null){
+		}if (c.erro != null){
 			lc.erro = c.erro;
 			return false;
-		}
-		
+		}		
+		if (lc.cod != null)	lc.cod = lc.cod + c.cod; else lc.cod = c.cod;	
 		return true;
 	}
 
