@@ -18,6 +18,12 @@ public abstract class AbstractAnaliseSintatica {
 		return "T" + seqVar++;
 	}
 
+	protected boolean addTabSimbulos(String place, String tipo, Integer address) {
+		if (!getSntStrean().getStackSimbVaraibles().isEmpty())
+			return getSntStrean().addTabSimbulos(place, tipo, address, criaTemp());
+		else
+			return getSntStrean().addTabSimbulos(place, tipo, address, null);
+	}
 
 	protected void clear() {
 		getVariables().clear();
@@ -50,10 +56,22 @@ public abstract class AbstractAnaliseSintatica {
 		return getPlaceBp(place) + "=" + getPlaceBp(place2.toString()) + op + getPlaceBp(place3.toString());
 	}
 
+	protected String genGotoCond(String place, String op, String place2, String lbElse) {
+		Object[] var = getSntStrean().findSimbolById(place);
+		if(var!=null && var[2]!=null)
+			place = (String) var[2];
+		var = getSntStrean().findSimbolById(place2);
+		if(var!=null && var[2]!=null)
+			place2 = (String) var[2];
+		return "if " + place + "==" + place2 + " goto " + lbElse;
+
+	}
+
 	private String getPlaceBp(String place) {
-		Object[] op1 = this.sntStrean.findSimbolById(place);
+		Object[] op1 = null;
+		op1 = this.sntStrean.findSimbolById(place);
+
 		if (op1 != null && op1[2] != null)
-//			place = "[_BP + " + op1[1] + "]";
 			place = (String) op1[2];
 
 		return place;

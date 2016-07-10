@@ -26,13 +26,14 @@ public class AnaliseIf extends AbstractAnaliseSintatica {
 							if (isElse(pcElse)) {
 								if (pcElse.cod == null || pcElse.cod.isEmpty()){
 									String lbFinal = creatLabel();
-									a.addCods( e.cod , "if" + e.place + "==" + "0" + "goto" + lbFinal ,
+									a.addCods( e.cod , genGotoCond(e.place, "==", "0", lbFinal) ,
 										      clc.cod ,lbFinal + ":");
 								} else{
 									String lbElse = creatLabel();
 									String lbFinal = creatLabel();
-									a.addCods( e.cod + "if" + e.place + "==" + "0" + "goto" + lbElse ,
-							        clc.cod , "goto" + lbFinal , lbElse + ":" , pcElse.cod , lbFinal + ":");									
+									
+									a.addCods( e.cod + genGotoCond(e.place, "==", "0", lbElse) ,
+							        clc.cod , " goto " + lbFinal , lbElse + ":" , pcElse.cod , lbFinal + ":");									
 								}
 								return true;
 							}
@@ -66,11 +67,13 @@ public class AnaliseIf extends AbstractAnaliseSintatica {
 			clc.lbBreak = a.lbBreak;
 			if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
 				a.cod = clc.cod;
+				return true;
 			}else{
 				a.erro = coalesce(clc.erro, formateErro("Esperava um comando"));
+				return false;
 			}
 		}
-		a.cod = null;
+		
 		return true;
 	}
 

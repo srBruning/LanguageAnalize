@@ -12,86 +12,97 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 	private boolean isCommand(PlaceCod c) {
 		PlaceCod lc1 = new PlaceCod();
 		lc1.lbBreak = c.lbBreak;
-		lc1.lbContinue = c.lbContinue;		
-		
-		if ( currentIsEquals(TypeToken.TK_ID)) {
+		lc1.lbContinue = c.lbContinue;
+		lc1.address = c.address;
+
+		if (currentIsEquals(TypeToken.TK_ID)) {
 			lc1.place = currentToken().getValue();
 			toNextToken();
-			if ( AnaliseExpressao.getInstance(getSntStrean()).isChamadaFuncao(lc1)){
-				
-				if(toNextIfEquals(TypeToken.TK_SEMICOLON)){
-				c.cod = lc1.cod;
-				return true;
-				}else{
+			if (AnaliseExpressao.getInstance(getSntStrean()).isChamadaFuncao(lc1)) {
+
+				if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
+					c.cod = lc1.cod;
+					return true;
+				} else {
 					c.erro = formateErro("Esperava um token de fim de sentença!");
 					return false;
 				}
 			}
-			if( lc1.erro !=null){
+			if (lc1.erro != null) {
 				c.erro = lc1.erro;
-				return false;				
+				return false;
 			}
-	
-			if (  AnaliseAtribuicao.isCmdAtribicao(getSntStrean(), lc1) ){
+
+			if (AnaliseAtribuicao.isCmdAtribicao(getSntStrean(), lc1)) {
 				c.cod = lc1.cod;
 				return true;
-			}if (lc1.erro != null){
+			}
+			if (lc1.erro != null) {
 				c.erro = lc1.erro;
 				return false;
 			}
 		}
-	
+
 		if (AnaliseDeclaracao.isDeclaracao(getSntStrean(), lc1)) {
 			c.cod = lc1.cod;
+			c.tipo = lc1.tipo;
+			c.address = lc1.address;
 			return true;
-		}if (lc1.erro != null){
+		}
+		if (lc1.erro != null) {
 			c.erro = lc1.erro;
 			return false;
-		}		
+		}
 		if (AnaliseIf.isIf(getSntStrean(), lc1)) {
 			c.cod = lc1.cod;
 			return true;
-		}if (lc1.erro != null){
+		}
+		if (lc1.erro != null) {
 			c.erro = lc1.erro;
 			return false;
-		}	
+		}
 		if (AnaliseWhile.isWhile(getSntStrean(), lc1)) {
 			c.cod = lc1.cod;
 			return true;
-		}if (lc1.erro != null){
+		}
+		if (lc1.erro != null) {
 			c.erro = lc1.erro;
 			return false;
 		}
 		if (AnaliseSwitch.isSwitch(getSntStrean(), lc1)) {
 			c.cod = lc1.cod;
 			return true;
-		}if (lc1.erro != null){
+		}
+		if (lc1.erro != null) {
 			c.erro = lc1.erro;
 			return false;
-		}			
+		}
 		if (AnaliseFor.isFor(getSntStrean(), lc1)) {
 			c.cod = lc1.cod;
 			return true;
-		}if (lc1.erro != null){
+		}
+		if (lc1.erro != null) {
 			c.erro = lc1.erro;
 			return false;
-		}	
+		}
 		if (isCmsReturn(lc1)) {
 			c.cod = lc1.cod;
 			return true;
-		}if (lc1.erro != null){
+		}
+		if (lc1.erro != null) {
 			c.erro = lc1.erro;
 			return false;
-		}		
+		}
 		if (isBreakContinue(lc1)) {
 			c.cod = lc1.cod;
 			return true;
-		}if (lc1.erro != null){
+		}
+		if (lc1.erro != null) {
 			c.erro = lc1.erro;
 			return false;
-		}				
-			
-		//c.erro = coalesce(lc1.erro, formateErro("Esperava um Comando"));
+		}
+
+		// c.erro = coalesce(lc1.erro, formateErro("Esperava um Comando"));
 		return false;
 	}
 
@@ -122,7 +133,7 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				return false;
 			}
 			c.addCods(gen("=", "[_BP+" + func.getEndReturn() + "]", er.place), "goto " + func.getLbRetutn());
-			
+
 			return true;
 		}
 
@@ -139,16 +150,14 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				er.erro = formateErro("esperava um token de fim de sentenÃ§a");
 				return false;
 			}
-			
-			
-			
-		}else if(e.erro !=null){
+
+		} else if (e.erro != null) {
 			er.erro = e.erro;
 			return false;
 		}
 		return true;
 	}
-	
+
 	private boolean isBreakContinue(PlaceCod bc) {
 
 		if (toNextIfEquals(TypeToken.BREAK)) {
@@ -156,35 +165,35 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				if (bc.lbBreak == null || bc.lbBreak.isEmpty()) {
 					bc.erro = formateErro("Break Fora de Contexto");
 					return false;
-				}else{
-					bc.cod = "goto "+bc.lbBreak;
+				} else {
+					bc.cod = "goto " + bc.lbBreak;
 					return true;
 				}
-			}else{
+			} else {
 				bc.erro = formateErro("Esperava Ponto e Virgula");
 				return false;
 			}
-			
+
 		}
 		if (toNextIfEquals(TypeToken.CONTINUE)) {
 			if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
 				if (bc.lbContinue == null || bc.lbContinue.isEmpty()) {
 					bc.erro = formateErro("Continue Fora de Contexto");
 					return false;
-				}else{
-					bc.cod = "goto "+bc.lbContinue;
+				} else {
+					bc.cod = "goto " + bc.lbContinue;
 					return true;
 				}
-			}else{
+			} else {
 				bc.erro = formateErro("Esperava Ponto e Virgula");
 				return false;
 			}
-		}		
+		}
 		return false;
-	}	
+	}
 
 	public boolean comandOrListComand(PlaceCod clc) {
-	
+
 		if (toNextIfEquals(TypeToken.TK_OPEN_BRAKET)) {
 			PlaceCod lc1 = new PlaceCod();
 			lc1.lbBreak = clc.lbBreak;
@@ -200,24 +209,24 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				clc.erro = coalesce(lc1.erro, formateErro("Esperava Lista Comandos"));
 				return false;
 			}
-		}else{
-		
-			PlaceCod cmd =new PlaceCod();
+		} else {
+
+			PlaceCod cmd = new PlaceCod();
 			cmd.address = clc.address;
 			cmd.returnType = clc.returnType;
 			cmd.lbBreak = clc.lbBreak;
 			cmd.lbContinue = clc.lbContinue;
-			if ( isCommand(cmd)){
+			if (isCommand(cmd)) {
 				clc.cod = cmd.cod;
 				clc.address = cmd.address;
 				return true;
-			}else{
+			} else {
 				if (toNextIfEquals(TypeToken.TK_SEMICOLON)) {
 					return true;
-				}			
+				}
 				clc.erro = cmd.erro;
 			}
-			
+
 			return false;
 		}
 		clc.erro = formateErro("Comando ou ListaComando");
@@ -229,24 +238,28 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 		PlaceCod c = new PlaceCod();
 		c.lbContinue = lc.lbContinue;
 		c.lbBreak = lc.lbBreak;
+		c.address = lc.address;
 		if (isCommand(c)) {
 			PlaceCod lc1 = new PlaceCod();
 			lc1.lbContinue = c.lbContinue;
 			lc1.lbBreak = c.lbBreak;
-//			if (lc.cod != null)	lc1.cod = lc.cod + c.cod; else lc1.cod = c.cod;			
+			lc1.address= c.address;
+			// if (lc.cod != null) lc1.cod = lc.cod + c.cod; else lc1.cod =
+			// c.cod;
 			if (listaComando(lc1)) {
-				lc.cod = lc1.cod;
-				lc.addCods(lc.cod, c.cod, lc1.cod);
+				lc.addCods( c.cod, lc1.cod);
+				lc.address = lc1.address;
 				return true;
-			}else if(lc1.erro !=null){
+			} else if (lc1.erro != null) {
 				lc.erro = lc1.erro;
 				return false;
 			}
-		}if (c.erro != null){
+		}
+		if (c.erro != null) {
 			lc.erro = c.erro;
 			return false;
-		}		
-			
+		}
+		lc.address = c.address;
 		lc.addCods(c.cod);
 		return true;
 	}

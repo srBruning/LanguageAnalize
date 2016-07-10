@@ -83,9 +83,6 @@ public class SyntaticStrean {
 		return simbVaraibles;
 	}
 
-	protected boolean addTabSimbulos(String place, String tipo, Integer address) {
-		return addTabSimbulos(place, tipo, address, null);
-	}
 	protected boolean addTabSimbulos(String place, String tipo, Integer address, String varTmp) {
 		if (findSimbolById(place) != null)
 			return false;
@@ -111,6 +108,12 @@ public class SyntaticStrean {
 		if( getStackSimbVaraibles().isEmpty() )
 			return null;
 		return getStackSimbVaraibles().peek().get(value);
+	}
+	
+	public HashMap<String, Object[]> getLocalVariables() {
+		if (getStackSimbVaraibles().isEmpty() || getStackSimbVaraibles().peek() == null)
+			return null;
+		return getStackSimbVaraibles().peek();
 	}
 
 	protected void pushTabSimbulo() {

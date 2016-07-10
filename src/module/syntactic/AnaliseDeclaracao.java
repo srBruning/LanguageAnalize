@@ -1,5 +1,7 @@
 package module.syntactic;
 
+import java.util.HashMap;
+
 import module.ParametrosBean;
 import module.PlaceCod;
 import module.Token;
@@ -52,16 +54,23 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 					}
 					getSntStrean().addTabFunc(funcBean);
 					if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
+						cf.address = clc.address;
 						String labelFim = creatLabel();
 						cf.addCods("goto " + labelFim, funcBean.getName() + ":");
 						cf.addCods("push _BP ");
-						cf.addCods(gen("=", "_BP", "_SP"), gen("+", "_SP", "_SP", clc.address.toString()));
-//						cf.addCods("pop _BP");
+						cf.addCods(gen("=", "_BP", "_SP"), gen("-", "_SP", "_SP", clc.address.toString()));
+						// cf.addCods("pop _BP");
+
 						for (ParametrosBean p : funcBean.getParametros()) {
 							cf.addCods(gen("=", p.varTemp, "[_BP +" + p.addres + "]"));
 						}
+						HashMap<String, Object[]> variaveis = getSntStrean().getLocalVariables();
+						for (Object[] var : variaveis.values()) {
+							if (var[2] == null)
+								var[2] = criaTemp();
+						}
 						cf.addCods(clc.cod, funcBean.getLbRetutn() + ":",
-								gen("-", "_SP", "_SP", clc.address.toString()));
+								gen("+", "_SP", "_SP", clc.address.toString()));
 						cf.addCods("pop _BP", "return");
 						cf.addCods(labelFim + ":");
 						return true;
@@ -98,7 +107,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				if (listParameters2(lp)) {
 
 					getSntStrean().addTabSimbulos(crt.getValue(), t.tipo, lp.address, bean.varTemp);
-					bean.addres = lp.address ;
+					bean.addres = lp.address;
 				}
 			} else {
 				lp.erro = formateErro("Esperava um identificador deposide um tipo");
@@ -110,7 +119,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 
 	private boolean listParameters2(PlaceCod lp) {
 		PlaceCod t = new PlaceCod();
-		if( !toNextIfEquals(TypeToken.TK_COMMA))
+		if (!toNextIfEquals(TypeToken.TK_COMMA))
 			return true;
 		if (type(t)) {
 			Token crt = currentToken();
@@ -119,13 +128,13 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 					lp.erro = formateErro("Ja ha um parametro com esse nome");
 					return false;
 				}
-				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, criaTemp());				
-				int index = getSntStrean().peekFuncao().getParametros().size();			
+				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, criaTemp());
+				int index = getSntStrean().peekFuncao().getParametros().size();
 				getSntStrean().peekFuncao().getParametros().add(bean);
 				getSntStrean().addTabSimbulos(crt.getValue(), t.tipo, lp.address, bean.varTemp);
 				listParameters2(lp);
-				
-				bean.addres = lp.address ;
+
+				bean.addres = lp.address;
 				lp.address += 4;
 				return true;
 			} else {
@@ -133,7 +142,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				return false;
 			}
 		}
-		
+
 		return false;
 	}
 
@@ -149,6 +158,8 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				d2.address = d.address;
 				if (declaracao2(d2)) {
 					d.cod = d2.cod;
+					d.address = d2.address;
+					d.tipo = d2.tipo;
 					return true;
 				} else {
 					d.erro = d2.erro;
@@ -165,7 +176,9 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				PlaceCod cf = new PlaceCod();
 				cf.returnType = null;
 				cf.place = ct.getValue();
+				cf.address = d.address;
 				if (corpoFuncao(cf)) {
+					d.address  = cf.address; 
 					d.cod = cf.cod;
 				} else {
 					d.erro = coalesce(cf.erro, formateErro("Esperava a declaração de uma função "));
@@ -198,7 +211,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				d2.erro = formateErro("Já há uma varivel com o nome " + currentToken().getValue());
 				return false;
 			}
-			getSntStrean().addTabSimbulos(d2.place, d2.tipo, d2.address);
+			addTabSimbulos(d2.place, d2.tipo, d2.address);
 			if (d2.address != null)
 				d2.address += 4;
 
@@ -277,7 +290,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				return false;
 			}
 
-			getSntStrean().addTabSimbulos(d5.place, d5.tipo, d5.address);
+			addTabSimbulos(d5.place, d5.tipo, d5.address);
 			if (d5.address != null) {
 				d5.address += 4;
 			}

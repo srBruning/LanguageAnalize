@@ -1,7 +1,11 @@
 package module.syntactic;
 
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
+import module.ParametrosBean;
 import module.PlaceCod;
 import module.Token;
 import module.Token.TypeToken;
@@ -354,7 +358,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 
 	private boolean e6(PlaceCod e6) {
 		if (currentIsEquals(TypeToken.CONST_NUM)) {
-//			e6.place = criaTemp();
+			// e6.place = criaTemp();
 			e6.place = currentToken().getValue();
 			if (currentToken().getValue().toString().indexOf(".") > 0)
 				e6.tipo = "FLOAT";
@@ -363,7 +367,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 			else
 				e6.tipo = "INT";
 
-//			e6.cod = gen("=", e6.place, currentToken().getValue());
+			// e6.cod = gen("=", e6.place, currentToken().getValue());
 			toNextToken();
 			return true;
 		}
@@ -380,8 +384,12 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 				e6.place = cf.place;
 				return true;
 			}
+			Object[] tipo = null;
+			if (getSntStrean().getStackSimbVaraibles().size() > 0)
+				tipo = getSntStrean().findSimbolLocalTableById(tkCurrent.getValue());
+			else
+				tipo = getSntStrean().findSimbolById(tkCurrent.getValue());
 
-			Object[] tipo = getSntStrean().findSimbolLocalTableById(tkCurrent.getValue());
 			if (tipo == null) {
 				e6.erro = formateErro("Identificador não declarado");
 				return false;
@@ -403,6 +411,28 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 		return false;
 	}
 
+	private List<Object[]> getListVarablesFunc(List<ParametrosBean> pars){
+		HashMap<String, Object[]> variables = getSntStrean().getLocalVariables();
+		List<Object[]> list = new ArrayList<>();
+		if (variables != null)
+			for (String key : variables.keySet()) {
+			
+				Object[] value = variables.get(key);
+				boolean b=true;
+				for( ParametrosBean p : pars){
+					if(p.addres == value[1]){
+						b= false;
+						break;
+					}						
+				}
+				if( b ){
+					list.add(new Object[]{key, value[1],value[2]});
+				}
+			}
+		
+		return list;
+		
+	}
 	public boolean isChamadaFuncao(PlaceCod cf) {
 
 		if (toNextIfEquals(TypeToken.TK_OPENPARENTHESIS)) {
@@ -415,23 +445,43 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 				cf.erro = formateErro("Funcao não declarada. ");
 				return false;
 			}
+
 			PlaceCod lp = new PlaceCod();
 			if (listParametros(lp, func)) {
 
 				if (toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS)) {
+					String codPush = "";
+					String codPop = "";
+					{// guardando variaveis na pilha
+						List<Object[]> variables = getListVarablesFunc(func.getParametros());
+						
+						if (variables != null)
+							for (Object[] var: variables) {
+								codPush += "\n";
+								codPop = "\n"+codPop;
+								if (var[2] != null) {
+									codPush += "[_BP+" + var[1] + "] = " + var[2];
+									codPop = var[2] + "= [_BP+" + var[1] + "]" + codPop;
+								}else{
+									codPush += "[_BP+" + var[1] + "] = " +var[0];
+									codPop = var[0] + "= [_BP+" + var[1] + "]" + codPop;	
+								}
+							}
+					}
 					cf.tipo = func.getType();
+					cf.addCods(codPush);
 					
-					cf.addCods("//\n");
-					if ( cf.tipo !=null)
+					if (cf.tipo != null)
 						cf.addCods(gen("-", "_SP", "_SP", "4"));
 
 					cf.addCods(lp.cod);
 					cf.addCods("call " + cf.place);
 					cf.place = criaTemp();
-					cf.addCods(gen("+", "_SP", "_SP", func.getParametros().size()*4));
+					cf.addCods(gen("+", "_SP", "_SP", func.getParametros().size() * 4));
 					cf.addCods("pop " + cf.place);
+					cf.addCods(codPop);
 					return true;
-				}else{
+				} else {
 					cf.erro = formateErro("esoerava um ')'");
 				}
 			} else {
@@ -441,10 +491,13 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 		}
 		return false;
 	}
-	private boolean listParametros(PlaceCod lp, FuncaoBean func){
+
+	private boolean listParametros(PlaceCod lp, FuncaoBean func) {
 		return listParametros(lp, func, 1);
 	}
+
 	private boolean listParametros(PlaceCod lp, FuncaoBean func, int p) {
+
 		PlaceCod ex = new PlaceCod();
 		if (AnaliseExpressao.isExpressao(getSntStrean(), ex)) {
 			lp.addCods(ex.cod);
@@ -456,7 +509,10 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 				return false;
 			}
 
+		} else if (p == 1 && func.getParametros().size() == 0) {
+			return true;
 		}
+
 		if (p == func.getParametros().size()) {
 			// toNextToken();
 			return true;
