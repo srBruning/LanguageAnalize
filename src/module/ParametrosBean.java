@@ -13,6 +13,11 @@ public class ParametrosBean {
 		this.addres = addres;
 		this.varTemp = vartemp;
 	}
+	public ParametrosBean(	 String tokenId, String type, String vartemp){
+		this.type = type;
+		this.tokenId = tokenId;
+		this.varTemp = vartemp;
+	}
 	public String type;
 	public String tokenId;
 	public String varTemp;

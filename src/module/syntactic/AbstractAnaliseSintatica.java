@@ -12,6 +12,7 @@ public abstract class AbstractAnaliseSintatica {
 	private static int seqVar;
 	private SyntaticStrean sntStrean;
 	private int countLabel;
+	public static String LINHA_SEPARADORA = "'LINHA_SEPARADORA'";
 
 	protected String criaTemp() {
 		return "T" + seqVar++;
@@ -44,15 +45,16 @@ public abstract class AbstractAnaliseSintatica {
 		return new CausaErro(erro, tk.getLinha(), tk.getPosIni(), tk.getPosFin(), meta);
 	}
 
-	protected String gen(String op, String place, String place2, String place3) {
+	protected String gen(String op, String place, Object place2, Object place3) {
 
-		return getPlaceBp(place) + "=" + getPlaceBp(place2) + op + getPlaceBp(place3);
+		return getPlaceBp(place) + "=" + getPlaceBp(place2.toString()) + op + getPlaceBp(place3.toString());
 	}
 
 	private String getPlaceBp(String place) {
 		Object[] op1 = this.sntStrean.findSimbolById(place);
-		if (op1 != null && op1[1] != null)
-			place = "[_Bp + " + op1[1] + "]";
+		if (op1 != null && op1[2] != null)
+//			place = "[_BP + " + op1[1] + "]";
+			place = (String) op1[2];
 
 		return place;
 	}

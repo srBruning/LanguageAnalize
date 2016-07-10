@@ -354,7 +354,8 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 
 	private boolean e6(PlaceCod e6) {
 		if (currentIsEquals(TypeToken.CONST_NUM)) {
-			e6.place = criaTemp();
+//			e6.place = criaTemp();
+			e6.place = currentToken().getValue();
 			if (currentToken().getValue().toString().indexOf(".") > 0)
 				e6.tipo = "FLOAT";
 			else if (currentToken().getValue().length() > 8)
@@ -362,7 +363,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 			else
 				e6.tipo = "INT";
 
-			e6.cod = gen("=", e6.place, currentToken().getValue());
+//			e6.cod = gen("=", e6.place, currentToken().getValue());
 			toNextToken();
 			return true;
 		}
@@ -376,6 +377,7 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 
 				e6.cod = cf.cod;
 				e6.tipo = cf.tipo;
+				e6.place = cf.place;
 				return true;
 			}
 
@@ -414,16 +416,20 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 				return false;
 			}
 			PlaceCod lp = new PlaceCod();
-			if (listParametros(lp, func, 0)) {
+			if (listParametros(lp, func)) {
 
 				if (toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS)) {
+					cf.tipo = func.getType();
+					
+					cf.addCods("//\n");
+					if ( cf.tipo !=null)
+						cf.addCods(gen("-", "_SP", "_SP", "4"));
 
-					cf.cod = lp.cod;
+					cf.addCods(lp.cod);
 					cf.addCods("call " + cf.place);
 					cf.place = criaTemp();
-					cf.addCods(gen("+", "_Sp", "_Sp", "8"));
+					cf.addCods(gen("+", "_SP", "_SP", func.getParametros().size()*4));
 					cf.addCods("pop " + cf.place);
-					cf.tipo = func.getType();
 					return true;
 				}else{
 					cf.erro = formateErro("esoerava um ')'");
@@ -435,14 +441,14 @@ public class AnaliseExpressao extends AbstractAnaliseSintatica {
 		}
 		return false;
 	}
-
+	private boolean listParametros(PlaceCod lp, FuncaoBean func){
+		return listParametros(lp, func, 1);
+	}
 	private boolean listParametros(PlaceCod lp, FuncaoBean func, int p) {
-
 		PlaceCod ex = new PlaceCod();
 		if (AnaliseExpressao.isExpressao(getSntStrean(), ex)) {
 			lp.addCods(ex.cod);
 			lp.addCods("push " + ex.place);
-			lp.addCods(gen("-", "_Sp", "_Sp", "4"));
 			if (toNextIfEquals(TypeToken.TK_COMMA)) {
 				if (listParametros(lp, func, p + 1)) {
 					return true;

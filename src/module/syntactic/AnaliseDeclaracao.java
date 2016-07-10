@@ -29,12 +29,12 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 	}
 
 	public boolean corpoFuncao(PlaceCod cf) {
-		// FIXME implementar
+
 		getSntStrean().pushTabSimbulo();
 		try {
 
 			PlaceCod lp = new PlaceCod();
-			lp.address = 8;
+			lp.address = 12;
 			FuncaoBean funcBean = new FuncaoBean();
 			funcBean.setName(cf.place);
 			funcBean.setType(cf.returnType);
@@ -45,7 +45,7 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 				PlaceCod clc = new PlaceCod();
 				clc.address = 0;
 				if (listParameters(lp) && toNextIfEquals(TypeToken.TK_CLOSEPARENTHESIS)) {
-					funcBean.setEndReturn(lp.address+4);
+					funcBean.setEndReturn(lp.address + 4);
 					if (getSntStrean().findFuncao(cf.place) != null) {
 						cf.erro = formateErro("Metodo " + cf.place + "duplicado!");
 						return false;
@@ -54,16 +54,18 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 					if (AnaliseComando.getInstancia(getSntStrean()).comandOrListComand(clc)) {
 						String labelFim = creatLabel();
 						cf.addCods("goto " + labelFim, funcBean.getName() + ":");
-						cf.addCods("push _Bp ");
-						cf.addCods(gen("=", "_Bp", "_Sp"), gen("+", "_Sp", "_Sp", clc.address.toString()));
+						cf.addCods("push _BP ");
+						cf.addCods(gen("=", "_BP", "_SP"), gen("+", "_SP", "_SP", clc.address.toString()));
+//						cf.addCods("pop _BP");
 						for (ParametrosBean p : funcBean.getParametros()) {
-							cf.addCods(gen("=", p.varTemp, "[_Bp +" + p.addres + "]"));
+							cf.addCods(gen("=", p.varTemp, "[_BP +" + p.addres + "]"));
 						}
-						cf.addCods(clc.cod, funcBean.getLbRetutn()+":", gen("-", "_Sp", "_Sp", clc.address.toString())  );
-						cf.addCods("pop _Bp", "return");
-						cf.addCods(labelFim+":");
+						cf.addCods(clc.cod, funcBean.getLbRetutn() + ":",
+								gen("-", "_SP", "_SP", clc.address.toString()));
+						cf.addCods("pop _BP", "return");
+						cf.addCods(labelFim + ":");
 						return true;
-					}else{
+					} else {
 						cf.erro = coalesce(clc.erro, formateErro("Esperava um comando!"));
 					}
 				} else {
@@ -88,16 +90,51 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 					lp.erro = formateErro("Ja ha um parametro com esse nome");
 					return false;
 				}
-				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, lp.address, criaTemp());
+				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, criaTemp());
+				int index = getSntStrean().peekFuncao().getParametros().size();
 				getSntStrean().peekFuncao().getParametros().add(bean);
-				getSntStrean().addTabSimbulos(crt.getValue(), t.tipo, lp.address);
-				lp.address += 4;
+				// getSntStrean().addTabSimbulos(crt.getValue(), t.tipo,
+				// lp.address);
+				if (listParameters2(lp)) {
+
+					getSntStrean().addTabSimbulos(crt.getValue(), t.tipo, lp.address, bean.varTemp);
+					bean.addres = lp.address ;
+				}
 			} else {
 				lp.erro = formateErro("Esperava um identificador deposide um tipo");
 				return false;
 			}
 		}
 		return true;
+	}
+
+	private boolean listParameters2(PlaceCod lp) {
+		PlaceCod t = new PlaceCod();
+		if( !toNextIfEquals(TypeToken.TK_COMMA))
+			return true;
+		if (type(t)) {
+			Token crt = currentToken();
+			if (toNextIfEquals(TypeToken.TK_ID)) {
+				if (getSntStrean().peekFuncao().findParam(crt.getValue()) != null) {
+					lp.erro = formateErro("Ja ha um parametro com esse nome");
+					return false;
+				}
+				ParametrosBean bean = new ParametrosBean(crt.getValue(), t.tipo, criaTemp());				
+				int index = getSntStrean().peekFuncao().getParametros().size();			
+				getSntStrean().peekFuncao().getParametros().add(bean);
+				getSntStrean().addTabSimbulos(crt.getValue(), t.tipo, lp.address, bean.varTemp);
+				listParameters2(lp);
+				
+				bean.addres = lp.address ;
+				lp.address += 4;
+				return true;
+			} else {
+				lp.erro = formateErro("Esperava um identificador deposide um tipo");
+				return false;
+			}
+		}
+		
+		return false;
 	}
 
 	private boolean declaracao(PlaceCod d) {
@@ -147,15 +184,16 @@ public class AnaliseDeclaracao extends AbstractAnaliseSintatica {
 		cf.returnType = d2.tipo;
 		cf.place = d2.place;
 		if (corpoFuncao(cf)) {
-			d2.addCods(d2.cod , cf.cod);
+			d2.addCods(d2.cod, cf.cod);
 			d2.address = cf.address;
 			return true;
 		} else {
-			
-			if ( cf.erro !=null){
+
+			if (cf.erro != null) {
 				d2.erro = cf.erro;
-				return false;			}
-			
+				return false;
+			}
+
 			if (getSntStrean().findSimbolById(d2.place) != null) {
 				d2.erro = formateErro("Já há uma varivel com o nome " + currentToken().getValue());
 				return false;

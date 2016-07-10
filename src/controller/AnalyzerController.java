@@ -54,6 +54,7 @@ public class AnalyzerController implements AnalyzerControllerInterface {
 			public void run() {
 				try {
 					frame.setVisible(true);
+					
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

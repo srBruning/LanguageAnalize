@@ -31,18 +31,33 @@ public class SyntacticAnalyzerModule extends AbstractAnaliseSintatica {
 			PlaceCod d = new PlaceCod();
 
 			if (!AnaliseDeclaracao.isDeclaracao(getSntStrean(), d)) {
-				if (d.erro != null)
+				if (d.erro != null) {
 					erros.add(d.erro);
-				getSntStrean().nextToken();
+					getSntStrean().nextToken();
+
+				} else {
+					if (!AnaliseComando.isCommands(getSntStrean(), d)) {
+						if (d.erro != null) {
+							erros.add(d.erro);
+							getSntStrean().nextToken();
+
+						} else {
+							erros.add(formateErro("Esperava uma declaração ou u comando."));
+							return new ResultadoAnalizeBean(mPlaceCod.cod, erros);
+						}
+					}
+				}
 			}
 
 			mPlaceCod.addCods(d.cod);
 		}
-		mPlaceCod.addCods("goto main");
+//		mPlaceCod.addCods(" call main");
 		String cod = mPlaceCod.cod;
 		if (cod != null) {
 			while (cod.indexOf("\n\n") > 0)
 				cod = cod.replaceAll("\n\n", "\n");
+
+			cod = cod.replaceAll(LINHA_SEPARADORA, "\n");
 		}
 
 		return new ResultadoAnalizeBean(cod, erros);

@@ -104,12 +104,12 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 				return false;
 			}
 			;
-
 			if (!getSntStrean().isFunction()) {
 				c.erro = formateErro("Deve estar em uma funÃ§Ã£o!");
 				return false;
 			}
 
+			c.addCods(er.cod);
 			FuncaoBean func = getSntStrean().peekFuncao();
 			if (er.returnType == null) {
 				if (func.getType() != null) {
@@ -117,11 +117,12 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 					return false;
 				}
 
-				c.addCods(gen("=", "[_Bp+" + func.getEndReturn() + "]", er.place), "goto " + func.getLbRetutn());
 			} else if (!er.returnType.equals(func.getType())) {
 				c.erro = formateErro("Tipo de retorno incompativel");
 				return false;
 			}
+			c.addCods(gen("=", "[_BP+" + func.getEndReturn() + "]", er.place), "goto " + func.getLbRetutn());
+			
 			return true;
 		}
 
@@ -232,9 +233,10 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 			PlaceCod lc1 = new PlaceCod();
 			lc1.lbContinue = c.lbContinue;
 			lc1.lbBreak = c.lbBreak;
-			if (lc.cod != null)	lc1.cod = lc.cod + c.cod; else lc1.cod = c.cod;			
+//			if (lc.cod != null)	lc1.cod = lc.cod + c.cod; else lc1.cod = c.cod;			
 			if (listaComando(lc1)) {
 				lc.cod = lc1.cod;
+				lc.addCods(lc.cod, c.cod, lc1.cod);
 				return true;
 			}else if(lc1.erro !=null){
 				lc.erro = lc1.erro;
@@ -244,7 +246,8 @@ public class AnaliseComando extends AbstractAnaliseSintatica {
 			lc.erro = c.erro;
 			return false;
 		}		
-		if (lc.cod != null)	lc.cod = lc.cod + c.cod; else lc.cod = c.cod;	
+			
+		lc.addCods(c.cod);
 		return true;
 	}
 

@@ -18,6 +18,8 @@ import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Document;
 import javax.swing.text.MutableAttributeSet;
@@ -34,26 +36,29 @@ public class AnalyzerView extends AnalyzerViewLay {
 	private SimpleAttributeSet styleType;
 	private Thread thrRunAnalise;
 
-
 	@Override
 	protected void init() {
 		editorPane.addKeyListener(new KeyListener() {
 
 			@Override
-			public void keyTyped(KeyEvent e) {}
+			public void keyTyped(KeyEvent e) {
+			}
 
 			@Override
 			public void keyReleased(KeyEvent e) {
-				fazAnalizeLexicaLater();			
-			}			
+				fazAnalizeLexicaLater();
+			}
+
 			@Override
-			public void keyPressed(KeyEvent e) {}
+			public void keyPressed(KeyEvent e) {
+			}
 		});
 	}
 
 	protected void saveFile() throws FileNotFoundException {
 		File f = AnalyzerView.this.currentFile();
-		if(f==null)return ;
+		if (f == null)
+			return;
 		PrintWriter out = new PrintWriter(f);
 
 		String text = AnalyzerView.this.editorPane.getText();
@@ -62,23 +67,21 @@ public class AnalyzerView extends AnalyzerViewLay {
 	}
 
 	protected File currentFile() {
-		if(this.fileEntrada == null|| !this.fileEntrada.isFile()){
+		if (this.fileEntrada == null || !this.fileEntrada.isFile()) {
 			JFileChooser c = new JFileChooser();
 			int returnVal = c.showOpenDialog(AnalyzerView.this);
 			if (returnVal == JFileChooser.APPROVE_OPTION) {
 
-				this.fileEntrada =   c.getSelectedFile();
+				this.fileEntrada = c.getSelectedFile();
 
 			}
 		}
 		return this.fileEntrada;
 	}
 
-
-
 	@Override
 	public void setController(AnalyzerControllerInterface controller) {
-		this.controller= controller;
+		this.controller = controller;
 	}
 
 	@Override
@@ -87,24 +90,25 @@ public class AnalyzerView extends AnalyzerViewLay {
 		this.onResultLexicon(lexemas, null);
 	}
 
-	private void writh_out(String message)	{
+	private void writh_out(String message) {
 		try {
 			Document doc = console.getDocument();
-			doc.insertString(doc.getLength(), message+"\n", null);
-		} catch(BadLocationException exc) {
+			doc.insertString(doc.getLength(), message + "\n", null);
+		} catch (BadLocationException exc) {
 			exc.printStackTrace();
-		}	
+		}
 	}
+
 	@Override
 	public void onResultLexicon(ArrayList<Token> saida, HashMap<String, ArrayList<Token>> tableids) {
 		this.controller.analisarSintatico(saida, tableids);
 	}
 
 	private MutableAttributeSet getStyleType() {
-		if ( styleType == null ){
+		if (styleType == null) {
 			styleType = new SimpleAttributeSet();
 			StyleConstants.setForeground(styleType, new Color(219, 93, 50));
-			StyleConstants.setBold(styleType , true);
+			StyleConstants.setBold(styleType, true);
 		}
 		return styleType;
 	}
@@ -113,17 +117,16 @@ public class AnalyzerView extends AnalyzerViewLay {
 	protected void fazAnalizeLexica() {
 
 		try {
-			String text =editorPane.getText();
-			if ( text.isEmpty())
+			String text = editorPane.getText();
+			if (text.isEmpty())
 				return;
 
-			InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));			
+			InputStream stream = new ByteArrayInputStream(text.getBytes(StandardCharsets.UTF_8));
 			this.controller.analiseLexicaArquivo(stream);
-		} catch (FileNotFoundException   e1) {
+		} catch (FileNotFoundException e1) {
 			e1.printStackTrace();
-			JOptionPane.showMessageDialog(null, e1.toString(), "Error",
-					JOptionPane.ERROR_MESSAGE);
-		}		
+			JOptionPane.showMessageDialog(null, e1.toString(), "Error", JOptionPane.ERROR_MESSAGE);
+		}
 	}
 
 	@Override
@@ -136,42 +139,53 @@ public class AnalyzerView extends AnalyzerViewLay {
 			@Override
 			public void run() {
 				Document doc = console.getDocument();
-				
-				writh_out("Sintatico: "+ (valide ? "Valido" : "Invalido: "));
-				if ( erros!=null)
-					for (CausaErro erro : erros){
-						writh_out(erro.getFormatedMessage()+"\t("+erro.getMetadataLog()+")");
-					}
 
-				editorPaneResult.setText(codigoIntermediario);				
+				writh_out("Sintatico: " + (valide ? "Valido" : "Invalido: "));
+				if (erros != null)
+					for (CausaErro erro : erros) {
+						writh_out(erro.getFormatedMessage() + "\t(" + erro.getMetadataLog() + ")");
+					}
+				editorPaneResult.setText(codigoIntermediario);
+				setStyle();
 			}
 		});
 	}
 
-//	protected void setStyle(Token tk, MutableAttributeSet attr){
-//		Document document = editorPane.getDocument();
-//
-//		try {						
-//			int ini = tk.getLinha()* tk.getPosIni();
-//			int fim = tk.getLinha()* tk.getPosFin()+1;
-//			int position = editorPane.getCaretPosition();
-//				
-//			document.remove(ini, fim);
-//			
-//			document.insertString(ini,tk.getValue(), attr);			
-//
-//			position = position > document.getLength() ? document.getLength()-1: position;
-//			
-//			editorPane.setCaretPosition(position);
-//		} catch (BadLocationException e) {
-//			e.printStackTrace();
-//		}
-//	}
+	protected void setStyle() {/*
+		Document document = editorPaneResult.getDocument();
+		String text = editorPaneResult.getText();
+		char[] chars = text.toCharArray();
+		int n = 0;
+		SimpleAttributeSet label = new SimpleAttributeSet();
+		StyleConstants.setBold(label, true);
+		StyleConstants.setForeground(label, Color.blue);
+		// StyleConstants.setFontFamily(set, "Monospace");
+		// StyleConstants.setFontSize(set, 22);
+		// StyleConstants.setItalic(set, true);
 
-	private void setFileIputStrean(File file){
 		try {
-			this.fileEntrada= file;
-			editorPane.setPage(file.toURI().toURL());	
+			for (int i = 0; i < chars.length; i++) {
+				if (chars[i] == '\n'){
+					n = i+1;
+					continue;
+				}
+				if (chars[i] == ':') {
+					document.remove(n , i);
+					document.insertString(n , text.substring(n , i+1), label);
+//					
+					break;
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	*/}
+
+	private void setFileIputStrean(File file) {
+		try {
+			this.fileEntrada = file;
+			editorPane.setPage(file.toURI().toURL());
 
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -187,7 +201,11 @@ public class AnalyzerView extends AnalyzerViewLay {
 	protected void inputFile() {
 
 		JFileChooser c = new JFileChooser();
-		// Demonstrate "Open" dialog:
+		FileFilter ff = new FileNameExtensionFilter("C files", "c", "cpp");
+		c.addChoosableFileFilter(ff);
+		c.setFileFilter(ff);
+
+		c.addChoosableFileFilter(new FileNameExtensionFilter("Text files files", "txt", "c", "cpp"));
 		int rVal = c.showOpenDialog(AnalyzerView.this);
 		if (rVal == JFileChooser.APPROVE_OPTION) {
 			AnalyzerView.this.fileEntrada = c.getSelectedFile();
@@ -200,11 +218,11 @@ public class AnalyzerView extends AnalyzerViewLay {
 		fazAnalizeLexicaLater();
 	};
 
-	private void fazAnalizeLexicaLater(){
-		
-		if ( thrRunAnalise==null || !thrRunAnalise.isAlive()){
+	private void fazAnalizeLexicaLater() {
+
+		if (thrRunAnalise == null || !thrRunAnalise.isAlive()) {
 			console.setText("");
-			thrRunAnalise = new Thread(){
+			thrRunAnalise = new Thread() {
 				@Override
 				public void run() {
 					try {
@@ -221,9 +239,3 @@ public class AnalyzerView extends AnalyzerViewLay {
 	}
 
 }
-
-
-
-
-
-
