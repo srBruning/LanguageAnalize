@@ -57,6 +57,8 @@ public class SyntacticAnalyzerModule extends AbstractAnaliseSintatica {
 			while (cod.indexOf("\n\n") > 0)
 				cod = cod.replaceAll("\n\n", "\n");
 
+			cod = cod.replaceAll("null", " ");
+
 			cod = cod.replaceAll(LINHA_SEPARADORA, "\n");
 		}
 
